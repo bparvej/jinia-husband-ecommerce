@@ -1,0 +1,19 @@
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>Inventory</h2>
+        <span class="page-count"><%= pagination.totalItems %> products</span>
+    </div>
+</div>
+
+<div class="filters-bar">
+    <div class="filter-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+        <input type="text" placeholder="Search by name or SKU..." value="<%= filters.search || '' %>"
+            hx-get="/admin/inventory" hx-target="#inventory-table-container" hx-trigger="keyup changed delay:300ms"
+            name="search" hx-vals='{"_partial":"1"}'>
+    </div>
+</div>
+
+<div id="inventory-table-container">
+    <%- include('partials/inventory-table') %>
+</div>

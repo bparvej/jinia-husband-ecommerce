@@ -1,0 +1,125 @@
+<div class="page-header">
+    <a href="/admin/orders" class="back-link">← Back to Orders</a>
+</div>
+
+<div class="order-detail-grid">
+    <div class="order-detail-main">
+        <div class="panel">
+            <div class="panel-header">
+                <h3>Order <%= order.order_number %></h3>
+                <div id="order-status-container">
+                    <%- include('partials/status-badge', { order }) %>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (order.OrderItems) { %>
+                            <% order.OrderItems.forEach(item => { %>
+                            <tr>
+                                <td>
+                                    <div class="product-cell">
+                                        <% if (item.Product) { %>
+                                        <img src="<%= item.Product.image || '/assets/images/category-bookshelf.png' %>" alt="<%= item.product_name %>" class="product-thumb">
+                                        <% } %>
+                                        <span><%= item.product_name %></span>
+                                    </div>
+                                </td>
+                                <td>৳<%= Number(item.unit_price).toLocaleString() %></td>
+                                <td><%= item.quantity %></td>
+                                <td class="text-bold">৳<%= Number(item.total_price).toLocaleString() %></td>
+                            </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right">Subtotal</td>
+                            <td class="text-bold">৳<%= Number(order.subtotal).toLocaleString() %></td>
+                        </tr>
+                        <% if (order.discount_amount > 0) { %>
+                        <tr>
+                            <td colspan="3" class="text-right">Discount</td>
+                            <td class="text-success">-৳<%= Number(order.discount_amount).toLocaleString() %></td>
+                        </tr>
+                        <% } %>
+                        <tr>
+                            <td colspan="3" class="text-right">Shipping</td>
+                            <td><%= Number(order.shipping_cost) > 0 ? '৳' + Number(order.shipping_cost).toLocaleString() : 'Free' %></td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3" class="text-right"><strong>Total</strong></td>
+                            <td><strong>৳<%= Number(order.total).toLocaleString() %></strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-detail-side">
+        <div class="panel">
+            <div class="panel-header"><h3>Update Status</h3></div>
+            <div class="panel-body">
+                <form hx-put="/api/v1/orders/<%= order.id %>/status" hx-target="#order-status-container" hx-swap="innerHTML">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="form-group">
+                        <select name="status" class="form-select">
+                            <% ['pending','confirmed','processing','shipped','delivered','cancelled','refunded'].forEach(s => { %>
+                                <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= s.charAt(0).toUpperCase() + s.slice(1) %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-admin btn-primary-admin btn-full">Update Status</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header"><h3>Customer</h3></div>
+            <div class="panel-body">
+                <% if (order.User) { %>
+                <div class="detail-row"><strong>Name:</strong> <%= order.User.name %></div>
+                <div class="detail-row"><strong>Email:</strong> <%= order.User.email %></div>
+                <div class="detail-row"><strong>Phone:</strong> <%= order.User.phone || 'N/A' %></div>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header"><h3>Shipping</h3></div>
+            <div class="panel-body">
+                <div class="detail-row"><strong>Name:</strong> <%= order.shipping_name || 'N/A' %></div>
+                <div class="detail-row"><strong>Phone:</strong> <%= order.shipping_phone || 'N/A' %></div>
+                <div class="detail-row"><strong>Address:</strong> <%= order.shipping_address || 'N/A' %></div>
+                <div class="detail-row"><strong>City:</strong> <%= order.shipping_city || 'N/A' %></div>
+            </div>
+        </div>
+
+        <% if (order.Payment) { %>
+        <div class="panel">
+            <div class="panel-header"><h3>Payment</h3></div>
+            <div class="panel-body">
+                <div class="detail-row"><strong>Method:</strong> <%= order.Payment.method.toUpperCase() %></div>
+                <div class="detail-row"><strong>Status:</strong> <span class="status-badge status-<%= order.Payment.status %>"><%= order.Payment.status %></span></div>
+                <div class="detail-row"><strong>Amount:</strong> ৳<%= Number(order.Payment.amount).toLocaleString() %></div>
+                <% if (order.Payment.transaction_id) { %>
+                <div class="detail-row"><strong>Transaction:</strong> <%= order.Payment.transaction_id %></div>
+                <% } %>
+            </div>
+        </div>
+        <% } %>
+
+        <div class="detail-meta">
+            <span>Created: <%= new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span>
+        </div>
+    </div>
+</div>

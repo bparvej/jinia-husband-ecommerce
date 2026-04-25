@@ -1,0 +1,16 @@
+<div class="error-page">
+    <div class="error-container">
+        <span class="error-code"><%= error.status %></span>
+        <h1><%= title %></h1>
+        <p><%= message %></p>
+        <a href="/" class="btn btn-primary">Go Home</a>
+    </div>
+</div>
+
+<style>
+.error-page { min-height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
+.error-container { max-width: 500px; }
+.error-code { font-size: 6rem; font-weight: 800; color: #EDE6DB; line-height: 1; }
+.error-page h1 { font-family: 'Playfair Display', serif; font-size: 2rem; color: #3E2518; margin: 1rem 0 0.5rem; }
+.error-page p { color: #6B5B4E; margin-bottom: 2rem; }
+</style>
