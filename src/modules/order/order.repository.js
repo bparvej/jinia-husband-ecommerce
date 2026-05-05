@@ -74,8 +74,8 @@ class OrderRepository {
     return results[0];
   }
 
-  async count(where = {}) {
-    return db.Order.count({ where });
+  async count(options = {}) {
+    return db.Order.count(options);
   }
 
   async createOrderItem(data, transaction = null) {

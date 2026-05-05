@@ -8,7 +8,7 @@ class ShippingService {
     if (filters.status) where.status = filters.status;
     if (filters.city) where.shipping_city = filters.city;
 
-    const total = await shippingRepository.count(where);
+    const total = await shippingRepository.count({ where });
     const pagination = paginate(page, limit, total);
     const result = await shippingRepository.findAll({
       offset: pagination.offset,

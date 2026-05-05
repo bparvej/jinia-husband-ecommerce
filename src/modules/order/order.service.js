@@ -114,8 +114,8 @@ class OrderService {
     const stats = await orderRepository.getOrderStats();
     const recentOrders = await orderRepository.getRecentOrders(5);
     const lowStock = await inventoryRepository.getLowStock();
-    const totalProducts = await productRepository.count({ is_active: true });
-    const totalCustomers = await userRepository.count({ role_id: 4 }); // Assuming 4 is customer role
+    const totalProducts = await productRepository.count({ where: { is_active: true } });
+    const totalCustomers = await userRepository.count({ where: { role_id: 4 } }); // Assuming 4 is customer role
 
     return { stats, recentOrders, lowStock, totalProducts, totalCustomers };
   }

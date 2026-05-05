@@ -114,8 +114,8 @@ class ProductRepository {
     });
   }
 
-  async count(where = {}) {
-    return db.Product.count({ where });
+  async count(options = {}) {
+    return db.Product.count(options);
   }
 
   async incrementSoldCount(id, amount, transaction = null) {

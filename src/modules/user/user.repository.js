@@ -42,8 +42,8 @@ class UserRepository {
     return user.destroy();
   }
 
-  async count(where = {}) {
-    return db.User.count({ where });
+  async count(options = {}) {
+    return db.User.count(options);
   }
 
   async getRoles() {

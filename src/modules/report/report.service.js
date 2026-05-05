@@ -7,8 +7,8 @@ const userRepository = require('../user/user.repository');
 class ReportService {
   async getDashboardStats() {
     const orderStats = await orderRepository.getOrderStats();
-    const totalProducts = await productRepository.count({ is_active: true });
-    const totalCustomers = await userRepository.count({ role_id: 4 }); // Assuming 4 is customer role
+    const totalProducts = await productRepository.count({ where: { is_active: true } });
+    const totalCustomers = await userRepository.count({ where: { role_id: 4 } }); // Assuming 4 is customer role
     
     // Revenue last 7 days
     const endDate = new Date();

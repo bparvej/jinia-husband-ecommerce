@@ -64,27 +64,35 @@ class ProductService {
   }
 
   async createProduct(data) {
-    // Generate slug
-    data.slug = generateSlug(data.name);
+    const db = require('../../models');
+    const transaction = await db.sequelize.transaction();
     
-    // Ensure unique slug
-    const existing = await productRepository.count({ slug: data.slug });
-    if (existing > 0) {
-      data.slug = `${data.slug}-${Date.now()}`;
+    try {
+      data.slug = generateSlug(data.name);
+      
+      // Ensure unique slug
+      const existing = await productRepository.count({ where: { slug: data.slug } });
+      if (existing > 0) {
+        data.slug = `${data.slug}-${Date.now()}`;
+      }
+      
+      const product = await productRepository.create(data, transaction);
+      
+      const inventoryRepository = require('../inventory/inventory.repository');
+      await inventoryRepository.create({
+        product_id: product.id,
+        quantity: parseInt(data.stock_quantity) || 0,
+        low_stock_threshold: parseInt(data.low_stock_threshold) || 10,
+      }, transaction);
+      
+      await transaction.commit();
+      logger.info('Product created', { productId: product.id, name: product.name });
+      return product;
+    } catch (err) {
+      await transaction.rollback();
+      logger.error('Product creation failed', { error: err.message, name: data.name });
+      throw err;
     }
-
-    const product = await productRepository.create(data);
-
-    // Create inventory record (using inventoryRepository)
-    const inventoryRepository = require('../inventory/inventory.repository');
-    await inventoryRepository.create({
-      product_id: product.id,
-      quantity: parseInt(data.stock_quantity) || 0,
-      low_stock_threshold: parseInt(data.low_stock_threshold) || 10,
-    });
-
-    logger.info('Product created', { productId: product.id, name: product.name });
-    return product;
   }
 
   async updateProduct(id, data) {
@@ -92,8 +100,10 @@ class ProductService {
       data.slug = generateSlug(data.name);
       const { Op } = require('sequelize');
       const existing = await productRepository.count({
-        slug: data.slug,
-        id: { [Op.ne]: id }
+        where: {
+          slug: data.slug,
+          id: { [Op.ne]: id }
+        }
       });
       if (existing > 0) {
         data.slug = `${data.slug}-${Date.now()}`;

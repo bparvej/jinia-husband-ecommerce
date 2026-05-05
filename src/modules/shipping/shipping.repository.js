@@ -30,8 +30,10 @@ class ShippingRepository {
     return order.update(updateData);
   }
 
-  async count(where = {}) {
+  async count(options = {}) {
+    const where = options.where || {};
     return db.Order.count({
+      ...options,
       where: {
         ...where,
         status: { [Op.in]: ['processing', 'shipped', 'delivered'] }

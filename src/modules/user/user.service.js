@@ -16,7 +16,7 @@ class UserService {
       ];
     }
 
-    const total = await userRepository.count(where);
+    const total = await userRepository.count({ where });
     const pagination = paginate(page, limit, total);
     const result = await userRepository.findAll({
       offset: pagination.offset,

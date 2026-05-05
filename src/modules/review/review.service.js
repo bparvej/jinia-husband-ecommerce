@@ -10,7 +10,7 @@ class ReviewService {
     if (filters.product_id) where.product_id = filters.product_id;
     if (filters.is_approved !== undefined) where.is_approved = filters.is_approved;
 
-    const total = await reviewRepository.count(where);
+    const total = await reviewRepository.count({ where });
     const pagination = paginate(page, limit, total);
     const result = await reviewRepository.findAll({
       offset: pagination.offset,

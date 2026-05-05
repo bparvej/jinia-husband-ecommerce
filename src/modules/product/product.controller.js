@@ -66,7 +66,7 @@ class ProductController {
 
       // Handle file upload
       if (req.file) {
-        data.image = `/uploads/${req.file.filename}`;
+        data.image = `/uploads/products/${req.file.filename}`;
       }
 
       await productService.createProduct(data);
@@ -123,7 +123,7 @@ class ProductController {
       };
 
       if (req.file) {
-        data.image = `/uploads/${req.file.filename}`;
+        data.image = `/uploads/products/${req.file.filename}`;
       }
 
       await productService.updateProduct(req.params.id, data);

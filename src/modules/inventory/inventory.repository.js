@@ -57,8 +57,8 @@ class InventoryRepository {
     });
   }
 
-  async count(where = {}) {
-    return db.Inventory.count({ where });
+  async count(options = {}) {
+    return db.Inventory.count(options);
   }
 
   async create(data, transaction = null) {

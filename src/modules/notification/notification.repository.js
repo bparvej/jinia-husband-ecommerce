@@ -26,8 +26,8 @@ class NotificationRepository {
     return db.Notification.destroy({ where: { id, user_id: userId } });
   }
 
-  async count(where = {}) {
-    return db.Notification.count({ where });
+  async count(options = {}) {
+    return db.Notification.count(options);
   }
 }
 

@@ -30,8 +30,8 @@ class CouponRepository {
     return coupon.destroy();
   }
 
-  async count(where = {}) {
-    return db.Coupon.count({ where });
+  async count(options = {}) {
+    return db.Coupon.count(options);
   }
 
   async findById(id) {

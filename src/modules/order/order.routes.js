@@ -4,6 +4,7 @@ const orderController = require('./order.controller');
 const { requireAuth, requireAdmin } = require('../../middleware/auth');
 const { checkPermission } = require('../../middleware/rbac');
 const { auditLog } = require('../../middleware/auditLog');
+const { csrfProtection } = require('../../middleware/csrf');
 
 // Dashboard
 router.get('/admin/dashboard', requireAuth, requireAdmin, orderController.dashboard);
@@ -11,6 +12,6 @@ router.get('/admin/dashboard', requireAuth, requireAdmin, orderController.dashbo
 // Orders
 router.get('/admin/orders', requireAuth, requireAdmin, checkPermission('read', 'Order'), orderController.adminIndex);
 router.get('/admin/orders/:id', requireAuth, requireAdmin, checkPermission('read', 'Order'), orderController.adminDetail);
-router.put('/api/v1/orders/:id/status', requireAuth, requireAdmin, checkPermission('update', 'Order'), auditLog('update', 'Order'), orderController.updateStatus);
+router.put('/api/v1/orders/:id/status', requireAuth, requireAdmin, checkPermission('update', 'Order'), csrfProtection, auditLog('update', 'Order'), orderController.updateStatus);
 
 module.exports = router;

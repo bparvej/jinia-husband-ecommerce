@@ -17,7 +17,7 @@ class NotificationService {
 
   async getUserNotifications(userId, page = 1, limit = 20) {
     const where = { user_id: userId };
-    const total = await notificationRepository.count(where);
+    const total = await notificationRepository.count({ where });
     const pagination = paginate(page, limit, total);
     
     const result = await notificationRepository.findAll({

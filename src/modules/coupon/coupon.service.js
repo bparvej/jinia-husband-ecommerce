@@ -9,7 +9,7 @@ class CouponService {
       where.code = { [Op.iLike]: `%${filters.search}%` };
     }
 
-    const total = await couponRepository.count(where);
+    const total = await couponRepository.count({ where });
     const pagination = paginate(page, limit, total);
     const result = await couponRepository.findAll({
       offset: pagination.offset,

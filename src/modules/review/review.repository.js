@@ -30,8 +30,8 @@ class ReviewRepository {
     return review.destroy();
   }
 
-  async count(where = {}) {
-    return db.Review.count({ where });
+  async count(options = {}) {
+    return db.Review.count(options);
   }
 
   async getAverageRating(productId) {

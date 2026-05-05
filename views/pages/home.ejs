@@ -166,7 +166,66 @@
     </div>
 </section>
 
-<!-- ======================== PRODUCTS ======================== -->
+<!-- ======================== FEATURED PRODUCTS (BEST SELLERS) ======================== -->
+<section class="products featured-products" id="best-sellers">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">Premium Picks</span>
+            <h2 class="section-title">Best Sellers</h2>
+            <p class="section-desc">Our most loved handcrafted pieces, now available for your home</p>
+        </div>
+        <div class="product-grid">
+            <% if (typeof featuredProducts !== 'undefined' && featuredProducts.length > 0) { %>
+                <% featuredProducts.forEach(product => { %>
+                <div class="product-card featured" data-category="<%= product.Category ? product.Category.slug : 'all' %>">
+                    <div class="product-image">
+                        <img src="<%= product.image || '/assets/images/category-bookshelf.png' %>" alt="<%= product.name %>" loading="lazy">
+                        <% if (product.badge) { %>
+                        <div class="product-badges">
+                            <span class="badge badge-<%= product.badge.toLowerCase().replace(' ', '-') === 'best-seller' ? 'hot' : product.badge.toLowerCase() %>"><%= product.badge %></span>
+                        </div>
+                        <% } %>
+                        <div class="product-actions">
+                            <button class="action-btn" aria-label="Add to wishlist">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            </button>
+                            <button class="action-btn" aria-label="Quick view">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <button class="add-to-cart-btn"
+                            <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+                            hx-post="/api/v1/cart/add" hx-vals='{"product_id": "<%= product.id %>", "quantity": "1"}' hx-swap="none"
+                            <% } %>
+                        >Add to Cart</button>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category text-accent"><%= product.Category ? product.Category.name : 'Furniture' %></span>
+                        <h3 class="product-name"><%= product.name %></h3>
+                        <div class="product-rating">
+                            <div class="stars"><%= '★'.repeat(Math.round(product.avg_rating || 0)) %><%= '☆'.repeat(5 - Math.round(product.avg_rating || 0)) %></div>
+                            <span class="review-count">(<%= product.review_count || 0 %>)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price-current">৳<%= Number(product.price).toLocaleString() %></span>
+                            <% if (product.compare_price) { %>
+                            <span class="price-old">৳<%= Number(product.compare_price).toLocaleString() %></span>
+                            <span class="discount">-<%= Math.round((1 - product.price / product.compare_price) * 100) %>%</span>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+            <% } else { %>
+                <div class="empty-state text-center" style="grid-column: 1/-1; padding: 3rem;">
+                    <p class="text-muted">No featured products found.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- ======================== NEW ARRIVALS ======================== -->
 <section class="products" id="new-arrivals">
     <div class="container">
         <div class="section-header">
