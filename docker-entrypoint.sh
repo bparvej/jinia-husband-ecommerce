@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e
 
+# Auto-detect production if running on Render
+if [ "$RENDER" = "true" ] && [ -z "$NODE_ENV" ]; then
+  export NODE_ENV=production
+fi
+
 if [ -n "$DATABASE_URL" ]; then
   echo "⏳ Waiting for database connection via DATABASE_URL..."
   until pg_isready -d "$DATABASE_URL"; do
