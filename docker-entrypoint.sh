@@ -3,10 +3,12 @@ set -e
 
 # Wait for database to be ready
 # Defaults to host 'db' and port '5432' (Postgres) if variables aren't set
-echo "⏳ Waiting for database (${DB_HOST:-db}:${DB_PORT:-5432}) to be ready..."
-while ! nc -z ${DB_HOST:-db} ${DB_PORT:-5432}; do
-  sleep 1
-done
+if [ -z "$DATABASE_URL" ]; then
+  echo "⏳ Waiting for database (${DB_HOST:-db}:${DB_PORT:-5432}) to be ready..."
+  while ! nc -z ${DB_HOST:-db} ${DB_PORT:-5432}; do
+    sleep 1
+  done
+fi
 echo "✅ Database is reachable!"
 
 echo "🔎 Step 0: Verifying migration files exist in /app/src/database/migrations..."
@@ -25,8 +27,12 @@ npx sequelize-cli db:migrate --config src/config/config.js --env ${NODE_ENV:-dev
 
 # Validation: Check if the users table actually exists now
 echo "🔎 Step 2.5: Validating 'users' table existence..."
-export PGPASSWORD=${DB_PASSWORD:-homei_secret_2026}
-TABLE_CHECK=$(psql -h ${DB_HOST:-db} -U ${DB_USER:-homei_user} -d ${DB_NAME:-homei_db} -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
+if [ -n "$DATABASE_URL" ]; then
+    TABLE_CHECK=$(psql "$DATABASE_URL" -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
+else
+    export PGPASSWORD=${DB_PASSWORD:-homei_secret_2026}
+    TABLE_CHECK=$(psql -h ${DB_HOST:-db} -U ${DB_USER:-homei_user} -d ${DB_NAME:-homei_db} -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
+fi
 
 if [ "$TABLE_CHECK" = "0" ]; then
     echo "❌ FATAL ERROR: Migrations completed but 'users' table is missing!"

@@ -16,10 +16,16 @@ module.exports = {
     }
   },
   // Production and test environments can follow the same pattern
-  production: { 
-    use_env_variable: 'DATABASE_URL', 
-    dialect: 'postgres', 
+  production: {
+    use_env_variable: 'DATABASE_URL',
+    dialect: 'postgres',
     logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    },
     define: {
       timestamps: true,
       underscored: true,

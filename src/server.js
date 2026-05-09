@@ -18,9 +18,8 @@ async function start() {
 
     // Start server
     app.listen(PORT, '0.0.0.0', () => {
-      logger.info(`🚀 Homei Ecommerce server running on http://localhost:${PORT}`);
-      logger.info(`📋 Admin panel: http://localhost:${PORT}/admin/dashboard`);
-      logger.info(`🔑 Login: admin@homei.com / Admin@123`);
+      logger.info(`🚀 Homei Ecommerce server running on port ${PORT}`);
+      logger.info(`🔑 Default Admin: admin@homei.com / Admin@123`);
     });
   } catch (error) {
     logger.error('❌ Failed to start server', { error: error.message, stack: error.stack });
