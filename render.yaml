@@ -18,6 +18,8 @@ services:
           property: connectionString
       - key: PORT
         value: 10000
+      - key: DB_SSL
+        value: "true"
 databases:
   - name: homei-db
     plan: free

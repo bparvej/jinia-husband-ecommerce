@@ -9,29 +9,31 @@ if [ "$RENDER" = "true" ]; then
   echo "🌐 Detected Render environment"
 fi
 
-if [ -n "$DATABASE_URL" ]; then
-  echo "⏳ Waiting for database connection..."
-  # Wait for DB to wake up. Render Free tier DBs spin down when inactive.
-  until pg_isready -d "$DATABASE_URL" -t 30; do
-    sleep 1
-  done
-  echo "✅ Database is reachable!"
-elif [ -n "$DB_HOST" ]; then
-  echo "⏳ Waiting for database connection ($DB_HOST)..."
-  until pg_isready -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "${DB_USER:-postgres}" -t 30; do
-    sleep 1
-  done
-  echo "✅ Database is reachable!"
-elif [ "$RENDER" = "true" ] && [ -z "$DB_HOST" ]; then
-  echo "************************************************************************"
-  echo "❌ DEPLOYMENT STOPPED: DATABASE_URL IS MISSING"
-  echo "ACTION REQUIRED: Go to Render Dashboard -> Web Service -> Environment"
-  echo "Click 'Add Database' under 'Linked Databases' to connect your Postgres."
-  echo "************************************************************************"
-  exit 1
-else
-  echo "⚠️ Warning: No database connection info found (DATABASE_URL or DB_HOST). Startup might fail."
+# Try to detect connection info for up to 10 seconds (Render env injection can sometimes be slow)
+for i in $(seq 1 10); do
+  if [ -n "$DATABASE_URL" ] || [ -n "$DB_HOST" ]; then
+    break
+  fi
+  echo "⏳ Waiting for environment variables (attempt $i/10)..."
+  sleep 1
+done
+
+if [ -z "$DATABASE_URL" ] && [ -z "$DB_HOST" ] && [ "$RENDER" = "true" ]; then
+    echo "************************************************************************"
+    echo "❌ DEPLOYMENT STOPPED: DATABASE_URL IS MISSING"
+    echo "Render is not providing the database connection string."
+    echo "FIX: Go to Render Dashboard -> Web Service -> Environment -> Linked Databases"
+    echo "And ensure your database is attached to this service."
+    echo "************************************************************************"
+    exit 1
 fi
+
+echo "⏳ Checking database availability..."
+until pg_isready -d "${DATABASE_URL:-postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME}" -t 2; do
+  echo "Waiting for database to be ready..."
+  sleep 2
+done
+echo "✅ Database is reachable!"
 
 echo "🔎 Step 0: Verifying migration files exist in /app/src/database/migrations..."
 if [ ! -d "src/database/migrations" ]; then
