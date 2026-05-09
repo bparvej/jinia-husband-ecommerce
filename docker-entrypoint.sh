@@ -11,13 +11,8 @@ fi
 
 if [ -n "$DATABASE_URL" ]; then
   echo "⏳ Waiting for database connection..."
-  until pg_isready -d "$DATABASE_URL"; do
-    sleep 1
-  done
-  echo "✅ Database is reachable!"
-elif [ -n "$DB_HOST" ]; then
-  echo "⏳ Waiting for database (${DB_HOST}:${DB_PORT:-5432})..."
-  until pg_isready -h "$DB_HOST" -p "${DB_PORT:-5432}"; do
+  # Use pg_isready to check database availability. Timeout after 30 seconds.
+  until pg_isready -d "$DATABASE_URL" -t 30; do
     sleep 1
   done
   echo "✅ Database is reachable!"
@@ -36,18 +31,24 @@ fi
 ls -1 src/database/migrations
 
 if [ -n "$DB_HOST" ] && [ -z "$DATABASE_URL" ]; then
-    echo "🛠️ Step 1: Ensuring database exists (${DB_NAME:-homei_db})..."
-    npx sequelize-cli db:create --config src/config/config.js --env ${NODE_ENV:-development} || echo "💡 Database already exists."
+    echo "🛠️ Step 1: Ensuring database exists (using DB_HOST directly)..."
+    npx sequelize-cli db:create --config src/config/config.js --env "$NODE_ENV" || echo "💡 Database already exists (likely in development)."
 else
     echo "🛠️ Step 1: Skipping db:create (Using Managed Database via DATABASE_URL)."
 fi
 
 echo "🚀 Step 2: Running database migrations..."
-npx sequelize-cli db:migrate --config src/config/config.js --env ${NODE_ENV:-development} || exit 1
+npx sequelize-cli db:migrate --config src/config/config.js --env "$NODE_ENV" || exit 1
+
+# After migrations, ensure the connection is still valid before proceeding.
+if [ -n "$DATABASE_URL" ]; then
+  echo "✅ Database connection re-validated after migrations."
+  pg_isready -d "$DATABASE_URL" || (echo "❌ Database connection lost after migrations!" && exit 1)
+fi
 
 # Validation: Check if the users table actually exists now
 echo "🔎 Step 2.5: Validating 'users' table existence..."
-if [ -n "$DATABASE_URL" ] && which psql >/dev/null 2>&1; then
+if [ -n "$DATABASE_URL" ] && command -v psql >/dev/null 2>&1; then
     TABLE_CHECK=$(psql "$DATABASE_URL" -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
 elif [ -n "$DB_HOST" ] && which psql >/dev/null 2>&1; then
     export PGPASSWORD=${DB_PASSWORD:-homei_secret_2026}
@@ -63,7 +64,7 @@ if [ "$TABLE_CHECK" = "0" ]; then
 fi
 
 echo "🌱 Step 3: Running database seeders..."
-npx sequelize-cli db:seed:all --config src/config/config.js --env ${NODE_ENV:-development} || echo "💡 Seeding skipped (already seeded)."
+npx sequelize-cli db:seed:all --config src/config/config.js --env "$NODE_ENV" || echo "💡 Seeding skipped (already seeded or failed)."
 
 echo "🟢 Starting application..."
 exec "$@"

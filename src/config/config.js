@@ -2,6 +2,7 @@ require('dotenv').config();
 
 module.exports = {
   development: {
+    // Prioritize DATABASE_URL if present, even in dev (e.g., local Docker with external DB)
     use_env_variable: process.env.DATABASE_URL ? 'DATABASE_URL' : undefined,
     username: process.env.DB_USER || 'homei_user',
     password: process.env.DB_PASSWORD || 'homei_secret_2026',
@@ -10,6 +11,7 @@ module.exports = {
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: false,
+    // Apply SSL options only if DATABASE_URL is used (typical for cloud DBs)
     dialectOptions: process.env.DATABASE_URL ? {
       ssl: {
         require: true,

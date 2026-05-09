@@ -2,6 +2,7 @@ require('dotenv').config();
 
 module.exports = {
   development: {
+    // Prioritize DATABASE_URL if present, even in dev
     use_env_variable: process.env.DATABASE_URL ? 'DATABASE_URL' : undefined,
     username: process.env.DB_USER || 'homei_user',
     password: process.env.DB_PASSWORD || 'homei_secret_2026',
@@ -16,6 +17,7 @@ module.exports = {
       acquire: 30000,
       idle: 10000,
     },
+    // Apply SSL options only if DATABASE_URL is used
     dialectOptions: process.env.DATABASE_URL ? {
       ssl: {
         require: true,
