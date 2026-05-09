@@ -3,11 +3,13 @@ set -e
 
 # Wait for database to be ready
 # Defaults to host 'db' and port '5432' (Postgres) if variables aren't set
-if [ -z "$DATABASE_URL" ]; then
-  echo "⏳ Waiting for database (${DB_HOST:-db}:${DB_PORT:-5432}) to be ready..."
-  while ! nc -z ${DB_HOST:-db} ${DB_PORT:-5432}; do
+if [ -n "$DATABASE_URL" ]; then
+  echo "⏳ Waiting for database connection via DATABASE_URL..."
+  until pg_isready -d "$DATABASE_URL"; do
     sleep 1
   done
+else
+  echo "⚠️ DATABASE_URL not found. Skipping readiness check..."
 fi
 echo "✅ Database is reachable!"
 
