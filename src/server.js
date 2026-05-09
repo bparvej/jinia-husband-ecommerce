@@ -6,8 +6,8 @@ const PORT = process.env.PORT || 10000;
 
 async function start() {
   try {
-    if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
-      logger.error('❌ FATAL: DATABASE_URL is missing. Please link your DB in Render Dashboard.');
+    if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL && !process.env.DB_HOST) {
+      logger.error('❌ FATAL: Database connection info is missing. Link your DB in Render or set DB_HOST.');
       process.exit(1);
     }
 

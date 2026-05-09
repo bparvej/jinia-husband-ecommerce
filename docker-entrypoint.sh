@@ -17,12 +17,12 @@ if [ -n "$DATABASE_URL" ]; then
   done
   echo "✅ Database is reachable!"
 elif [ -n "$DB_HOST" ]; then
-  echo "⏳ Waiting for database connection via DB_HOST ($DB_HOST)..."
-  until pg_isready -h "$DB_HOST" -p "${DB_PORT:-5432}" -t 30; do
+  echo "⏳ Waiting for database connection ($DB_HOST)..."
+  until pg_isready -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "${DB_USER:-postgres}" -t 30; do
     sleep 1
   done
   echo "✅ Database is reachable!"
-elif [ "$RENDER" = "true" ]; then
+elif [ "$RENDER" = "true" ] && [ -z "$DB_HOST" ]; then
   echo "************************************************************************"
   echo "❌ DEPLOYMENT STOPPED: DATABASE_URL IS MISSING"
   echo "ACTION REQUIRED: Go to Render Dashboard -> Web Service -> Environment"
