@@ -22,7 +22,9 @@ elif [ -n "$DB_HOST" ]; then
   done
   echo "✅ Database is reachable!"
 else
-  echo "⚠️ Warning: DATABASE_URL not found. Connection may fail."
+  echo "❌ ERROR: DATABASE_URL not found."
+  echo "Please link a Render PostgreSQL database to this service in the Render Dashboard."
+  exit 1
 fi
 
 echo "🔎 Step 0: Verifying migration files exist in /app/src/database/migrations..."
@@ -33,11 +35,11 @@ if [ ! -d "src/database/migrations" ] || [ -z "$(ls -A src/database/migrations)"
 fi
 ls -1 src/database/migrations
 
-echo "🛠️ Step 1: Ensuring database exists (${DB_NAME:-homei_db})..."
-if [ -z "$DATABASE_URL" ]; then
+if [ -n "$DB_HOST" ] && [ -z "$DATABASE_URL" ]; then
+    echo "🛠️ Step 1: Ensuring database exists (${DB_NAME:-homei_db})..."
     npx sequelize-cli db:create --config src/config/config.js --env ${NODE_ENV:-development} || echo "💡 Database already exists."
 else
-    echo "💡 Using existing database from DATABASE_URL."
+    echo "🛠️ Step 1: Skipping db:create (Using Managed Database via DATABASE_URL)."
 fi
 
 echo "🚀 Step 2: Running database migrations..."

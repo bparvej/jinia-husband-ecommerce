@@ -25,10 +25,10 @@ module.exports = {
   // Production and test environments can follow the same pattern
   production: {
     use_env_variable: process.env.DATABASE_URL ? 'DATABASE_URL' : undefined,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
+    username: process.env.DB_USER || null,
+    password: process.env.DB_PASSWORD || null,
+    database: process.env.DB_NAME || null,
+    host: process.env.DB_HOST || null,
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: false,
