@@ -17,11 +17,16 @@ if [ -n "$DATABASE_URL" ]; then
   done
   echo "✅ Database is reachable!"
 elif [ -n "$DB_HOST" ]; then
-  echo "⏳ Waiting for database connection ($DB_HOST)..."
+  echo "⏳ Waiting for database connection via DB_HOST ($DB_HOST)..."
   until pg_isready -h "$DB_HOST" -p "${DB_PORT:-5432}" -t 30; do
     sleep 1
   done
   echo "✅ Database is reachable!"
+elif [ "$RENDER" = "true" ]; then
+  echo "❌ FATAL ERROR: DATABASE_URL is not set."
+  echo "On Render, you MUST link a PostgreSQL database to this service."
+  echo "Go to your Web Service -> Environment -> Linked Databases -> Add Database."
+  exit 1
 else
   echo "⚠️ Warning: No database connection info found (DATABASE_URL or DB_HOST). Startup might fail."
 fi
@@ -34,12 +39,7 @@ if [ ! -d "src/database/migrations" ] || [ -z "$(ls -A src/database/migrations)"
 fi
 ls -1 src/database/migrations
 
-if [ -z "$DATABASE_URL" ] && [ -n "$DB_HOST" ]; then
-    echo "🛠️ Step 1: Ensuring database exists..."
-    npx sequelize-cli db:create --config src/config/config.js --env "$NODE_ENV" || echo "💡 Database already exists or skipping creation."
-else
-    echo "🛠️ Step 1: Skipping db:create (Using connection string or no host info)."
-fi
+echo "🛠️ Step 1: Skipping db:create (Using Managed Database)."
 
 echo "🚀 Step 2: Running database migrations..."
 npx sequelize-cli db:migrate --config src/config/config.js --env "$NODE_ENV" || exit 1

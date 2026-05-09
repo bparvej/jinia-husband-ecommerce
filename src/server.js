@@ -6,6 +6,11 @@ const PORT = process.env.PORT || 3000;
 
 async function start() {
   try {
+    if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
+      logger.error('❌ DATABASE_URL environment variable is required in production');
+      process.exit(1);
+    }
+
     // Test database connection
     await db.sequelize.authenticate();
     logger.info('✅ Database connection established');
