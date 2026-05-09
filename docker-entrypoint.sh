@@ -16,10 +16,14 @@ if [ -n "$DATABASE_URL" ]; then
     sleep 1
   done
   echo "✅ Database is reachable!"
+elif [ -n "$DB_HOST" ]; then
+  echo "⏳ Waiting for database connection ($DB_HOST)..."
+  until pg_isready -h "$DB_HOST" -p "${DB_PORT:-5432}" -t 30; do
+    sleep 1
+  done
+  echo "✅ Database is reachable!"
 else
-  echo "❌ ERROR: DATABASE_URL not found."
-  echo "Please link a Render PostgreSQL database to this service in the Render Dashboard."
-  exit 1
+  echo "⚠️ Warning: No database connection info found (DATABASE_URL or DB_HOST). Startup might fail."
 fi
 
 echo "🔎 Step 0: Verifying migration files exist in /app/src/database/migrations..."
@@ -30,11 +34,11 @@ if [ ! -d "src/database/migrations" ] || [ -z "$(ls -A src/database/migrations)"
 fi
 ls -1 src/database/migrations
 
-if [ -n "$DB_HOST" ] && [ -z "$DATABASE_URL" ]; then
-    echo "🛠️ Step 1: Ensuring database exists (using DB_HOST directly)..."
-    npx sequelize-cli db:create --config src/config/config.js --env "$NODE_ENV" || echo "💡 Database already exists (likely in development)."
+if [ -z "$DATABASE_URL" ] && [ -n "$DB_HOST" ]; then
+    echo "🛠️ Step 1: Ensuring database exists..."
+    npx sequelize-cli db:create --config src/config/config.js --env "$NODE_ENV" || echo "💡 Database already exists or skipping creation."
 else
-    echo "🛠️ Step 1: Skipping db:create (Using Managed Database via DATABASE_URL)."
+    echo "🛠️ Step 1: Skipping db:create (Using connection string or no host info)."
 fi
 
 echo "🚀 Step 2: Running database migrations..."
@@ -50,9 +54,9 @@ fi
 echo "🔎 Step 2.5: Validating 'users' table existence..."
 if [ -n "$DATABASE_URL" ] && command -v psql >/dev/null 2>&1; then
     TABLE_CHECK=$(psql "$DATABASE_URL" -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
-elif [ -n "$DB_HOST" ] && which psql >/dev/null 2>&1; then
-    export PGPASSWORD=${DB_PASSWORD:-homei_secret_2026}
-    TABLE_CHECK=$(psql -h ${DB_HOST:-db} -U ${DB_USER:-homei_user} -d ${DB_NAME:-homei_db} -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
+elif [ -n "$DB_HOST" ] && command -v psql >/dev/null 2>&1; then
+    export PGPASSWORD=${DB_PASSWORD}
+    TABLE_CHECK=$(psql -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
 else
     echo "⚠️ Skipping table validation (missing connection info or psql client)."
     TABLE_CHECK="1"

@@ -50,11 +50,11 @@ module.exports = {
       underscored: true,
       paranoid: true,
     },
-    dialectOptions: {
+    dialectOptions: (process.env.DATABASE_URL || process.env.DB_SSL === 'true') ? {
       ssl: {
         require: true,
         rejectUnauthorized: false,
       },
-    },
+    } : {},
   },
 };
