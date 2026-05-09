@@ -55,16 +55,16 @@ fi
 # Validation: Check if the users table actually exists now
 echo "🔎 Step 2.5: Validating 'users' table existence..."
 if [ -n "$DATABASE_URL" ] && command -v psql >/dev/null 2>&1; then
-    TABLE_CHECK=$(psql "$DATABASE_URL" -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
+    TABLE_CHECK=$(psql "$DATABASE_URL" -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';" || echo "0")
 elif [ -n "$DB_HOST" ] && command -v psql >/dev/null 2>&1; then
     export PGPASSWORD=${DB_PASSWORD}
-    TABLE_CHECK=$(psql -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';")
+    TABLE_CHECK=$(psql -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';" || echo "0")
 else
     echo "⚠️ Skipping table validation (missing connection info or psql client)."
     TABLE_CHECK="1"
 fi
 
-if [ "$TABLE_CHECK" = "0" ]; then
+if [ "$TABLE_CHECK" = "0" ] && [ "$NODE_ENV" = "production" ]; then
     echo "❌ FATAL ERROR: Migrations completed but 'users' table is missing!"
     exit 1
 fi
