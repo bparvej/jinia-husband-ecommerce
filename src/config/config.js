@@ -37,7 +37,7 @@ module.exports = {
     dialectOptions: (process.env.DATABASE_URL || process.env.DB_SSL === 'true') ? {
       ssl: {
         require: true,
-        rejectUnauthorized: false
+        rejectUnauthorized: false // Required for Render/Heroku self-signed certs
       }
     } : {},
     define: {

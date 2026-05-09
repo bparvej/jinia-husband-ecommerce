@@ -15,10 +15,12 @@ async function start() {
     await db.sequelize.authenticate();
     logger.info('✅ Database connection established');
 
-    // Sync models (only in development, use migrations in production)
-    if (process.env.NODE_ENV === 'development') {
-      // We use migrations instead of sync
-      logger.info('📦 Using Sequelize migrations for database schema');
+    // Log environment info for debugging Render deploys
+    if (process.env.RENDER) {
+      logger.info('🌐 Running on Render Cloud');
+    }
+    if (process.env.NODE_ENV === 'production') {
+      logger.info('📦 Production mode: Using migrations for schema');
     }
 
     // Start server

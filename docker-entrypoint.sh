@@ -2,11 +2,11 @@
 set -e
 
 echo "🏁 Starting entrypoint script..."
+export NODE_ENV=${NODE_ENV:-production}
 
 # Auto-detect production if running on Render
 if [ "$RENDER" = "true" ]; then
   echo "🌐 Detected Render environment"
-  export NODE_ENV=production
 fi
 
 if [ -n "$DATABASE_URL" ]; then
@@ -34,14 +34,13 @@ else
 fi
 
 echo "🔎 Step 0: Verifying migration files exist in /app/src/database/migrations..."
-if [ ! -d "src/database/migrations" ] || [ -z "$(ls -A src/database/migrations)" ]; then
+if [ ! -d "src/database/migrations" ]; then
     echo "❌ ERROR: No migration files found in src/database/migrations"
-    echo "Ensure your volumes and paths are correct."
     exit 1
 fi
-ls -1 src/database/migrations
 
 echo "🛠️ Step 1: Skipping db:create (Using Managed Database)."
+echo "Current Environment: $NODE_ENV"
 
 echo "🚀 Step 2: Running database migrations..."
 npx sequelize-cli db:migrate --config src/config/config.js --env "$NODE_ENV" || exit 1
