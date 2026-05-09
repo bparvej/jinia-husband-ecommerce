@@ -2,29 +2,26 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install required packages
-RUN apk add --no-cache python3 make g++ postgresql-client dos2unix
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    postgresql-client \
+    dos2unix
 
-# Copy package files
 COPY package*.json ./
 
-# Install dependencies
 RUN npm ci --omit=dev
 
-# Copy source code
 COPY . .
 
-# Create uploads directory
 RUN mkdir -p public/uploads/products
 
-# Make entrypoint executable
-RUN chmod +x docker-entrypoint.sh
-RUN dos2unix docker-entrypoint.sh
+RUN dos2unix docker-entrypoint.sh && \
+    chmod +x docker-entrypoint.sh
 
-# Render injects PORT dynamically
-ENV PORT=10000
+ENV NODE_ENV=production
 
-# Expose Render port
 EXPOSE 10000
 
 ENTRYPOINT ["sh", "./docker-entrypoint.sh"]
