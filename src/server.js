@@ -2,12 +2,12 @@ const app = require('./app');
 const db = require('./models');
 const logger = require('./utils/logger');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 async function start() {
   try {
     if (process.env.NODE_ENV === 'production' && !process.env.DATABASE_URL) {
-      logger.error('❌ DATABASE_URL environment variable is required in production');
+      logger.error('❌ FATAL: DATABASE_URL is missing. Please link your DB in Render Dashboard.');
       process.exit(1);
     }
 
@@ -22,10 +22,16 @@ async function start() {
     }
 
     // Start server
-    app.listen(PORT, '0.0.0.0', () => {
-      logger.info(`🚀 Homei Ecommerce server running on port ${PORT}`);
-      logger.info(`🔑 Default Admin: admin@homei.com / Admin@123`);
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      logger.info(`🚀 Server listening on 0.0.0.0:${PORT} (Render Policy Compliant)`);
     });
+
+    // Graceful shutdown for Render restarts
+    process.on('SIGTERM', () => {
+      logger.info('SIGTERM received. Shutting down gracefully...');
+      server.close(() => process.exit(0));
+    });
+
   } catch (error) {
     logger.error('❌ Failed to start server', { error: error.message, stack: error.stack });
     process.exit(1);

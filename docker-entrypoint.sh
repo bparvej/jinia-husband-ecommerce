@@ -23,9 +23,11 @@ elif [ -n "$DB_HOST" ]; then
   done
   echo "✅ Database is reachable!"
 elif [ "$RENDER" = "true" ]; then
-  echo "❌ FATAL ERROR: DATABASE_URL is not set."
-  echo "On Render, you MUST link a PostgreSQL database to this service."
-  echo "Go to your Web Service -> Environment -> Linked Databases -> Add Database."
+  echo "************************************************************************"
+  echo "❌ DEPLOYMENT STOPPED: DATABASE_URL IS MISSING"
+  echo "ACTION REQUIRED: Go to Render Dashboard -> Web Service -> Environment"
+  echo "Click 'Add Database' under 'Linked Databases' to connect your Postgres."
+  echo "************************************************************************"
   exit 1
 else
   echo "⚠️ Warning: No database connection info found (DATABASE_URL or DB_HOST). Startup might fail."
