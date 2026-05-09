@@ -10,17 +10,31 @@ if [ "$RENDER" = "true" ]; then
 fi
 
 # ------------------------------------------------------------------
+# STEP 0: Fallback Construction
+# ------------------------------------------------------------------
+# If DATABASE_URL is missing but we have components (from render.yaml updates below)
+if [ -z "$DATABASE_URL" ] && [ -n "$DB_HOST" ] && [ -n "$DB_USER" ] && [ -n "$DB_PASSWORD" ]; then
+  echo "🔗 Building DATABASE_URL from individual components..."
+  export DATABASE_URL="postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT:-5432}/${DB_NAME}"
+fi
+
+# ------------------------------------------------------------------
 # STEP 1: Validate DATABASE_URL
 # ------------------------------------------------------------------
 
 if [ -z "$DATABASE_URL" ] && [ "$RENDER" = "true" ]; then
   echo "************************************************************************"
-  echo "❌ FATAL ERROR: DATABASE_URL is missing."
-  echo "Render has not injected the database connection string."
-  echo "FIX: Go to Render Dashboard -> Web Service -> Environment -> Linked Databases"
-  echo "and ensure your 'homei-db' is attached to this service."
+  echo "❌ DATABASE_URL is missing."
+  echo "DEBUG: Available ENV keys (names only):"
+  env | cut -d= -f1 | grep -E "DB|DATABASE|RENDER" || echo "No DB env vars found."
+  echo ""
+  echo "ACTION REQUIRED:"
+  echo "1. If using Blueprints: Check if 'homei-db' exists in your dashboard."
+  echo "2. If manual: Go to 'homei-ecommerce' -> Environment -> Linked Databases"
+  echo "   and click 'Add Database' to connect your Postgres instance."
   echo "************************************************************************"
-  exit 1
+  # Don't exit 1 yet; let pg_isready attempt a connection if components exist
+  [ -z "$DATABASE_URL" ] && exit 1
 fi
 
 # ------------------------------------------------------------------

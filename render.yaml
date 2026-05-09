@@ -24,6 +24,26 @@ services:
         fromDatabase:
           name: homei-db
           property: connectionString
+      - key: DB_HOST
+        fromDatabase:
+          name: homei-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: homei-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: homei-db
+          property: user
+      - key: DB_NAME
+        fromDatabase:
+          name: homei-db
+          property: database
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: homei-db
+          property: password
 
 databases:
   - name: homei-db
