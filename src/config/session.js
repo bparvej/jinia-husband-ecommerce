@@ -22,6 +22,10 @@ const sessionConfig = {
     pool,
     tableName: 'session',
     createTableIfMissing: true,
+    // Add error handling for the session store
+    errorLog: (err) => {
+      console.error('Session Store Error:', err);
+    }
   }),
   secret: process.env.SESSION_SECRET || 'homei_session_s3cret_k3y_2026',
   resave: false,
