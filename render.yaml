@@ -11,6 +11,9 @@ services:
       - key: NODE_ENV
         value: production
 
+      - key: RENDER
+        value: true
+
       - key: RUN_SEEDERS
         value: false
 

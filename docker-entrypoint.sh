@@ -13,24 +13,14 @@ fi
 # STEP 1: Validate DATABASE_URL
 # ------------------------------------------------------------------
 
-MAX_WAIT=60
-WAITED=0
-
-while [ -z "$DATABASE_URL" ]; do
-  echo "⏳ Waiting for DATABASE_URL..."
-
-  sleep 2
-  WAITED=$((WAITED + 2))
-
-  if [ "$WAITED" -ge "$MAX_WAIT" ]; then
-    echo "❌ DATABASE_URL was not injected after ${MAX_WAIT}s"
-    echo "⚠️ Continuing startup anyway for debugging..."
-    break
-  fi
-done
-
-if [ -n "$DATABASE_URL" ]; then
-  echo "✅ DATABASE_URL detected"
+if [ -z "$DATABASE_URL" ] && [ "$RENDER" = "true" ]; then
+  echo "************************************************************************"
+  echo "❌ FATAL ERROR: DATABASE_URL is missing."
+  echo "Render has not injected the database connection string."
+  echo "FIX: Go to Render Dashboard -> Web Service -> Environment -> Linked Databases"
+  echo "and ensure your 'homei-db' is attached to this service."
+  echo "************************************************************************"
+  exit 1
 fi
 
 # ------------------------------------------------------------------
