@@ -24,33 +24,36 @@
                 <a href="/admin/orders" class="panel-link">View All →</a>
             </div>
             <div class="panel-body">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Order</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (typeof recentOrders !== 'undefined' && recentOrders.length > 0) { %>
-                            <% recentOrders.forEach(order => { %>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td><a href="/admin/orders/<%= order.id %>" class="order-link"><%= order.order_number %></a></td>
-                                <td><%= order.User ? order.User.name : 'N/A' %></td>
-                                <td class="text-bold">৳<%= Number(order.total).toLocaleString() %></td>
-                                <td><span class="status-badge status-<%= order.status %>"><%= order.status %></span></td>
-                                <td class="text-muted"><%= new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) %></td>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
                             </tr>
-                            <% }) %>
-                        <% } else { %>
-                            <tr><td colspan="5" class="text-center text-muted">No orders yet</td></tr>
-                        <% } %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <% if (typeof recentOrders !== 'undefined' && recentOrders.length > 0) { %>
+                                <% recentOrders.forEach(order => { %>
+                                <tr>
+                                    <td><a href="/admin/orders/<%= order.id %>" class="order-link"><%= order.order_number %></a></td>
+                                    <td><%= order.User ? order.User.name : 'N/A' %></td>
+                                    <td class="text-bold">৳<%= Number(order.total).toLocaleString() %></td>
+                                    <td><span class="status-badge status-<%= order.status %>"><%= order.status %></span></td>
+                                    <td class="text-muted"><%= new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) %></td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="5" class="text-center text-muted">No orders yet</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         </div>
 
         <!-- Low Stock Alerts -->

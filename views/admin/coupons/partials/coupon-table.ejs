@@ -1,0 +1,53 @@
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Discount</th>
+                <th>Min Spend</th>
+                <th>Limit</th>
+                <th>Used</th>
+                <th>Expiry</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (coupons.length > 0) { %>
+                <% coupons.forEach(coupon => { %>
+                <tr>
+                    <td class="text-bold text-mono"><%= coupon.code %></td>
+                    <td>
+                        <%= coupon.discount_type === 'percentage' ? coupon.discount_value + '%' : '৳' + coupon.discount_value.toLocaleString() %>
+                    </td>
+                    <td>৳<%= Number(coupon.min_spend || 0).toLocaleString() %></td>
+                    <td><%= coupon.usage_limit || '∞' %></td>
+                    <td><%= coupon.used_count %></td>
+                    <td class="text-muted">
+                        <%= coupon.expires_at ? new Date(coupon.expires_at).toLocaleDateString('en-GB') : 'Never' %>
+                    </td>
+                    <td>
+                        <span class="status-badge <%= coupon.is_active ? 'active' : 'inactive' %>">
+                            <%= coupon.is_active ? 'Active' : 'Inactive' %>
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <div class="action-btns" style="justify-content: flex-end;">
+                            <button class="action-btn-sm delete" title="Delete"
+                                hx-delete="/admin/coupons/<%= coupon.id %>?_method=DELETE"
+                                hx-target="closest tr" hx-swap="outerHTML swap:0.3s"
+                                hx-confirm="Delete coupon '<%= coupon.code %>'?">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            <% } else { %>
+                <tr><td colspan="8" class="text-center text-muted">No coupons found</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<%- include('../../../partials/pagination', { baseUrl: '/admin/coupons', targetContainer: '#coupon-table-container' }) %>

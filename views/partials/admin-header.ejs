@@ -29,7 +29,7 @@
                 </svg>
             </button>
 
-            <div class="topbar-dropdown" x-show="userMenu" x-transition>
+            <div class="topbar-dropdown" x-show="userMenu" x-transition x-cloak>
                 <div class="dropdown-header">
                     <strong><%= typeof currentUser !== 'undefined' && currentUser ? currentUser.name : 'Admin' %></strong>
                     <span><%= typeof currentUser !== 'undefined' && currentUser ? currentUser.email : '' %></span>

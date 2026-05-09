@@ -1,0 +1,79 @@
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.stat-icon.revenue { background: #ecfdf5; color: #059669; }
+.stat-icon.orders { background: #eff6ff; color: #2563eb; }
+.stat-icon.products { background: #fff7ed; color: #ea580c; }
+.stat-icon.users { background: #fdf2f8; color: #db2777; }
+.stat-label { font-size: 0.875rem; color: #6b7280; }
+.stat-value { font-size: 1.25rem; font-weight: 700; color: #111827; margin: 0; }
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    color: #6b7280;
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+.report-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+.report-card.full-width {
+    grid-column: span 2;
+}
+.card-header { margin-bottom: 1.25rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 0.75rem; }
+.card-header h3 { font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0; }
+.top-list { list-style: none; padding: 0; margin: 0; }
+.top-list-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f9fafb;
+}
+.top-list-item:last-child { border-bottom: none; }
+.item-name { color: #374151; font-weight: 500; }
+.item-value { color: #6b7280; font-size: 0.875rem; }
+
+@media (max-width: 768px) {
+    .report-grid {
+        grid-template-columns: 1fr;
+    }
+    .report-card.full-width {
+        grid-column: span 1;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .loader-container {
+        padding: 2rem 1rem;
+    }
+}

@@ -1,73 +1,51 @@
-<div class="panel">
-    <div class="panel-body">
-        <table class="data-table">
-            <thead>
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Payment</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (orders.length > 0) { %>
+                <% orders.forEach(order => { %>
                 <tr>
-                    <th>Order</th>
-                    <th>Customer</th>
-                    <th>Payment</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <td><a href="/admin/orders/<%= order.id %>" class="order-link"><%= order.order_number %></a></td>
+                    <td>
+                        <div>
+                            <span class="text-bold"><%= order.User ? order.User.name : 'N/A' %></span>
+                            <br><span class="text-muted text-sm"><%= order.User ? order.User.email : '' %></span>
+                        </div>
+                    </td>
+                    <td>
+                        <% if (order.Payment) { %>
+                            <span class="payment-method"><%= order.Payment.method.toUpperCase() %></span>
+                            <br><span class="status-badge status-<%= order.Payment.status %>"><%= order.Payment.status %></span>
+                        <% } else { %>
+                            <span class="text-muted">—</span>
+                        <% } %>
+                    </td>
+                    <td class="text-bold">৳<%= Number(order.total).toLocaleString() %></td>
+                    <td><span class="status-badge status-<%= order.status %>"><%= order.status %></span></td>
+                    <td class="text-muted"><%= new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
+                    <td class="text-right">
+                        <a href="/admin/orders/<%= order.id %>" class="action-btn-sm view" title="View Details">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                <% if (orders.length > 0) { %>
-                    <% orders.forEach(order => { %>
-                    <tr>
-                        <td><a href="/admin/orders/<%= order.id %>" class="order-link"><%= order.order_number %></a></td>
-                        <td>
-                            <div>
-                                <span class="text-bold"><%= order.User ? order.User.name : 'N/A' %></span>
-                                <br><span class="text-muted text-sm"><%= order.User ? order.User.email : '' %></span>
-                            </div>
-                        </td>
-                        <td>
-                            <% if (order.Payment) { %>
-                                <span class="payment-method"><%= order.Payment.method.toUpperCase() %></span>
-                                <br><span class="status-badge status-<%= order.Payment.status %>"><%= order.Payment.status %></span>
-                            <% } else { %>
-                                <span class="text-muted">—</span>
-                            <% } %>
-                        </td>
-                        <td class="text-bold">৳<%= Number(order.total).toLocaleString() %></td>
-                        <td><span class="status-badge status-<%= order.status %>"><%= order.status %></span></td>
-                        <td class="text-muted"><%= new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
-                        <td>
-                            <a href="/admin/orders/<%= order.id %>" class="action-btn-sm view" title="View Details">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </a>
-                        </td>
-                    </tr>
-                    <% }) %>
-                <% } else { %>
-                    <tr><td colspan="7" class="text-center text-muted">No orders found</td></tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-
-    <% if (pagination.totalPages > 1) { %>
-    <div class="pagination">
-        <% if (pagination.hasPrev) { %>
-            <a hx-get="?page=<%= pagination.page - 1 %>&_partial=true" 
-               hx-target="#order-table-container" 
-               hx-push-url="true"
-               class="page-btn">← Prev</a>
-        <% } %>
-        <% pageNumbers.forEach(num => { %>
-            <a hx-get="?page=<%= num %>&_partial=true" 
-               hx-target="#order-table-container" 
-               hx-push-url="true"
-               class="page-btn <%= num === pagination.page ? 'active' : '' %>"><%= num %></a>
-        <% }) %>
-        <% if (pagination.hasNext) { %>
-            <a hx-get="?page=<%= pagination.page + 1 %>&_partial=true" 
-               hx-target="#order-table-container" 
-               hx-push-url="true"
-               class="page-btn">Next →</a>
-        <% } %>
-    </div>
-    <% } %>
+                <% }) %>
+            <% } else { %>
+                <tr><td colspan="7" class="text-center text-muted">No orders found</td></tr>
+            <% } %>
+        </tbody>
+    </table>
 </div>
+
+<%- include('../../../partials/pagination', { baseUrl: '/admin/orders', targetContainer: '#order-table-container' }) %>
+

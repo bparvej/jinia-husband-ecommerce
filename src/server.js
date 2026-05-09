@@ -18,7 +18,7 @@ async function start() {
 
     // Start server
     app.listen(PORT, '0.0.0.0', () => {
-      logger.info(`🚀 HomeI Ecommerce server running on http://localhost:${PORT}`);
+      logger.info(`🚀 Homei Ecommerce server running on http://localhost:${PORT}`);
       logger.info(`📋 Admin panel: http://localhost:${PORT}/admin/dashboard`);
       logger.info(`🔑 Login: admin@homei.com / Admin@123`);
     });

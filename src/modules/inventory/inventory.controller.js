@@ -18,7 +18,7 @@ class InventoryController {
       };
 
       if (req.headers['hx-request'] && req.query._partial) {
-        return res.render('admin/inventory/partials/inventory-table', viewData);
+        return res.render('admin/inventory/partials/inventory-table', { ...viewData, layout: false });
       }
 
       res.render('admin/inventory/index', viewData);

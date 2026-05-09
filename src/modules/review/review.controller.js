@@ -23,8 +23,8 @@ class ReviewController {
         filters: { is_approved, product_id },
       };
 
-      if (req.headers['hx-request']) {
-        return res.render('admin/reviews/partials/review-table', viewData);
+      if (req.headers['hx-request'] && req.query._partial) {
+        return res.render('admin/reviews/partials/review-table', { ...viewData, layout: false });
       }
 
       res.render('admin/reviews/index', viewData);

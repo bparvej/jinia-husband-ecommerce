@@ -1,0 +1,64 @@
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>Recipient</th>
+                <th>Destination</th>
+                <th>Tracking #</th>
+                <th>Cost</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (shipments.length > 0) { %>
+                <% shipments.forEach(shipment => { %>
+                <tr>
+                    <td><span class="text-bold"><%= shipment.Order ? shipment.Order.order_number : '—' %></span></td>
+                    <td>
+                        <div class="user-details">
+                            <span class="user-name"><%= shipment.recipient_name %></span>
+                            <span class="user-email text-sm"><%= shipment.recipient_phone %></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="text-sm">
+                            <span class="text-bold"><%= shipment.city %></span>
+                            <br><span class="text-muted"><%= shipment.address %></span>
+                        </div>
+                    </td>
+                    <td class="text-mono"><%= shipment.tracking_number || 'Pending' %></td>
+                    <td>৳<%= Number(shipment.shipping_cost || 0).toLocaleString() %></td>
+                    <td>
+                        <div id="ship-status-<%= shipment.id %>">
+                            <select class="status-select status-<%= shipment.status %>" 
+                                    name="status"
+                                    hx-put="/admin/shipping/<%= shipment.id %>/status"
+                                    hx-target="this"
+                                    hx-swap="outerHTML"
+                                    hx-trigger="change">
+                                <option value="pending" <%= shipment.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="shipped" <%= shipment.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                <option value="delivered" <%= shipment.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                <option value="cancelled" <%= shipment.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <div class="action-btns" style="justify-content: flex-end;">
+                            <a href="/admin/orders/<%= shipment.order_id %>" class="action-btn-sm view" title="View Order">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            <% } else { %>
+                <tr><td colspan="7" class="text-center text-muted">No shipments found</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<%- include('../../../partials/pagination', { baseUrl: '/admin/shipping', targetContainer: '#shipping-table-container' }) %>

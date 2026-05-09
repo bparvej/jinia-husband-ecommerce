@@ -19,7 +19,7 @@ class ShippingController {
       };
 
       if (req.headers['hx-request'] && req.query._partial) {
-        return res.render('admin/shipping/partials/shipping-table', viewData);
+        return res.render('admin/shipping/partials/shipping-table', { ...viewData, layout: false });
       }
 
       res.render('admin/shipping/index', viewData);
@@ -35,7 +35,22 @@ class ShippingController {
       await shippingService.updateShippingStatus(req.params.id, status, tracking_number);
       
       if (req.headers['hx-request']) {
-        return res.send(`<span class="status-badge ${status}">${status}</span>`);
+        return res.send(`
+          <select class="status-select status-${status}" 
+                  name="status"
+                  hx-put="/admin/shipping/${req.params.id}/status"
+                  hx-target="this"
+                  hx-swap="outerHTML"
+                  hx-trigger="change">
+              <option value="pending" ${status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="shipped" ${status === 'shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="delivered" ${status === 'delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="cancelled" ${status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+          </select>
+          <div hx-swap-oob="beforeend:#toast-container">
+            <div class="toast toast-success">Shipping status updated to ${status}</div>
+          </div>
+        `);
       }
       res.redirect('back');
     } catch (err) {

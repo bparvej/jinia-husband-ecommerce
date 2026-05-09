@@ -1,32 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= typeof title !== 'undefined' ? title : 'Admin — HomeI' %></title>
+    <title>
+        <%= typeof title !=='undefined' ? title : 'Admin — HomeI' %>
+    </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/admin.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin.css?v=1.1">
     <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
     <script src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="admin-body" x-data="{ sidebarOpen: true }">
+
+<body class="admin-body" x-data="{ sidebarOpen: window.innerWidth > 768 }">
     <div class="admin-layout" :class="{ 'sidebar-collapsed': !sidebarOpen }">
+        <div class="sidebar-overlay" @click="sidebarOpen = false"></div>
         <%- include('../partials/admin-sidebar') %>
-        
-        <div class="admin-main">
-            <%- include('../partials/admin-header') %>
-            
-            <main class="admin-content">
-                <!-- Toast container -->
-                <div id="toast-container"></div>
-                
-                <%- body %>
-            </main>
-        </div>
+
+            <div class="admin-main">
+                <%- include('../partials/admin-header') %>
+
+                    <main class="admin-content">
+                        <!-- Toast container -->
+                        <div id="toast-container"></div>
+
+                        <%- body %>
+                    </main>
+            </div>
     </div>
 
-    <script src="/js/admin.js"></script>
+    <script src="/js/admin.js?v=1.1"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        // Re-initialize icons after HTMX swaps new content into the DOM
+        document.body.addEventListener('htmx:afterSwap', () => lucide.createIcons());
+    </script>
 </body>
+
 </html>

@@ -1,0 +1,74 @@
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>Coupons</h2>
+        <span class="page-count"><%= pagination.totalItems %> total</span>
+    </div>
+    <button class="btn-admin btn-primary-admin" onclick="openCreateModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Create Coupon
+    </button>
+</div>
+
+<div class="filters-bar">
+    <div class="filter-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+        <input type="text" placeholder="Search by code..." value="<%= filters.search || '' %>"
+            hx-get="/admin/coupons" hx-target="#coupon-table-container" hx-trigger="keyup changed delay:300ms"
+            name="search" hx-vals='{"_partial":"1"}'>
+    </div>
+</div>
+
+<div id="coupon-table-container">
+    <%- include('partials/coupon-table') %>
+</div>
+
+<!-- Create Coupon Modal -->
+<div id="create-coupon-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Create New Coupon</h3>
+            <button class="close-btn" onclick="closeModal('create-coupon-modal')">&times;</button>
+        </div>
+        <form hx-post="/admin/coupons" hx-target="#toast-container" hx-on::after-request="if(event.detail.successful) closeModal('create-coupon-modal')">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Coupon Code</label>
+                    <input type="text" name="code" required placeholder="e.g. SAVE20" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Discount Type</label>
+                    <select name="discount_type" class="form-control">
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="fixed">Fixed Amount (৳)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Discount Value</label>
+                    <input type="number" name="discount_value" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Min Spend (৳)</label>
+                    <input type="number" name="min_spend" value="0" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Usage Limit</label>
+                    <input type="number" name="usage_limit" placeholder="∞" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" name="expires_at" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-admin btn-secondary-admin" onclick="closeModal('create-coupon-modal')">Cancel</button>
+                <button type="submit" class="btn-admin btn-primary-admin">Create Coupon</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openCreateModal() {
+    openModal('create-coupon-modal');
+}
+</script>

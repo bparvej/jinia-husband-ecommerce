@@ -1,7 +1,7 @@
 {
   "name": "homei-ecommerce",
   "version": "1.0.0",
-  "description": "HomeI — Cozy Living | Production Ecommerce Admin Panel",
+  "description": "Homei — Cozy Living | Production Ecommerce Admin Panel",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

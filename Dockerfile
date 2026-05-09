@@ -3,16 +3,19 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install system dependencies
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ postgresql-client
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production 2>/dev/null || npm install
+# Install all dependencies
+RUN npm install
 
 # Copy app source
 COPY . .
+
+# Set up the entrypoint script
+RUN chmod +x docker-entrypoint.sh
 
 # Create uploads directory
 RUN mkdir -p public/uploads
@@ -20,5 +23,5 @@ RUN mkdir -p public/uploads
 # Expose port
 EXPOSE 3000
 
-# Start app
+ENTRYPOINT ["sh", "./docker-entrypoint.sh"]
 CMD ["node", "src/server.js"]

@@ -20,8 +20,8 @@ class ProductController {
         filters: { search, category_id, status },
       };
 
-      if (req.headers['hx-request']) {
-        return res.render('admin/products/partials/product-table', viewData);
+      if (req.headers['hx-request'] && req.query._partial) {
+        return res.render('admin/products/partials/product-table', { ...viewData, layout: false });
       }
 
       res.render('admin/products/index', viewData);

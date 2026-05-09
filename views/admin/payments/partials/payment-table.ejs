@@ -1,0 +1,60 @@
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Order</th>
+                <th>Method</th>
+                <th>Transaction ID</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (payments.length > 0) { %>
+                <% payments.forEach(payment => { %>
+                <tr>
+                    <td>
+                        <a href="/admin/orders/<%= payment.order_id %>" class="order-link">
+                            <%= payment.Order ? payment.Order.order_number : '—' %>
+                        </a>
+                    </td>
+                    <td>
+                        <span class="payment-method"><%= payment.method.toUpperCase() %></span>
+                    </td>
+                    <td class="text-mono text-sm"><%= payment.transaction_id || '—' %></td>
+                    <td class="text-bold">৳<%= Number(payment.amount).toLocaleString() %></td>
+                    <td>
+                        <select class="status-select status-<%= payment.status %>" 
+                                name="status"
+                                hx-put="/api/v1/payments/<%= payment.order_id %>/status"
+                                hx-target="this"
+                                hx-swap="outerHTML"
+                                hx-trigger="change">
+                            <option value="pending" <%= payment.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                            <option value="completed" <%= payment.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                            <option value="failed" <%= payment.status === 'failed' ? 'selected' : '' %>>Failed</option>
+                            <option value="refunded" <%= payment.status === 'refunded' ? 'selected' : '' %>>Refunded</option>
+                        </select>
+                    </td>
+                    <td class="text-muted text-sm">
+                        <%= new Date(payment.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+                    </td>
+                    <td class="text-right">
+                        <div class="action-btns" style="justify-content: flex-end;">
+                            <a href="/admin/orders/<%= payment.order_id %>" class="action-btn-sm view" title="View Details">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            <% } else { %>
+                <tr><td colspan="7" class="text-center text-muted">No payments found</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<%- include('../../../partials/pagination', { baseUrl: '/admin/payments', targetContainer: '#payment-table-container' }) %>

@@ -11,6 +11,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-homei_secret_2026}
     ports:
       - "${DB_PORT:-5433}:5432"
+    shm_size: '128mb'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
