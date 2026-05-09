@@ -16,11 +16,6 @@ services:
           property: connectionString
       - key: PORT
         value: 10000
-    disk:
-      name: uploads
-      mountPath: /app/public/uploads
-      sizeGB: 1
-
 databases:
   - name: homei-db
     plan: free
