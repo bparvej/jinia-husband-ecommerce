@@ -11,7 +11,7 @@ fi
 
 if [ -n "$DATABASE_URL" ]; then
   echo "⏳ Waiting for database connection..."
-  # Use pg_isready to check database availability. Timeout after 30 seconds.
+  # Wait for DB to wake up. Render Free tier DBs spin down when inactive.
   until pg_isready -d "$DATABASE_URL" -t 30; do
     sleep 1
   done
