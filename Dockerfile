@@ -21,4 +21,4 @@ RUN mkdir -p public/uploads
 EXPOSE 3000
 
 # Start app
-CMD ["node", "src/server.js"]
+CMD ["sh", "-c", "npm run migrate && npm run seed && npm start"]
