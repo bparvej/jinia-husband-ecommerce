@@ -38,8 +38,9 @@ class ReportService {
     const sales = await reportRepository.getSalesReport(startDate, endDate);
     const topProducts = await reportRepository.getTopProducts(startDate, endDate);
     const categorySales = await reportRepository.getCategorySales(startDate, endDate);
+    const paymentSales = await reportRepository.getPaymentMethodSales(startDate, endDate);
 
-    return { sales, topProducts, categorySales };
+    return { sales, topProducts, categorySales, paymentSales };
   }
 }
 

@@ -127,6 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const timerMins = document.getElementById('timer-mins');
         const timerSecs = document.getElementById('timer-secs');
 
+        if (!timerDays || !timerHours || !timerMins || !timerSecs) return;
+
         function updateTimer() {
             const now = new Date();
             const diff = endDate - now;
@@ -290,23 +292,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ========================
-    // CART FUNCTIONALITY (DEMO)
+    // REAL CART SYSTEM & DRAWER
     // ========================
     const cartCount = document.getElementById('cart-count');
-    let cartItems = 0;
+    const cartBtn = document.getElementById('cart-btn');
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartBackdrop = document.getElementById('cart-drawer-backdrop');
+    const cartClose = document.getElementById('cart-drawer-close');
 
+    function openCartDrawer() {
+        if (cartDrawer && cartBackdrop) {
+            // Load cart drawer content via HTMX if empty or needs refresh
+            htmx.trigger('#cart-drawer-body', 'load');
+            cartDrawer.classList.add('active');
+            cartBackdrop.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent body scroll
+        }
+    }
+
+    function closeCartDrawer() {
+        if (cartDrawer && cartBackdrop) {
+            cartDrawer.classList.remove('active');
+            cartBackdrop.classList.remove('active');
+            document.body.style.overflow = ''; // Restore body scroll
+        }
+    }
+
+    if (cartBtn) cartBtn.addEventListener('click', openCartDrawer);
+    if (cartClose) cartClose.addEventListener('click', closeCartDrawer);
+    if (cartBackdrop) cartBackdrop.addEventListener('click', closeCartDrawer);
+
+    // Add to cart buttons visual feedback (HTMX handles logic)
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            cartItems++;
-            cartCount.textContent = cartItems;
-            
-            // Cart bounce animation
-            cartCount.style.transform = 'scale(1.4)';
-            setTimeout(() => {
-                cartCount.style.transform = 'scale(1)';
-            }, 200);
-
+        btn.addEventListener('click', () => {
             // Button feedback
             const originalText = btn.textContent;
             btn.textContent = '✓ Added!';
@@ -317,6 +335,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.style.background = '';
             }, 1500);
         });
+    });
+
+    // Listen for custom 'open-cart' event triggered by HTMX response header
+    document.body.addEventListener('open-cart', () => {
+        openCartDrawer();
+    });
+
+    // Handle payment method active class toggle in checkout form
+    document.body.addEventListener('change', (e) => {
+        if (e.target && e.target.name === 'payment_method') {
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            const selectedOption = e.target.closest('.payment-option');
+            if (selectedOption) selectedOption.classList.add('active');
+        }
     });
 
     // ========================

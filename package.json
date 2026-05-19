@@ -6,10 +6,10 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "npx nodemon src/server.js",
-    "migrate": "npx sequelize-cli db:migrate",
-    "migrate:undo": "npx sequelize-cli db:migrate:undo:all",
-    "seed": "npx sequelize-cli db:seed:all",
-    "seed:undo": "npx sequelize-cli db:seed:undo:all",
+    "migrate": "npx -y sequelize-cli db:migrate",
+    "migrate:undo": "npx -y sequelize-cli db:migrate:undo:all",
+    "seed": "npx -y sequelize-cli db:seed:all",
+    "seed:undo": "npx -y sequelize-cli db:seed:undo:all",
     "db:reset": "npm run migrate:undo && npm run migrate && npm run seed"
   },
   "dependencies": {

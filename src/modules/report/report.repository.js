@@ -37,20 +37,40 @@ class ReportRepository {
   }
 
   async getCategorySales(startDate, endDate) {
-    // This requires joining with Product and Category
     return db.OrderItem.findAll({
       where: {
         created_at: { [Op.between]: [startDate, endDate] }
       },
       include: [{
         model: db.Product,
-        include: [{ model: db.Category, attributes: ['name'] }]
+        attributes: [],
+        include: [{ model: db.Category, attributes: [] }]
       }],
       attributes: [
-        [db.sequelize.col('Product.Category.name'), 'category_name'],
-        [db.sequelize.fn('SUM', db.sequelize.col('order_items.total_price')), 'revenue']
+        [db.sequelize.col('Product->Category.name'), 'category_name'],
+        [db.sequelize.fn('SUM', db.sequelize.col('OrderItem.total_price')), 'revenue']
       ],
-      group: [db.sequelize.col('Product.Category.name')],
+      group: [db.sequelize.col('Product->Category.name')],
+      raw: true
+    });
+  }
+
+  async getPaymentMethodSales(startDate, endDate) {
+    return db.Order.findAll({
+      where: {
+        status: { [Op.notIn]: ['cancelled', 'refunded'] },
+        created_at: { [Op.between]: [startDate, endDate] }
+      },
+      include: [{
+        model: db.Payment,
+        attributes: ['method']
+      }],
+      attributes: [
+        [db.sequelize.col('Payment.method'), 'payment_method'],
+        [db.sequelize.fn('COUNT', db.sequelize.col('Order.id')), 'orders'],
+        [db.sequelize.fn('SUM', db.sequelize.col('total')), 'revenue']
+      ],
+      group: [db.sequelize.col('Payment.method')],
       raw: true
     });
   }

@@ -4,6 +4,15 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   async up(queryInterface) {
     // ============================
+    // 0. CHECK IF ALREADY SEEDED
+    // ============================
+    const [existingRoles] = await queryInterface.sequelize.query('SELECT id FROM roles LIMIT 1');
+    if (existingRoles.length > 0) {
+      console.log('Database already seeded. Skipping seed execution.');
+      return;
+    }
+
+    // ============================
     // 1. ROLES
     // ============================
     const roles = [
