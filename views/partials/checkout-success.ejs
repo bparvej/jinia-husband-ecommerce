@@ -1,0 +1,35 @@
+<!-- Update the cart count in the header to 0 out-of-band (OOB) -->
+<span id="cart-count" hx-swap-oob="true" class="cart-count">0</span>
+
+<div class="checkout-success-container">
+    <div class="success-icon-wrapper">
+        <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+    </div>
+    <h2>Order Placed!</h2>
+    <p class="order-number">Order #<%= order.order_number %></p>
+    <p class="success-message">Thank you for shopping with HomeI! We've received your order and will contact you shortly to confirm the delivery details.</p>
+    
+    <div class="order-summary-box">
+        <h4>Delivery Details</h4>
+        <div class="summary-details">
+            <p><strong>Recipient:</strong> <%= order.shipping_name %></p>
+            <p><strong>Phone:</strong> <%= order.shipping_phone %></p>
+            <p><strong>Address:</strong> <%= order.shipping_address %>, <%= order.shipping_city %></p>
+            <p><strong>Payment Method:</strong> 
+                <% if (order.Payment && order.Payment.method === 'cod') { %>
+                    Cash on Delivery (COD)
+                <% } else if (order.Payment) { %>
+                    <%= order.Payment.method.toUpperCase() %> (Pending)
+                <% } else { %>
+                    Cash on Delivery
+                <% } %>
+            </p>
+            <p class="summary-total"><strong>Total:</strong> ৳<%= Number(order.total).toLocaleString() %></p>
+        </div>
+    </div>
+    
+    <button class="btn btn-primary btn-full close-cart-btn" onclick="document.getElementById('cart-drawer-close').click()">Continue Shopping</button>
+</div>

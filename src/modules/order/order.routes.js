@@ -14,4 +14,7 @@ router.get('/admin/orders', requireAuth, requireAdmin, checkPermission('read', '
 router.get('/admin/orders/:id', requireAuth, requireAdmin, checkPermission('read', 'Order'), orderController.adminDetail);
 router.put('/api/v1/orders/:id/status', requireAuth, requireAdmin, checkPermission('update', 'Order'), csrfProtection, auditLog('update', 'Order'), orderController.updateStatus);
 
+// Customer Checkout
+router.post('/api/v1/checkout', csrfProtection, orderController.placeOrder);
+
 module.exports = router;
