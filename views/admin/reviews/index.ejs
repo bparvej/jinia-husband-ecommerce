@@ -1,0 +1,18 @@
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>Reviews</h2>
+        <span class="page-count"><%= pagination.totalItems %> total</span>
+    </div>
+</div>
+
+<div class="filters-bar">
+    <select name="is_approved" hx-get="/admin/reviews" hx-target="#review-table-container" hx-trigger="change" hx-vals='{"_partial":"1"}'>
+        <option value="">All Reviews</option>
+        <option value="true" <%= filters.is_approved === 'true' ? 'selected' : '' %>>Approved Only</option>
+        <option value="false" <%= filters.is_approved === 'false' ? 'selected' : '' %>>Pending Only</option>
+    </select>
+</div>
+
+<div id="review-table-container">
+    <%- include('partials/review-table') %>
+</div>

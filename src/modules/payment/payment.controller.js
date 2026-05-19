@@ -35,8 +35,8 @@ class PaymentController {
         filters: { status, method },
       };
 
-      if (req.headers['hx-request']) {
-        return res.render('admin/payments/partials/payment-table', viewData);
+      if (req.headers['hx-request'] && req.query._partial) {
+        return res.render('admin/payments/partials/payment-table', { ...viewData, layout: false });
       }
 
       res.render('admin/payments/index', viewData);
@@ -52,8 +52,22 @@ class PaymentController {
       await paymentService.updatePaymentStatus(req.params.orderId, status, transaction_id);
       
       if (req.headers['hx-request']) {
-        res.set('HX-Refresh', 'true');
-        return res.send('<span class="toast toast-success">Payment status updated</span>');
+        return res.send(`
+          <select class="status-select status-${status}" 
+                  name="status"
+                  hx-put="/api/v1/payments/${req.params.orderId}/status"
+                  hx-target="this"
+                  hx-swap="outerHTML"
+                  hx-trigger="change">
+              <option value="pending" ${status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="completed" ${status === 'completed' ? 'selected' : ''}>Completed</option>
+              <option value="failed" ${status === 'failed' ? 'selected' : ''}>Failed</option>
+              <option value="refunded" ${status === 'refunded' ? 'selected' : ''}>Refunded</option>
+          </select>
+          <div hx-swap-oob="beforeend:#toast-container">
+            <div class="toast toast-success">Payment status updated to ${status}</div>
+          </div>
+        `);
       }
       res.redirect('back');
     } catch (err) {

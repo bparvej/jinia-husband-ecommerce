@@ -1,24 +1,43 @@
+<% 
+    // Helper to build query string from filters
+    const buildQuery = (pageNum) => {
+        const params = new URLSearchParams();
+        if (typeof filters !== 'undefined') {
+            Object.entries(filters).forEach(([key, value]) => {
+                if (value && key !== 'page') params.append(key, value);
+            });
+        }
+        params.append('page', pageNum);
+        params.append('_partial', '1');
+        return '?' + params.toString();
+    };
+%>
+
 <% if (pagination.totalPages > 1) { %>
     <div class="pagination">
         <% if (pagination.hasPrev) { %>
             <a href="?page=<%= pagination.page - 1 %>" 
                class="page-btn" 
-               hx-get="<%= baseUrl %>?page=<%= pagination.page - 1 %>&_partial=1" 
-               hx-target="<%= targetContainer %>">← Prev</a>
+               hx-get="<%= baseUrl %><%= buildQuery(pagination.page - 1) %>" 
+               hx-target="<%= targetContainer %>"
+               hx-push-url="true">← Prev</a>
         <% } %>
         
         <% pageNumbers.forEach(num => { %>
             <a href="?page=<%= num %>" 
                class="page-btn <%= num === pagination.page ? 'active' : '' %>"
-               hx-get="<%= baseUrl %>?page=<%= num %>&_partial=1" 
-               hx-target="<%= targetContainer %>"><%= num %></a>
+               hx-get="<%= baseUrl %><%= buildQuery(num) %>" 
+               hx-target="<%= targetContainer %>"
+               hx-push-url="true"><%= num %></a>
         <% }) %>
         
         <% if (pagination.hasNext) { %>
             <a href="?page=<%= pagination.page + 1 %>" 
                class="page-btn" 
-               hx-get="<%= baseUrl %>?page=<%= pagination.page + 1 %>&_partial=1" 
-               hx-target="<%= targetContainer %>">Next →</a>
+               hx-get="<%= baseUrl %><%= buildQuery(pagination.page + 1) %>" 
+               hx-target="<%= targetContainer %>"
+               hx-push-url="true">Next →</a>
         <% } %>
     </div>
 <% } %>
+

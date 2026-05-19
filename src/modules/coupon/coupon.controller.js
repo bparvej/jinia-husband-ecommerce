@@ -19,7 +19,7 @@ class CouponController {
       };
 
       if (req.headers['hx-request'] && req.query._partial) {
-        return res.render('admin/coupons/partials/coupon-table', viewData);
+        return res.render('admin/coupons/partials/coupon-table', { ...viewData, layout: false });
       }
 
       res.render('admin/coupons/index', viewData);

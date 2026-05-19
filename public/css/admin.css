@@ -108,7 +108,18 @@ body.admin-body {
     position: sticky; top: 0; z-index: 50;
 }
 .topbar-left { display: flex; align-items: center; gap: 1rem; }
-.topbar-toggle { display: none; width: 36px; height: 36px; border: none; background: none; color: var(--admin-text-secondary); cursor: pointer; border-radius: 8px; }
+.topbar-toggle { 
+    display: none; 
+    width: 36px; 
+    height: 36px; 
+    border: none; 
+    background: none; 
+    color: var(--admin-text-secondary); 
+    cursor: pointer; 
+    border-radius: 8px; 
+    align-items: center;
+    justify-content: center;
+}
 .topbar-toggle:hover { background: var(--admin-bg); }
 .topbar-title { font-size: 1.15rem; font-weight: 600; color: var(--admin-text); }
 
@@ -123,7 +134,27 @@ body.admin-body {
 .topbar-user-btn:hover { background: var(--admin-bg); }
 .topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-light)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: var(--admin-primary); }
 
-.topbar-dropdown { position: absolute; top: calc(100% + 8px); right: 0; min-width: 220px; background: var(--admin-surface); border-radius: var(--admin-radius); box-shadow: var(--admin-shadow-lg); border: 1px solid var(--admin-border); padding: 0.5rem; z-index: 200; }
+[x-cloak] { display: none !important; }
+
+.topbar-dropdown { 
+    display: none !important;
+    position: absolute; 
+    top: calc(100% + 8px); 
+    right: 0; 
+    min-width: 220px; 
+    background: var(--admin-surface); 
+    border-radius: var(--admin-radius); 
+    box-shadow: var(--admin-shadow-lg); 
+    border: 1px solid var(--admin-border); 
+    padding: 0.5rem; 
+    z-index: 200; 
+}
+
+/* Alpine will handle display: block/none via x-show, but this ensures no flicker */
+.topbar-dropdown[x-show] {
+    display: block !important;
+}
+
 .dropdown-header { padding: 0.75rem; }
 .dropdown-header strong { display: block; font-size: 0.88rem; color: var(--admin-text); }
 .dropdown-header span { font-size: 0.78rem; color: var(--admin-text-muted); }
@@ -132,6 +163,7 @@ body.admin-body {
 .dropdown-item:hover { background: var(--admin-bg); color: var(--admin-text); }
 .dropdown-item.text-danger { color: #C44D4D; }
 .dropdown-item.text-danger:hover { background: #FEF2F2; }
+
 
 /* ── Dashboard ── */
 .dashboard-grid { display: flex; flex-direction: column; gap: 1.5rem; }
@@ -164,8 +196,15 @@ body.admin-body {
 .panel-link:hover { color: var(--admin-primary); }
 .panel-body { padding: 1.25rem 1.5rem; }
 
+/* ── Table Container ── */
+.table-container { 
+    width: 100%; 
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch;
+}
+
 /* ── Data Table ── */
-.data-table { width: 100%; border-collapse: collapse; }
+.data-table { width: 100%; border-collapse: collapse; min-width: 600px; }
 .data-table th { text-align: left; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--admin-text-muted); padding: 0.75rem 1rem; border-bottom: 1px solid var(--admin-border); }
 .data-table td { padding: 0.85rem 1rem; font-size: 0.88rem; color: var(--admin-text-secondary); border-bottom: 1px solid var(--admin-border); vertical-align: middle; }
 .data-table tbody tr:last-child td { border-bottom: none; }
@@ -317,7 +356,27 @@ body.admin-body {
 .alert-success { background: #ECFDF5; border: 1px solid #A7F3D0; color: #059669; }
 
 /* ── Toast ── */
-.toast { position: fixed; bottom: 24px; right: 24px; padding: 0.75rem 1.5rem; border-radius: 10px; font-size: 0.88rem; font-weight: 500; z-index: 9999; animation: slideUp 0.3s ease, fadeOut 0.3s 2.7s ease forwards; }
+#toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast { 
+    pointer-events: auto;
+    padding: 0.75rem 1.5rem; 
+    border-radius: 10px; 
+    font-size: 0.88rem; 
+    font-weight: 500; 
+    animation: slideUp 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: var(--admin-shadow-lg);
+}
 .toast-success { background: #059669; color: #fff; }
 .toast-error { background: #DC2626; color: #fff; }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -336,7 +395,16 @@ body.admin-body {
 img { max-width: 100%; height: auto; display: block; }
 a { text-decoration: none; color: inherit; }
 
-/* ── Responsive ── */
+/* ── HTMX Transitions ── */
+.htmx-added { opacity: 0; }
+.htmx-settling { opacity: 1; transition: opacity 0.3s ease; }
+.htmx-swapping { opacity: 0; transition: opacity 0.2s ease; }
+
+.loader { display: none; }
+.htmx-request .loader { display: block; }
+.htmx-request.loader { display: block; }
+
+/* ── Responsive Refinements ── */
 @media (max-width: 1024px) {
     .stats-row { grid-template-columns: repeat(2, 1fr); }
     .dashboard-panels { grid-template-columns: 1fr; }
@@ -345,14 +413,72 @@ a { text-decoration: none; color: inherit; }
 }
 
 @media (max-width: 768px) {
-    .admin-main { margin-left: 0; }
-    .admin-sidebar { transform: translateX(-100%); }
+    .admin-main { margin-left: 0; width: 100%; }
+    .admin-sidebar { 
+        transform: translateX(-100%); 
+        box-shadow: none;
+        z-index: 1001; 
+    }
     .sidebar-collapsed .admin-sidebar { transform: translateX(-100%); }
-    .admin-layout:not(.sidebar-collapsed) .admin-sidebar { transform: translateX(0); }
+    .admin-layout:not(.sidebar-collapsed) .admin-sidebar { 
+        transform: translateX(0); 
+        box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+    }
+    
+    /* Overlay for mobile sidebar */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(44, 24, 16, 0.4);
+        backdrop-filter: blur(2px);
+        z-index: 1000;
+        display: none;
+    }
+    .admin-layout:not(.sidebar-collapsed) .sidebar-overlay {
+        display: block;
+    }
+
     .topbar-toggle { display: flex; }
-    .admin-content { padding: 1.25rem; }
+    .topbar-title { font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+    .topbar-search { display: none; }
+    
+    .admin-content { padding: 1rem; }
     .stats-row { grid-template-columns: 1fr; }
     .status-cards { flex-direction: column; }
     .form-row { grid-template-columns: 1fr; }
-    .topbar-search { display: none; }
+    
+    .admin-topbar { padding: 0 1rem; }
+
+    /* Table adjustments for very small screens */
+    .data-table { min-width: 500px; }
+    .product-cell-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
+
+/* ── Interactive Status Selects ── */
+.status-select {
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    background-color: #f3f4f6;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.status-select:focus {
+    outline: none;
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 2px rgba(44, 24, 16, 0.1);
+}
+
+.status-select.status-pending { background-color: #fef3c7; color: #92400e; }
+.status-select.status-shipped { background-color: #dcfce7; color: #166534; }
+.status-select.status-delivered { background-color: #d1fae5; color: #065f46; }
+.status-select.status-cancelled, .status-select.status-failed { background-color: #fee2e2; color: #991b1b; }
+.status-select.status-completed { background-color: #ecfdf5; color: #047857; }
+.status-select.status-refunded { background-color: #f3f4f6; color: #4b5563; }
+
+

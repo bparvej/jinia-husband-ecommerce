@@ -22,7 +22,7 @@ class ReportController {
       const data = await reportService.getSalesReport(range);
       
       if (req.headers['hx-request']) {
-        return res.render('admin/reports/partials/sales-report', { data });
+        return res.render('admin/reports/partials/sales-report', { data, layout: false });
       }
       
       res.json(data);

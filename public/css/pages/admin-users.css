@@ -1,0 +1,301 @@
+/* ============================================
+   Admin Users Page — Premium Redesign
+   ============================================ */
+
+/* ── Modal Styles ── */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(44, 24, 16, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--admin-surface);
+    width: 100%;
+    max-width: 550px;
+    border-radius: 20px;
+    box-shadow: var(--admin-shadow-lg);
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+
+.modal.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 1.5rem 2rem;
+    background: #FAF9F6;
+    border-bottom: 1px solid var(--admin-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--admin-primary);
+}
+
+.modal-header .close {
+    font-size: 1.5rem;
+    color: var(--admin-text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-header .close:hover {
+    color: var(--admin-primary);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    padding: 1.25rem 2rem;
+    background: #FAF9F6;
+    border-top: 1px solid var(--admin-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* ── Form Styles ── */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--admin-text);
+    margin-bottom: 8px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--admin-border);
+    border-radius: 12px;
+    background: #fff;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 4px rgba(196, 149, 106, 0.1);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--admin-text-secondary);
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--admin-primary);
+}
+
+/* ── Table Enhancements ── */
+.user-card {
+    background: var(--admin-surface);
+    border-radius: var(--admin-radius);
+    border: 1px solid var(--admin-border);
+    box-shadow: var(--admin-shadow);
+    overflow: hidden;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar-small {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-light));
+    color: var(--admin-primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-details .user-name {
+    font-weight: 600;
+    color: var(--admin-text);
+    font-size: 0.95rem;
+}
+
+.user-details .user-email {
+    font-size: 0.78rem;
+    color: var(--admin-text-muted);
+}
+
+/* ── Badges ── */
+.role-badge {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.role-badge.admin, .role-badge.super_admin {
+    background: #FEF2F2;
+    color: #C44D4D;
+}
+
+.role-badge.staff {
+    background: #EBF5FF;
+    color: #3B82F6;
+}
+
+.role-badge.customer {
+    background: #ECFDF5;
+    color: #059669;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.status-badge.active { color: #059669; }
+.status-badge.active::before { background: #10B981; }
+
+.status-badge.inactive { color: #9B8C80; }
+.status-badge.inactive::before { background: #D1D5DB; }
+
+/* ── Filter Card ── */
+.filter-card {
+    background: var(--admin-surface);
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--admin-radius);
+    border: 1px solid var(--admin-border);
+    margin-bottom: 2rem;
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: 1fr 200px 120px;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input svg {
+    position: absolute;
+    left: 14px;
+    color: var(--admin-text-muted);
+}
+
+.search-input input {
+    padding-left: 44px !important;
+}
+
+/* ── Buttons ── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.65rem 1.25rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: var(--font-body);
+}
+
+.btn-primary { background: var(--admin-primary); color: #fff; }
+.btn-primary:hover { background: var(--admin-primary-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(92,61,46,0.2); }
+
+.btn-secondary { background: var(--admin-bg); color: var(--admin-text); }
+.btn-secondary:hover { background: #EDE6DB; }
+
+.btn-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--admin-bg);
+    color: var(--admin-text-secondary);
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: #EDE6DB;
+    color: var(--admin-primary);
+}
+
+.btn-icon.text-danger:hover {
+    background: #FEF2F2;
+    color: #DC2626;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: calc(100% - 2rem);
+        margin: 1rem;
+    }
+}

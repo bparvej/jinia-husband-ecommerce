@@ -1,81 +1,68 @@
-<div class="panel">
-    <div class="panel-body">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>SKU</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Status</th>
-                    <th>Update</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (inventory.length > 0) { %>
-                    <% inventory.forEach(item => { %>
-                    <tr x-data="{ qty: <%= item.quantity %>, editing: false }">
-                        <td>
-                            <div class="product-cell">
-                                <img src="<%= item.Product.image || '/assets/images/category-bookshelf.png' %>" alt="<%= item.Product.name %>" class="product-thumb">
-                                <span class="product-cell-name"><%= item.Product.name %></span>
-                            </div>
-                        </td>
-                        <td class="text-mono"><%= item.Product.sku || '—' %></td>
-                        <td><%= item.Product.Category ? item.Product.Category.name : '—' %></td>
-                        <td>৳<%= Number(item.Product.price).toLocaleString() %></td>
-                        <td>
-                            <template x-if="!editing">
-                                <span class="stock-badge <%= item.quantity <= item.low_stock_threshold ? (item.quantity <= 5 ? 'critical' : 'low') : 'ok' %>" @click="editing = true" style="cursor:pointer" title="Click to edit">
-                                    <span x-text="qty"></span>
-                                </span>
-                            </template>
-                            <template x-if="editing">
-                                <input type="number" x-model="qty" class="inline-input" min="0" @keyup.enter="editing = false; $refs.submitBtn.click()" @keyup.escape="editing = false">
-                            </template>
-                        </td>
-                        <td>
-                            <span class="stock-indicator">
-                                <% if (item.quantity <= 5) { %>
-                                    <span class="dot dot-critical"></span> Critical
-                                <% } else if (item.quantity <= item.low_stock_threshold) { %>
-                                    <span class="dot dot-warning"></span> Low Stock
-                                <% } else { %>
-                                    <span class="dot dot-ok"></span> In Stock
-                                <% } %>
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th class="text-right">Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (inventory.length > 0) { %>
+                <% inventory.forEach(item => { %>
+                <tr x-data="{ qty: <%= item.quantity %>, editing: false }" id="inventory-<%= item.product_id %>">
+                    <td>
+                        <div class="product-cell">
+                            <img src="<%= item.Product.image || '/assets/images/category-bookshelf.png' %>" alt="<%= item.Product.name %>" class="product-thumb">
+                            <span class="product-cell-name"><%= item.Product.name %></span>
+                        </div>
+                    </td>
+                    <td class="text-mono"><%= item.Product.sku || '—' %></td>
+                    <td><%= item.Product.Category ? item.Product.Category.name : '—' %></td>
+                    <td>৳<%= Number(item.Product.price).toLocaleString() %></td>
+                    <td>
+                        <template x-if="!editing">
+                            <span class="stock-badge <%= item.quantity <= item.low_stock_threshold ? (item.quantity <= 5 ? 'critical' : 'low') : 'ok' %>" @click="editing = true" style="cursor:pointer" title="Click to edit">
+                                <span x-text="qty"></span>
                             </span>
-                        </td>
-                        <td>
-                            <button x-ref="submitBtn" class="action-btn-sm save"
-                                hx-put="/api/v1/inventory/<%= item.product_id %>"
-                                :hx-vals="JSON.stringify({ quantity: qty, _csrf: '<%= csrfToken %>' })"
-                                hx-swap="none"
-                                @click="editing = false"
-                                title="Save">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            </button>
-                        </td>
-                    </tr>
-                    <% }) %>
-                <% } else { %>
-                    <tr><td colspan="7" class="text-center text-muted">No inventory found</td></tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-
-    <% if (pagination.totalPages > 1) { %>
-    <div class="pagination">
-        <% if (pagination.hasPrev) { %>
-            <a href="?page=<%= pagination.page - 1 %>" class="page-btn">← Prev</a>
-        <% } %>
-        <% pageNumbers.forEach(num => { %>
-            <a href="?page=<%= num %>" class="page-btn <%= num === pagination.page ? 'active' : '' %>"><%= num %></a>
-        <% }) %>
-        <% if (pagination.hasNext) { %>
-            <a href="?page=<%= pagination.page + 1 %>" class="page-btn">Next →</a>
-        <% } %>
-    </div>
-    <% } %>
+                        </template>
+                        <template x-if="editing">
+                            <input type="number" x-model="qty" class="inline-input" min="0" @keyup.enter="editing = false; $refs.submitBtn.click()" @keyup.escape="editing = false">
+                        </template>
+                    </td>
+                    <td>
+                        <span class="stock-indicator">
+                            <% if (item.quantity <= 5) { %>
+                                <span class="dot dot-critical"></span> Critical
+                            <% } else if (item.quantity <= item.low_stock_threshold) { %>
+                                <span class="dot dot-warning"></span> Low Stock
+                            <% } else { %>
+                                <span class="dot dot-ok"></span> In Stock
+                            <% } %>
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <button x-ref="submitBtn" class="action-btn-sm save"
+                            hx-put="/api/v1/inventory/<%= item.product_id %>"
+                            :hx-vals="JSON.stringify({ quantity: qty, _csrf: '<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>' })"
+                            hx-swap="none"
+                            @click="editing = false"
+                            title="Save">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
+                    </td>
+                </tr>
+                <% }) %>
+            <% } else { %>
+                <tr><td colspan="7" class="text-center text-muted">No inventory found</td></tr>
+            <% } %>
+        </tbody>
+    </table>
 </div>
+
+<%- include('../../../partials/pagination', { baseUrl: '/admin/inventory', targetContainer: '#inventory-table-container' }) %>
+

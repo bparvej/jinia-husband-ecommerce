@@ -2,23 +2,29 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    postgresql-client \
+    dos2unix
 
-# Copy package files
-COPY package*.json ./
+COPY package*.json .
 
-# Install dependencies
-RUN npm ci --only=production 2>/dev/null || npm install
+RUN npm ci --omit=dev
 
-# Copy app source
 COPY . .
 
-# Create uploads directory
-RUN mkdir -p public/uploads
+RUN mkdir -p public/uploads/products
+RUN chmod -R 755 public/uploads
 
-# Expose port
-EXPOSE 3000
+RUN dos2unix docker-entrypoint.sh && \
+    chmod +x docker-entrypoint.sh
 
-# Start app
-CMD ["sh", "-c", "npm run migrate && npm run seed && npm start"]
+ENV NODE_ENV=production
+
+EXPOSE 10000
+
+ENTRYPOINT ["sh", "./docker-entrypoint.sh"]
+
+CMD ["node", "src/server.js"]

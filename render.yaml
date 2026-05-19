@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: homei-ecommerce
+    env: docker
+    plan: free
+    region: oregon
+
+    healthCheckPath: /
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: RENDER
+        value: true
+
+      - key: RUN_SEEDERS
+        value: false
+
+      - key: SESSION_SECRET
+        generateValue: true
+
+      - key: DATABASE_URL
+        fromDatabase:
+          name: homei-db
+          property: connectionString
+      - key: DB_HOST
+        fromDatabase:
+          name: homei-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: homei-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: homei-db
+          property: user
+      - key: DB_NAME
+        fromDatabase:
+          name: homei-db
+          property: database
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: homei-db
+          property: password
+
+databases:
+  - name: homei-db
+    plan: free
+    region: oregon
+    databaseName: homei_db
+    user: homei_user

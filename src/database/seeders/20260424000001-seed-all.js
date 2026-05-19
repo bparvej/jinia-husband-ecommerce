@@ -156,49 +156,49 @@ module.exports = {
     const products = [
       {
         name: 'Nordic Oak Ladder Shelf', slug: 'nordic-oak-ladder-shelf', description: 'A beautifully crafted 5-tier ladder shelf made from premium Nordic Oak. Perfect for displaying books, plants, and decorative items.', short_description: 'Handcrafted 5-tier oak ladder bookshelf',
-        price: 8500, compare_price: 10200, cost_price: 5500, sku: 'HI-BS-001', category_id: catMap['bookshelves'],
+        price: 8500, compare_price: 10200, cost_price: 5500, sku: 'Hi-BS-001', category_id: catMap['bookshelves'],
         image: '/assets/images/category-bookshelf.png', badge: 'New', is_active: true, is_featured: true, avg_rating: 4.90, review_count: 48, sold_count: 342,
         created_at: now, updated_at: now,
       },
       {
         name: 'Walnut Dining Set — 4 Seater', slug: 'walnut-dining-set-4-seater', description: 'Elegant walnut wood dining table with 4 matching chairs. Seats 4 comfortably with a smooth lacquer finish.', short_description: '4-seater walnut dining table with chairs',
-        price: 28000, compare_price: 32500, cost_price: 18000, sku: 'HI-DN-001', category_id: catMap['dining'],
+        price: 28000, compare_price: 32500, cost_price: 18000, sku: 'Hi-DN-001', category_id: catMap['dining'],
         image: '/assets/images/category-dining.png', badge: 'Hot', is_active: true, is_featured: true, avg_rating: 4.95, review_count: 72, sold_count: 278,
         created_at: now, updated_at: now,
       },
       {
         name: 'Oak Slatted Bed Frame — King', slug: 'oak-slatted-bed-frame-king', description: 'Solid oak king-size bed frame with a slatted design for modern minimalist bedrooms. Durable and elegant.', short_description: 'King-size solid oak slatted bed frame',
-        price: 35000, compare_price: null, cost_price: 22000, sku: 'HI-BR-001', category_id: catMap['bedroom'],
+        price: 35000, compare_price: null, cost_price: 22000, sku: 'Hi-BR-001', category_id: catMap['bedroom'],
         image: '/assets/images/category-bedroom.png', badge: 'New', is_active: true, is_featured: true, avg_rating: 4.20, review_count: 35, sold_count: 156,
         created_at: now, updated_at: now,
       },
       {
         name: 'Minimalist Oak TV Console', slug: 'minimalist-oak-tv-console', description: 'Sleek, modern TV console crafted from solid oak with cable management. Fits TVs up to 65 inches.', short_description: 'Minimalist oak TV console for modern living rooms',
-        price: 18500, compare_price: 22000, cost_price: 12000, sku: 'HI-ST-001', category_id: catMap['storage'],
+        price: 18500, compare_price: 22000, cost_price: 12000, sku: 'Hi-ST-001', category_id: catMap['storage'],
         image: '/assets/images/category-storage.png', badge: 'Sale', is_active: true, is_featured: true, avg_rating: 4.95, review_count: 56, sold_count: 215,
         created_at: now, updated_at: now,
       },
       {
         name: 'Cane-Woven Writing Desk', slug: 'cane-woven-writing-desk', description: 'Elegant writing desk featuring a cane-woven drawer front. Compact design perfect for home offices and study rooms.', short_description: 'Compact cane-woven writing desk',
-        price: 14200, compare_price: null, cost_price: 9000, sku: 'HI-SD-001', category_id: catMap['study-office'],
+        price: 14200, compare_price: null, cost_price: 9000, sku: 'Hi-SD-001', category_id: catMap['study-office'],
         image: '/assets/images/category-desk.png', badge: 'New', is_active: true, is_featured: false, avg_rating: 4.95, review_count: 29, sold_count: 98,
         created_at: now, updated_at: now,
       },
       {
         name: 'Wall-Mounted Floating Shelf Set', slug: 'wall-mounted-floating-shelf-set', description: 'Set of 3 floating shelves in different sizes. Easy to mount and perfect for any wall space.', short_description: '3-piece wall-mounted floating shelf set',
-        price: 4800, compare_price: 6000, cost_price: 2800, sku: 'HI-BS-002', category_id: catMap['bookshelves'],
+        price: 4800, compare_price: 6000, cost_price: 2800, sku: 'Hi-BS-002', category_id: catMap['bookshelves'],
         image: '/assets/images/category-bookshelf.png', badge: 'Best Seller', is_active: true, is_featured: true, avg_rating: 5.00, review_count: 94, sold_count: 420,
         created_at: now, updated_at: now,
       },
       {
         name: 'Oak Bedside Nightstand', slug: 'oak-bedside-nightstand', description: 'Compact bedside table with a single drawer and open shelf. Matches our Oak bed frame collection.', short_description: 'Oak bedside nightstand with drawer',
-        price: 6500, compare_price: null, cost_price: 4000, sku: 'HI-BR-002', category_id: catMap['bedroom'],
+        price: 6500, compare_price: null, cost_price: 4000, sku: 'Hi-BR-002', category_id: catMap['bedroom'],
         image: '/assets/images/category-bedroom.png', badge: null, is_active: true, is_featured: false, avg_rating: 4.10, review_count: 41, sold_count: 187,
         created_at: now, updated_at: now,
       },
       {
         name: 'Round Walnut Coffee Table', slug: 'round-walnut-coffee-table', description: 'Beautiful round coffee table crafted from solid walnut. Features tapered legs and a smooth finish.', short_description: 'Round walnut coffee table with tapered legs',
-        price: 9800, compare_price: 12000, cost_price: 6500, sku: 'HI-DN-002', category_id: catMap['dining'],
+        price: 9800, compare_price: 12000, cost_price: 6500, sku: 'Hi-DN-002', category_id: catMap['dining'],
         image: '/assets/images/category-dining.png', badge: 'Sale', is_active: true, is_featured: false, avg_rating: 4.95, review_count: 63, sold_count: 195,
         created_at: now, updated_at: now,
       },
@@ -227,7 +227,7 @@ module.exports = {
       const customerId = usersDb[0].id;
       await queryInterface.bulkInsert('orders', [
         {
-          order_number: 'HI-20260001',
+          order_number: 'Hi-20260001',
           user_id: customerId,
           status: 'delivered',
           subtotal: 36500,
@@ -242,7 +242,7 @@ module.exports = {
           updated_at: now,
         },
         {
-          order_number: 'HI-20260002',
+          order_number: 'Hi-20260002',
           user_id: customerId,
           status: 'processing',
           subtotal: 14200,
@@ -257,7 +257,7 @@ module.exports = {
           updated_at: now,
         },
         {
-          order_number: 'HI-20260003',
+          order_number: 'Hi-20260003',
           user_id: customerId,
           status: 'pending',
           subtotal: 9800,

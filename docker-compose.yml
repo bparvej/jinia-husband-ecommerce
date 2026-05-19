@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:16-alpine
-    container_name: homei_db
+    container_name: homei_db_render
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME:-homei_db}
@@ -11,6 +11,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-homei_secret_2026}
     ports:
       - "${DB_PORT:-5433}:5432"
+    shm_size: '128mb'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -23,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: homei_app
+    container_name: homei_app_render
     restart: unless-stopped
     depends_on:
       db:

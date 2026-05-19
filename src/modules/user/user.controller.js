@@ -20,7 +20,7 @@ class UserController {
       };
 
       if (req.headers['hx-request'] && req.query._partial) {
-        return res.render('admin/users/partials/user-table', viewData);
+        return res.render('admin/users/partials/user-table', { ...viewData, layout: false });
       }
 
       res.render('admin/users/index', viewData);

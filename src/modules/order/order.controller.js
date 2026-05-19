@@ -18,7 +18,7 @@ class OrderController {
       };
 
       if (req.headers['hx-request'] && req.query._partial) {
-        return res.render('admin/orders/partials/order-table', viewData);
+        return res.render('admin/orders/partials/order-table', { ...viewData, layout: false });
       }
 
       res.render('admin/orders/index', viewData);
@@ -47,7 +47,7 @@ class OrderController {
 
       if (req.headers['hx-request']) {
         const order = await orderService.getOrderById(req.params.id);
-        return res.render('admin/orders/partials/status-badge', { order });
+        return res.render('admin/orders/partials/status-badge', { order, layout: false });
       }
       res.redirect(`/admin/orders/${req.params.id}`);
     } catch (err) {
@@ -74,7 +74,7 @@ class OrderController {
       };
 
       if (req.headers['hx-request'] && req.query._partial === 'stats') {
-        return res.render('admin/dashboard/partials/stats-cards', viewData);
+        return res.render('admin/dashboard/partials/stats-cards', { ...viewData, layout: false });
       }
 
       res.render('admin/dashboard', viewData);

@@ -1,0 +1,26 @@
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>Payments & Transactions</h2>
+        <span class="page-count"><%= pagination.totalItems %> total</span>
+    </div>
+</div>
+
+<div class="filters-bar">
+    <select name="status" hx-get="/admin/payments" hx-target="#payment-table-container" hx-trigger="change" hx-vals='{"_partial":"1"}' hx-include="[name='method']">
+        <option value="">All Status</option>
+        <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
+        <option value="completed" <%= filters.status === 'completed' ? 'selected' : '' %>>Completed</option>
+        <option value="failed" <%= filters.status === 'failed' ? 'selected' : '' %>>Failed</option>
+        <option value="refunded" <%= filters.status === 'refunded' ? 'selected' : '' %>>Refunded</option>
+    </select>
+    <select name="method" hx-get="/admin/payments" hx-target="#payment-table-container" hx-trigger="change" hx-vals='{"_partial":"1"}' hx-include="[name='status']">
+        <option value="">All Methods</option>
+        <option value="cod" <%= filters.method === 'cod' ? 'selected' : '' %>>Cash on Delivery</option>
+        <option value="bkash" <%= filters.method === 'bkash' ? 'selected' : '' %>>bKash</option>
+        <option value="card" <%= filters.method === 'card' ? 'selected' : '' %>>Card</option>
+    </select>
+</div>
+
+<div id="payment-table-container">
+    <%- include('partials/payment-table') %>
+</div>
