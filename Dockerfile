@@ -2,23 +2,22 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies needed for some native node modules
 RUN apk add --no-cache python3 make g++
 
-# Copy package files
+# Copy dependency manifests
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production 2>/dev/null || npm install
+# Install ONLY production dependencies to keep the image fast and secure
+RUN npm ci --only=production
 
-# Copy app source
+# Copy the rest of your application code
 COPY . .
 
-# Create uploads directory
+# Ensure the public uploads directory exists
 RUN mkdir -p public/uploads
 
-# Expose port
 EXPOSE 3000
 
-# Start app
-CMD ["sh", "-c", "npm run migrate && npm run seed && npm start"]
+# Run migrations first, then start the production server
+CMD ["sh", "-c", "npm run migrate && npm start"]
