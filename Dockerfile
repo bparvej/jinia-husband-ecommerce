@@ -20,4 +20,5 @@ RUN mkdir -p public/uploads
 EXPOSE 3000
 
 # Run migrations first, then start the production server
-CMD ["sh", "-c", "npm run migrate && npm start"]
+# CMD ["sh", "-c", "npm run migrate && npm  && npm start"]
+CMD ["sh", "-c", "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all && npm start"]
