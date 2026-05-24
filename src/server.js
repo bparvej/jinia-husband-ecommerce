@@ -1,6 +1,7 @@
 const app = require('./app');
 const db = require('./models');
 const logger = require('./utils/logger');
+const { handleDbConnectionError } = require('./utils/dbErrorHandler');
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,13 +18,13 @@ async function start() {
     }
 
     // Start server
-    app.listen(PORT, '0.0.0.0', () => {
+    app.listen(PORT, () => {
       logger.info(`🚀 HomeI Ecommerce server running on http://localhost:${PORT}`);
       logger.info(`📋 Admin panel: http://localhost:${PORT}/admin/dashboard`);
       logger.info(`🔑 Login: admin@homei.com / Admin@123`);
     });
   } catch (error) {
-    logger.error('❌ Failed to start server', { error: error.message, stack: error.stack });
+    handleDbConnectionError(error, logger);
     process.exit(1);
   }
 }

@@ -5,9 +5,9 @@ module.exports = {
     username: process.env.DB_USER || 'homei_user',
     password: process.env.DB_PASSWORD || 'homei_secret_2026',
     database: process.env.DB_NAME || 'homei_db',
-    host: process.env.DB_HOST || 'db',
-    port: parseInt(process.env.DB_PORT, 10) || 5432,
-    dialect: 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT, 10) || 3306,
+    dialect: 'mysql',
     logging: false,
     pool: {
       max: 10,
@@ -26,8 +26,8 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT, 10) || 5432,
-    dialect: 'postgres',
+    port: parseInt(process.env.DB_PORT, 10) || 3306,
+    dialect: 'mysql',
     logging: false,
     pool: {
       max: 20,

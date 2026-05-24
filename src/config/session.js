@@ -1,21 +1,29 @@
 const session = require('express-session');
-const pgSession = require('connect-pg-simple')(session);
-const { Pool } = require('pg');
+const MySQLStore = require('express-mysql-session')(session);
+const mysql = require('mysql2/promise');
 
-const pool = new Pool({
-  host: process.env.DB_HOST || 'db',
-  port: parseInt(process.env.DB_PORT, 10) || 5432,
+const options = {
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT, 10) || 3306,
   database: process.env.DB_NAME || 'homei_db',
   user: process.env.DB_USER || 'homei_user',
   password: process.env.DB_PASSWORD || 'homei_secret_2026',
-});
+};
+
+const sessionStore = new MySQLStore({
+  createDatabaseTable: true,
+  schema: {
+    tableName: 'sessions',
+    columnNames: {
+      session_id: 'session_id',
+      expires: 'expires',
+      data: 'data'
+    }
+  }
+}, mysql.createPool(options));
 
 const sessionConfig = {
-  store: new pgSession({
-    pool,
-    tableName: 'session',
-    createTableIfMissing: true,
-  }),
+  store: sessionStore,
   secret: process.env.SESSION_SECRET || 'homei_session_s3cret_k3y_2026',
   resave: false,
   saveUninitialized: false,
