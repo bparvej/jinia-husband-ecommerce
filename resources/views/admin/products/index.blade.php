@@ -1,0 +1,38 @@
+@extends('layouts.admin')
+
+@section('content')
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>Products</h2>
+        <span class="page-count">{{ $products->total() ?? 0 }} total</span>
+    </div>
+    <a href="/admin/products/create" class="btn-admin btn-primary-admin">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Add Product
+    </a>
+</div>
+
+<div class="filters-bar">
+    <div class="filter-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+        <input type="text" placeholder="Search products..." value="{{ $filters['search'] ?? '' }}"
+            hx-get="/admin/products" hx-target="#product-table-container" hx-trigger="keyup changed delay:300ms"
+            name="search" hx-include="[name='category_id'],[name='status']" hx-vals='{"_partial":"1"}'>
+    </div>
+    <select name="category_id" hx-get="/admin/products" hx-target="#product-table-container" hx-trigger="change" hx-include="[name='search'],[name='status']" hx-vals='{"_partial":"1"}'>
+        <option value="">All Categories</option>
+        @foreach ($categories as $cat)
+            <option value="{{ $cat->id }}" {{ ($filters['category_id'] ?? '') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+        @endforeach
+    </select>
+    <select name="status" hx-get="/admin/products" hx-target="#product-table-container" hx-trigger="change" hx-include="[name='search'],[name='category_id']" hx-vals='{"_partial":"1"}'>
+        <option value="">All Status</option>
+        <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Active</option>
+        <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+    </select>
+</div>
+
+<div id="product-table-container">
+    @include('admin.products.partials.product-table')
+</div>
+@endsection

@@ -1,0 +1,256 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\Product;
+use App\Models\User;
+use App\Models\Inventory;
+use App\Models\Category;
+
+class AdminController extends Controller
+{
+    // --- ADMIN: Dashboard ---
+    public function dashboard(Request $request)
+    {
+        // 1. Core counters
+        $totalOrders = Order::count();
+        $pendingOrders = Order::where('status', 'pending')->count();
+        $totalRevenue = Order::whereNotIn('status', ['cancelled', 'refunded'])->sum('total');
+        $totalProducts = Product::where('is_active', true)->count();
+        $totalCustomers = User::whereHas('role', function($q) {
+            $q->where('name', 'customer');
+        })->count();
+
+        // 2. Recent orders
+        $recentOrders = Order::with(['user', 'payment'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // 3. Low stock inventory
+        $lowStock = Inventory::with('product')
+            ->whereRaw('quantity <= low_stock_threshold')
+            ->get();
+
+        // 4. Sales report for last 7 days
+        $endDate = now();
+        $startDate = now()->subDays(7);
+        
+        $revenueChart = Order::whereNotIn('status', ['cancelled', 'refunded'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw("DATE(created_at) as date, SUM(total) as revenue, COUNT(id) as orders")
+            ->groupByRaw("DATE(created_at)")
+            ->orderByRaw("DATE(created_at) ASC")
+            ->get();
+
+        $viewData = [
+            'title' => 'Dashboard — HomeI Admin',
+            'totalOrders' => $totalOrders,
+            'pendingOrders' => $pendingOrders,
+            'totalRevenue' => floatval($totalRevenue),
+            'totalProducts' => $totalProducts,
+            'totalCustomers' => $totalCustomers,
+            'recentOrders' => $recentOrders,
+            'lowStock' => $lowStock,
+            'revenueChart' => $revenueChart,
+            // Supporting legacy template properties
+            'stats' => (object)[
+                'total_orders' => $totalOrders,
+                'pending_orders' => $pendingOrders,
+                'total_revenue' => $totalRevenue
+            ]
+        ];
+
+        return view('admin.dashboard', $viewData);
+    }
+
+    // --- ADMIN: Orders Listing ---
+    public function adminOrders(Request $request)
+    {
+        $query = Order::with(['user', 'payment']);
+
+        $search = $request->query('search');
+        $status = $request->query('status');
+
+        if ($search) {
+            $query->where('order_number', 'LIKE', "%{$search}%");
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->paginate(12);
+
+        $viewData = [
+            'orders' => $orders,
+            'filters' => [
+                'search' => $search,
+                'status' => $status
+            ],
+            'title' => 'Orders — HomeI Admin'
+        ];
+
+        // HTMX request partial
+        if ($request->headers->has('hx-request') && $request->query('_partial')) {
+            return view('admin.orders.partials.order-table', $viewData);
+        }
+
+        return view('admin.orders.index', $viewData);
+    }
+
+    // --- ADMIN: Order Detail ---
+    public function adminOrderDetail($id)
+    {
+        $order = Order::with(['user', 'items.product', 'payment', 'coupon'])->findOrFail($id);
+
+        return view('admin.orders.detail', [
+            'title' => "Order {$order->order_number} — HomeI Admin",
+            'order' => $order
+        ]);
+    }
+
+    // --- ADMIN: Update Order Status ---
+    public function updateOrderStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string'
+        ]);
+
+        $order = Order::findOrFail($id);
+        $order->status = $request->input('status');
+        $order->save();
+
+        Log::info("Order status updated: {$order->order_number} -> {$order->status}");
+
+        if ($request->headers->has('hx-request')) {
+            return view('admin.orders.partials.status-badge', [
+                'order' => $order
+            ]);
+        }
+
+        return redirect("/admin/orders/{$id}");
+    }
+
+    // --- ADMIN: Inventory Listing ---
+    public function adminInventory(Request $request)
+    {
+        $query = Inventory::with('product');
+
+        $search = $request->query('search');
+        if ($search) {
+            $query->whereHas('product', function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('sku', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $inventory = $query->orderBy('created_at', 'desc')->paginate(12);
+
+        $viewData = [
+            'inventory' => $inventory,
+            'filters' => [
+                'search' => $search
+            ],
+            'title' => 'Inventory — HomeI Admin'
+        ];
+
+        if ($request->headers->has('hx-request')) {
+            return view('admin.inventory.partials.inventory-table', $viewData);
+        }
+
+        return view('admin.inventory.index', $viewData);
+    }
+
+    // --- ADMIN: Users Listing ---
+    public function adminUsers(Request $request)
+    {
+        $query = User::with('role');
+
+        $search = $request->query('search');
+        if ($search) {
+            $query->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->paginate(12);
+
+        $viewData = [
+            'users' => $users,
+            'filters' => [
+                'search' => $search
+            ],
+            'title' => 'Users — HomeI Admin'
+        ];
+
+        if ($request->headers->has('hx-request')) {
+            return view('admin.users.partials.users-table', $viewData);
+        }
+
+        return view('admin.users.index', $viewData);
+    }
+
+    // --- ADMIN: Reports & Analytics ---
+    public function adminReports(Request $request)
+    {
+        $range = $request->query('range', '30days');
+        
+        $endDate = now();
+        $startDate = now();
+
+        if ($range === '7days') {
+            $startDate = now()->subDays(7);
+        } elseif ($range === '12months') {
+            $startDate = now()->subMonths(12);
+        } else {
+            $startDate = now()->subDays(30);
+        }
+
+        // Sales Report
+        $sales = Order::whereNotIn('status', ['cancelled', 'refunded'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw("DATE(created_at) as date, SUM(total) as revenue, COUNT(id) as orders")
+            ->groupByRaw("DATE(created_at)")
+            ->orderByRaw("DATE(created_at) ASC")
+            ->get();
+
+        // Top products
+        $topProducts = OrderItem::whereBetween('created_at', [$startDate, $endDate])
+            ->selectRaw("product_name, SUM(quantity) as quantity, SUM(total_price) as revenue")
+            ->groupBy('product_name')
+            ->orderByRaw("SUM(quantity) DESC")
+            ->take(5)
+            ->get();
+
+        // Category Sales
+        $categorySales = OrderItem::whereBetween('order_items.created_at', [$startDate, $endDate])
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->selectRaw("categories.name as category_name, SUM(order_items.total_price) as revenue")
+            ->groupBy('categories.name')
+            ->get();
+
+        // Payment Method Sales
+        $paymentSales = Order::whereNotIn('orders.status', ['cancelled', 'refunded'])
+            ->whereBetween('orders.created_at', [$startDate, $endDate])
+            ->join('payments', 'orders.id', '=', 'payments.order_id')
+            ->selectRaw("payments.method as payment_method, COUNT(orders.id) as orders, SUM(orders.total) as revenue")
+            ->groupBy('payments.method')
+            ->get();
+
+        return view('admin.reports.index', [
+            'title' => 'Reports — HomeI Admin',
+            'sales' => $sales,
+            'topProducts' => $topProducts,
+            'categorySales' => $categorySales,
+            'paymentSales' => $paymentSales,
+            'range' => $range
+        ]);
+    }
+}

@@ -1,0 +1,120 @@
+<div class="report-grid">
+    <div class="report-card full-width">
+        <div class="card-header">
+            <h3>Revenue Trend</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Orders</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($sales as $day)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($day->date)->format('d M Y') }}</td>
+                                <td>{{ $day->orders }}</td>
+                                <td>BDT {{ number_format($day->revenue, 2) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="card-header">
+            <h3>Top Selling Products</h3>
+        </div>
+        <div class="card-body">
+            <ul class="top-list">
+                @foreach ($topProducts as $product)
+                    <li class="top-list-item">
+                        <span class="item-name">{{ $product->product_name }}</span>
+                        <span class="item-value">{{ $product->quantity }} sold</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="card-header">
+            <h3>Sales by Category</h3>
+        </div>
+        <div class="card-body">
+            <ul class="top-list">
+                @foreach ($categorySales as $cat)
+                    <li class="top-list-item">
+                        <span class="item-name">{{ $cat->category_name }}</span>
+                        <span class="item-value">BDT {{ number_format($cat->revenue, 2) }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
+    <div class="report-card">
+        <div class="card-header">
+            <h3>Sales by Payment Method</h3>
+        </div>
+        <div class="card-body">
+            <ul class="top-list">
+                @if (count($paymentSales) > 0)
+                    @foreach ($paymentSales as $pay)
+                        @php
+                            $displayName = $pay->payment_method;
+                            if ($pay->payment_method === 'cod') $displayName = 'Cash on Delivery (COD)';
+                            elseif ($pay->payment_method === 'bkash') $displayName = 'bKash';
+                            elseif ($pay->payment_method === 'nagad') $displayName = 'Nagad';
+                            elseif ($pay->payment_method === 'visa') $displayName = 'Visa';
+                            elseif ($pay->payment_method === 'mastercard') $displayName = 'MasterCard';
+                            elseif ($displayName) $displayName = strtoupper($displayName);
+                            else $displayName = 'Unknown';
+                        @endphp
+                        <li class="top-list-item">
+                            <span class="item-name">{{ $displayName }}</span>
+                            <span class="item-value"><strong>{{ $pay->orders }}</strong> orders &middot; BDT {{ number_format($pay->revenue, 2) }}</span>
+                        </li>
+                    @endforeach
+                @else
+                    <li class="top-list-item text-muted">No sales recorded yet</li>
+                @endif
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    .report-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    .report-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+    .report-card.full-width {
+        grid-column: span 2;
+    }
+    .card-header { margin-bottom: 1.25rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 0.75rem; }
+    .card-header h3 { font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0; }
+    .top-list { list-style: none; padding: 0; margin: 0; }
+    .top-list-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f9fafb;
+    }
+    .top-list-item:last-child { border-bottom: none; }
+    .item-name { color: #374151; font-weight: 500; }
+    .item-value { color: #6b7280; font-size: 0.875rem; }
+</style>
