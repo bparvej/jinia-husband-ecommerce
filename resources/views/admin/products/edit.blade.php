@@ -117,7 +117,7 @@
                                 <span>Upload new image</span>
                             </div>
                         </div>
-                        <input type="file" name="image" x-ref="fileInput" accept="image/*" style="display:none">
+                        <input type="file" name="image_file" x-ref="fileInput" accept="image/*" style="display:none">
                     </div>
                 </div>
             </div>

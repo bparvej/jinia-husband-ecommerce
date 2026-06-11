@@ -38,19 +38,16 @@
                                     hx-post="/cart/update/{{ $item->product_id }}"
                                     hx-vals='{"quantity": "{{ $item->quantity - 1 }}"}'
                                     hx-target="#cart-drawer-body"
-                                    hx-include="#csrf-token-cart"
                                     {{ $item->quantity <= 1 ? 'disabled' : '' }}>&minus;</button>
                             <span class="qty-val">{{ $item->quantity }}</span>
                             <button class="qty-btn"
                                     hx-post="/cart/update/{{ $item->product_id }}"
                                     hx-vals='{"quantity": "{{ $item->quantity + 1 }}"}'
-                                    hx-target="#cart-drawer-body"
-                                    hx-include="#csrf-token-cart">+</button>
+                                    hx-target="#cart-drawer-body">+</button>
                         </div>
                         <button class="cart-item-remove"
                                 hx-post="/cart/remove/{{ $item->product_id }}"
                                 hx-target="#cart-drawer-body"
-                                hx-include="#csrf-token-cart"
                                 aria-label="Remove item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                         </button>
@@ -81,7 +78,6 @@
 
         <form hx-post="/checkout" hx-target="#cart-drawer-body" hx-indicator="#checkout-indicator" id="checkout-form">
             @csrf
-            <input type="hidden" id="csrf-token-cart" name="_token" value="{{ csrf_token() }}">
 
             <div class="form-group">
                 <label for="shipping_name">Full Name *</label>

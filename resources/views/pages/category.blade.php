@@ -167,6 +167,5 @@
 
 @include('partials.footer')
 
-<input type="hidden" id="csrf-token-home" name="_token" value="{{ csrf_token() }}">
 @include('partials.cart-drawer')
 @endsection
