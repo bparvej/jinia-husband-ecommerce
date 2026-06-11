@@ -14,6 +14,7 @@ use App\Http\Controllers\ProductController;
 
 // Storefront
 Route::get('/', [StorefrontController::class, 'home'])->name('home');
+Route::get('/category/{slug}', [StorefrontController::class, 'category'])->name('category');
 Route::get('/cart/drawer', [StorefrontController::class, 'getCartDrawer'])->name('cart.drawer');
 Route::post('/cart/add', [StorefrontController::class, 'addToCart'])->name('cart.add');
 Route::post('/cart/update/{productId}', [StorefrontController::class, 'updateCartQuantity'])->name('cart.update');

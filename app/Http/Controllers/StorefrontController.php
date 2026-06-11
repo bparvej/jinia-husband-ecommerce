@@ -35,6 +35,24 @@ class StorefrontController extends Controller
         ]);
     }
 
+    public function category($slug)
+    {
+        $category = Category::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $categories = Category::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+
+        $products = Product::where('is_active', true)
+            ->where('category_id', $category->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+
+        return view('pages.category', [
+            'title' => $category->name . ' — HomeI Cozy Living',
+            'category' => $category,
+            'categories' => $categories,
+            'products' => $products,
+        ]);
+    }
+
     public function getCartDrawer(Request $request)
     {
         $cartData = $this->getCartData($request);
