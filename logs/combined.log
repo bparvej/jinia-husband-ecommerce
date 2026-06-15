@@ -1,0 +1,364 @@
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 18:34:10"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 18:34:10"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 18:34:10"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 18:34:10"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 18:34:10"}
+{"error":"relation \"products\" does not exist","level":"error","message":"Homepage error","service":"homei-ecommerce","timestamp":"2026-05-08 18:34:48"}
+{"email":"admin@homei.com","error":"relation \"users\" does not exist","level":"warn","message":"Login failed","service":"homei-ecommerce","timestamp":"2026-05-08 18:35:13"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 18:39:48"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 18:39:48"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 18:39:48"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 18:39:48"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 18:39:48"}
+{"error":"relation \"products\" does not exist","level":"error","message":"Homepage error","service":"homei-ecommerce","timestamp":"2026-05-08 18:39:51"}
+{"error":"relation \"products\" does not exist","level":"error","message":"Homepage error","service":"homei-ecommerce","timestamp":"2026-05-08 18:39:54"}
+{"email":"admin@homei.com","error":"relation \"users\" does not exist","level":"warn","message":"Login failed","service":"homei-ecommerce","timestamp":"2026-05-08 18:40:06"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 18:45:41"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 18:45:41"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 18:45:41"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 18:45:41"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 18:45:41"}
+{"error":"relation \"products\" does not exist","level":"error","message":"Homepage error","service":"homei-ecommerce","timestamp":"2026-05-08 18:45:43"}
+{"email":"admin@homei.com","error":"relation \"users\" does not exist","level":"warn","message":"Login failed","service":"homei-ecommerce","timestamp":"2026-05-08 18:45:53"}
+{"email":"admin@homei.com","error":"relation \"users\" does not exist","level":"warn","message":"Login failed","service":"homei-ecommerce","timestamp":"2026-05-08 18:46:11"}
+{"email":"admin@homei.com","error":"relation \"users\" does not exist","level":"warn","message":"Login failed","service":"homei-ecommerce","timestamp":"2026-05-08 18:46:22"}
+{"error":"relation \"products\" does not exist","level":"error","message":"Homepage error","service":"homei-ecommerce","timestamp":"2026-05-08 18:48:01"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 18:55:54"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 18:55:54"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 18:55:54"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 18:55:54"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 18:55:54"}
+{"error":"relation \"products\" does not exist","level":"error","message":"Homepage error","service":"homei-ecommerce","timestamp":"2026-05-08 18:57:07"}
+{"email":"admin@homei.com","error":"relation \"users\" does not exist","level":"warn","message":"Login failed","service":"homei-ecommerce","timestamp":"2026-05-08 18:57:14"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 19:16:41"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 19:16:41"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 19:16:41"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 19:16:41"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 19:16:41"}
+{"error":"relation \"products\" does not exist","level":"error","message":"Homepage error","service":"homei-ecommerce","timestamp":"2026-05-08 19:16:47"}
+{"email":"admin@homei.com","error":"relation \"users\" does not exist","level":"warn","message":"Login failed","service":"homei-ecommerce","timestamp":"2026-05-08 19:16:55"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 19:24:44"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 19:24:44"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 19:24:44"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 19:24:44"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 19:24:44"}
+{"error":"relation \"products\" does not exist","level":"error","message":"Homepage error","service":"homei-ecommerce","timestamp":"2026-05-08 19:24:44"}
+{"email":"admin@homei.com","error":"relation \"users\" does not exist","level":"warn","message":"Login failed","service":"homei-ecommerce","timestamp":"2026-05-08 19:24:51"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 19:40:46"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 19:40:46"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 19:40:46"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 19:40:46"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 19:40:46"}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-08 19:41:41","userId":1}
+{"level":"info","message":"User logged out","service":"homei-ecommerce","timestamp":"2026-05-08 19:44:38","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 19:55:20"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 19:55:20"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 19:55:20"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 19:55:20"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 19:55:20"}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-08 19:56:23","userId":1}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-08 20:06:13","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:23"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:23"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:23"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:23"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:23"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:41"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:41"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:41"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:41"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:13:41"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:15:00"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:15:00"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:15:00"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:15:00"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:15:00"}
+{"ip":"192.168.65.1","level":"error","message":"Unhandled error /app/views/admin/users/index.ejs:36\n    34| \n    35| <div id=\"user-table-container\" class=\"user-card\">\n >> 36|     <%- include('./partials/user-table') %>\n    37| </div>\n    38| \n    39| <!-- User Modal -->\n\n/app/views/admin/users/partials/user-table.ejs:71\n    69| </table>\n    70| \n >> 71| <%- include('../../partials/pagination', { baseUrl: '/admin/users', targetContainer: '#user-table-container' }) %>\n    72| \n\nCould not find the include file \"../../partials/pagination\"","method":"GET","service":"homei-ecommerce","stack":"Error: /app/views/admin/users/index.ejs:36\n    34| \n    35| <div id=\"user-table-container\" class=\"user-card\">\n >> 36|     <%- include('./partials/user-table') %>\n    37| </div>\n    38| \n    39| <!-- User Modal -->\n\n/app/views/admin/users/partials/user-table.ejs:71\n    69| </table>\n    70| \n >> 71| <%- include('../../partials/pagination', { baseUrl: '/admin/users', targetContainer: '#user-table-container' }) %>\n    72| \n\nCould not find the include file \"../../partials/pagination\"\n    at getIncludePath (/app/node_modules/ejs/lib/ejs.js:185:13)\n    at includeFile (/app/node_modules/ejs/lib/ejs.js:311:19)\n    at include (/app/node_modules/ejs/lib/ejs.js:701:16)\n    at eval (\"/app/views/admin/users/partials/user-table.ejs\":69:17)\n    at user-table (/app/node_modules/ejs/lib/ejs.js:703:17)\n    at include (/app/node_modules/ejs/lib/ejs.js:701:39)\n    at eval (\"/app/views/admin/users/index.ejs\":28:17)\n    at index (/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/app/node_modules/ejs/lib/ejs.js:491:10)","timestamp":"2026-05-08 20:17:09","url":"/admin/users","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:23:00"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:23:00"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:23:00"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:23:00"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:23:00"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:27:30"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:27:30"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:27:30"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:27:30"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:27:30"}
+{"ip":"192.168.65.1","level":"error","message":"Unhandled error /app/views/admin/users/index.ejs:36\n    34| \n    35| <div id=\"user-table-container\" class=\"user-card\">\n >> 36|     <%- include('./partials/user-table') %>\n    37| </div>\n    38| \n    39| <!-- User Modal -->\n\n/app/views/admin/users/partials/user-table.ejs:74\n    72| \n    73| \n >> 74| <%- include('../../partials/pagination', { baseUrl: '/admin/users', targetContainer: '#user-table-container' }) %>\n    75| \n\nCould not find the include file \"../../partials/pagination\"","method":"GET","service":"homei-ecommerce","stack":"Error: /app/views/admin/users/index.ejs:36\n    34| \n    35| <div id=\"user-table-container\" class=\"user-card\">\n >> 36|     <%- include('./partials/user-table') %>\n    37| </div>\n    38| \n    39| <!-- User Modal -->\n\n/app/views/admin/users/partials/user-table.ejs:74\n    72| \n    73| \n >> 74| <%- include('../../partials/pagination', { baseUrl: '/admin/users', targetContainer: '#user-table-container' }) %>\n    75| \n\nCould not find the include file \"../../partials/pagination\"\n    at getIncludePath (/app/node_modules/ejs/lib/ejs.js:185:13)\n    at includeFile (/app/node_modules/ejs/lib/ejs.js:311:19)\n    at include (/app/node_modules/ejs/lib/ejs.js:701:16)\n    at eval (\"/app/views/admin/users/partials/user-table.ejs\":69:17)\n    at user-table (/app/node_modules/ejs/lib/ejs.js:703:17)\n    at include (/app/node_modules/ejs/lib/ejs.js:701:39)\n    at eval (\"/app/views/admin/users/index.ejs\":28:17)\n    at index (/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/app/node_modules/ejs/lib/ejs.js:491:10)","timestamp":"2026-05-08 20:29:21","url":"/admin/users","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:11"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:11"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:11"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:11"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:11"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:37"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:37"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:37"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:37"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:37"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:53"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:53"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:53"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:53"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:35:53"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:00"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:00"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:00"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:00"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:00"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:08"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:08"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:08"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:08"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:08"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:14"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:14"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:14"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:14"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:14"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:21"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:21"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:22"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:22"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:22"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:30"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:31"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:31"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:31"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:36:31"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:39:06"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:39:06"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:39:06"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:39:06"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:39:06"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:48:18"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:48:18"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:48:19"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:48:19"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:48:19"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 20:54:10"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 20:54:10"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 20:54:10"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 20:54:10"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 20:54:11"}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-08 20:55:12","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 22:05:24"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 22:05:24"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 22:05:24"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 22:05:24"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 22:05:24"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-08 22:07:06"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-08 22:07:06"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-08 22:07:06"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-08 22:07:06"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-08 22:07:06"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 10:01:00"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 10:01:00"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-09 10:01:00"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-09 10:01:00"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 10:01:00"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:36"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:36"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:36"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:36"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:36"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:56"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:56"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:56"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:56"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 10:14:56"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 10:19:12"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 10:19:12"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-09 10:19:12"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-09 10:19:12"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 10:19:12"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:34"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:34"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:34"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:34"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:34"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:48"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:48"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:48"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:48"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 10:22:48"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 10:24:02"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 10:24:02"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-09 10:24:02"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-09 10:24:02"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 10:24:02"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 10:59:05"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 10:59:05"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 10:59:05"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 10:59:05"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:05:01"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:05:01"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 11:05:01"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 11:05:01"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:13:37"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:13:37"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 11:13:37"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 11:13:37"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:25:03"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:25:03"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 11:25:03"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 11:25:03"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:25:18"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:25:18"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 11:25:18"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 11:25:18"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:36:46"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:36:46"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 11:36:46"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 11:36:46"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:42:32"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:42:32"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 11:42:32"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 11:42:32"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:45:51"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:45:51"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 11:45:51"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 11:45:51"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:49:24"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:49:24"}
+{"level":"info","message":"🚀 Homei Ecommerce server running on port 3000","service":"homei-ecommerce","timestamp":"2026-05-09 11:49:24"}
+{"level":"info","message":"🔑 Default Admin: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-09 11:49:24"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:52:25"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:52:25"}
+{"level":"info","message":"🚀 Server listening on 0.0.0.0:3000 (Render Policy Compliant)","service":"homei-ecommerce","timestamp":"2026-05-09 11:52:25"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 11:58:19"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 11:58:19"}
+{"level":"info","message":"🚀 Server listening on 0.0.0.0:3000 (Render Policy Compliant)","service":"homei-ecommerce","timestamp":"2026-05-09 11:58:19"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 12:02:46"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 12:02:46"}
+{"level":"info","message":"🚀 Server listening on 0.0.0.0:3000 (Render Policy Compliant)","service":"homei-ecommerce","timestamp":"2026-05-09 12:02:46"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 12:06:18"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 12:06:18"}
+{"level":"info","message":"🚀 Server listening on 0.0.0.0:3000 (Render Policy Compliant)","service":"homei-ecommerce","timestamp":"2026-05-09 12:06:18"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 15:53:55"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-09 15:53:55"}
+{"level":"info","message":"🚀 Server listening on 0.0.0.0:3000 (Render Policy Compliant)","service":"homei-ecommerce","timestamp":"2026-05-09 15:53:55"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 16:34:44"}
+{"level":"info","message":"🚀 Server listening on 0.0.0.0:3000 (Render Policy Compliant)","service":"homei-ecommerce","timestamp":"2026-05-09 16:34:44"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 16:40:18"}
+{"level":"info","message":"🚀 Server listening on 0.0.0.0:3000 (Render Policy Compliant)","service":"homei-ecommerce","timestamp":"2026-05-09 16:40:18"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-09 17:01:51"}
+{"level":"info","message":"🚀 Server listening on 0.0.0.0:3000 (Render Policy Compliant)","service":"homei-ecommerce","timestamp":"2026-05-09 17:01:51"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-10 15:28:34"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-10 15:28:34"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-10 15:28:34"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-10 15:28:34"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-10 15:28:34"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-10 15:31:03"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-10 15:31:03"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-10 15:31:03"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-10 15:31:03"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-10 15:31:03"}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-10 15:31:42","userId":1}
+{"level":"info","message":"User logged out","service":"homei-ecommerce","timestamp":"2026-05-10 15:37:11","userId":1}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-10 15:41:22","userId":1}
+{"level":"info","message":"Product updated","productId":"1","service":"homei-ecommerce","timestamp":"2026-05-10 15:43:43"}
+{"level":"info","message":"User logged out","service":"homei-ecommerce","timestamp":"2026-05-10 15:53:45","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-10 15:57:15"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-10 15:57:15"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-10 15:57:15"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-10 15:57:15"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-10 15:57:15"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-10 15:59:46"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-10 15:59:46"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-10 15:59:46"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-10 15:59:46"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-10 15:59:46"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:31:10"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:31:10"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:31:10"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:31:10"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:31:10"}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-19 16:33:49","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:39:18"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:39:18"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:39:18"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:39:18"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:39:18"}
+{"level":"info","message":"User logged out","service":"homei-ecommerce","timestamp":"2026-05-19 16:41:23","userId":1}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-19 16:41:36","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:04"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:04"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:04"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:04"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:04"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:14"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:14"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:14"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:14"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:14"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:18"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:18"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:18"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:18"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:50:18"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:17"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:17"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:17"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:17"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:17"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:35"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:35"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:35"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:35"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:35"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:42"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:42"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:42"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:42"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:42"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:45"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:45"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:45"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:45"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 16:51:45"}
+{"level":"info","message":"User logged in: admin@homei.com","role":"super_admin","service":"homei-ecommerce","timestamp":"2026-05-19 17:14:09","userId":1}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 17:15:35"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 17:15:35"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 17:15:35"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 17:15:35"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 17:15:35"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:37"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:37"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:37"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:37"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:37"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:51"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:51"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:51"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:51"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 17:20:51"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:11"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:11"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:11"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:11"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:11"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:36"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:36"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:36"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:36"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 17:21:36"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-19 17:22:00"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-19 17:22:00"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-19 17:22:00"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-19 17:22:00"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-19 17:22:00"}
+{"level":"info","message":"Order created","orderId":4,"orderNumber":"HI-202654443695","service":"homei-ecommerce","timestamp":"2026-05-19 17:28:25","total":28000}
+{"level":"info","message":"Order created","orderId":5,"orderNumber":"HI-202630761737","service":"homei-ecommerce","timestamp":"2026-05-19 17:41:13","total":8500}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-21 12:39:32"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-21 12:39:32"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-21 12:39:32"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-21 12:39:32"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-21 12:39:32"}
+{"level":"info","message":"✅ Database connection established","service":"homei-ecommerce","timestamp":"2026-05-21 16:10:42"}
+{"level":"info","message":"📦 Using Sequelize migrations for database schema","service":"homei-ecommerce","timestamp":"2026-05-21 16:10:42"}
+{"level":"info","message":"🚀 HomeI Ecommerce server running on http://localhost:3000","service":"homei-ecommerce","timestamp":"2026-05-21 16:10:42"}
+{"level":"info","message":"📋 Admin panel: http://localhost:3000/admin/dashboard","service":"homei-ecommerce","timestamp":"2026-05-21 16:10:42"}
+{"level":"info","message":"🔑 Login: admin@homei.com / Admin@123","service":"homei-ecommerce","timestamp":"2026-05-21 16:10:42"}
+{"error":"","level":"error","message":"❌ Failed to start server","service":"homei-ecommerce","stack":"SequelizeConnectionRefusedError\n    at ConnectionManager.connect (/Users/mac/Documents/parvej/jinia-husband-ecommerce/node_modules/sequelize/lib/dialects/mysql/connection-manager.js:92:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async ConnectionManager._connect (/Users/mac/Documents/parvej/jinia-husband-ecommerce/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:222:24)\n    at async /Users/mac/Documents/parvej/jinia-husband-ecommerce/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:174:32\n    at async ConnectionManager.getConnection (/Users/mac/Documents/parvej/jinia-husband-ecommerce/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:197:7)\n    at async /Users/mac/Documents/parvej/jinia-husband-ecommerce/node_modules/sequelize/lib/sequelize.js:305:26\n    at async Sequelize.authenticate (/Users/mac/Documents/parvej/jinia-husband-ecommerce/node_modules/sequelize/lib/sequelize.js:457:5)\n    at async start (/Users/mac/Documents/parvej/jinia-husband-ecommerce/src/server.js:10:5)","timestamp":"2026-05-22 21:50:38"}
+{"level":"error","message":"❌ Connection Refused: Could not connect to MySQL at localhost:3306.","service":"homei-ecommerce","timestamp":"2026-05-22 21:54:13"}
+{"level":"error","message":"❌ Connection Refused: Could not connect to MySQL at localhost:3306.","service":"homei-ecommerce","timestamp":"2026-05-22 21:54:53"}
