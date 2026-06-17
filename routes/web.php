@@ -55,4 +55,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     // Reports
     Route::get('/reports', [AdminController::class, 'adminReports'])->name('admin.reports.index');
+
+    // Resources
+    Route::get('/resources/features', [AdminController::class, 'features'])->name('admin.resources.features');
+    Route::get('/resources/brochure', [AdminController::class, 'brochure'])->name('admin.resources.brochure');
+    Route::get('/resources/guide', [AdminController::class, 'adminGuide'])->name('admin.resources.guide');
 });

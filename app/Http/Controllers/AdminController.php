@@ -354,4 +354,113 @@ class AdminController extends Controller
             'range' => $range
         ]);
     }
+
+    // --- Resources: Feature List ---
+    public function features()
+    {
+        $content = file_get_contents(base_path('feature.md'));
+        $lines = explode("\n", $content);
+        $html = '';
+        $inList = false;
+        $inTable = false;
+        $inCode = false;
+        $listType = '';
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+
+            // Code block
+            if (str_starts_with($trimmed, '```')) {
+                if ($inCode) { $html .= "</pre>\n"; $inCode = false; } else { $html .= "<pre class=\"code-block\">"; $inCode = true; }
+                continue;
+            }
+            if ($inCode) { $html .= htmlspecialchars($line) . "\n"; continue; }
+
+            // Close list if not a list item
+            if ($inList && !str_starts_with($trimmed, '- ') && !str_starts_with($trimmed, '* ') && !str_starts_with($trimmed, '1. ')) {
+                $html .= $listType === 'ol' ? "</ol>\n" : "</ul>\n";
+                $inList = false;
+            }
+
+            // Close table
+            if ($inTable && (!str_contains($line, '|') || str_starts_with($trimmed, '---'))) {
+                if (str_starts_with($trimmed, '---')) continue;
+                $html .= "</tbody></table>\n";
+                $inTable = false;
+            }
+
+            // Heading
+            if (str_starts_with($line, '### ')) { $html .= "<h3>" . htmlspecialchars(substr($line, 4)) . "</h3>\n"; }
+            elseif (str_starts_with($line, '## ')) { $html .= "<h2>" . htmlspecialchars(substr($line, 3)) . "</h2>\n"; }
+            elseif (str_starts_with($line, '# ')) { $html .= "<h1>" . htmlspecialchars(substr($line, 2)) . "</h1>\n"; }
+
+            // Table
+            elseif (str_contains($line, '|') && preg_match('/^\|.+\|$/', $trimmed)) {
+                if (!$inTable) {
+                    $html .= "<table><thead><tr>";
+                    $cols = explode('|', trim($trimmed, '|'));
+                    foreach ($cols as $c) $html .= "<th>" . htmlspecialchars(trim($c)) . "</th>";
+                    $html .= "</tr></thead><tbody>\n";
+                    $inTable = true;
+                } else {
+                    $cols = explode('|', trim($trimmed, '|'));
+                    $html .= "<tr>";
+                    foreach ($cols as $c) $html .= "<td>" . htmlspecialchars(trim($c)) . "</td>";
+                    $html .= "</tr>\n";
+                }
+            }
+            // Sep line in table
+            elseif ($inTable && str_starts_with($trimmed, '|---')) { continue; }
+
+            // List item
+            elseif (str_starts_with($trimmed, '- ') || str_starts_with($trimmed, '* ')) {
+                if (!$inList) { $html .= "<ul>\n"; $inList = true; $listType = 'ul'; }
+                $html .= "<li>" . htmlspecialchars(substr($trimmed, 2)) . "</li>\n";
+            }
+            elseif (preg_match('/^\d+\.\s/', $trimmed)) {
+                if (!$inList) { $html .= "<ol>\n"; $inList = true; $listType = 'ol'; }
+                $html .= "<li>" . htmlspecialchars(preg_replace('/^\d+\.\s/', '', $trimmed)) . "</li>\n";
+            }
+
+            // Bold line
+            elseif (str_starts_with($trimmed, '**') && str_ends_with($trimmed, '**')) {
+                $html .= "<p><strong>" . htmlspecialchars(trim($trimmed, '*')) . "</strong></p>\n";
+            }
+
+            // Empty line
+            elseif (empty($trimmed)) { $html .= "<br>\n"; }
+
+            // Paragraph
+            else { $html .= "<p>" . htmlspecialchars($trimmed) . "</p>\n"; }
+        }
+
+        if ($inList) $html .= $listType === 'ol' ? "</ol>\n" : "</ul>\n";
+        if ($inTable) $html .= "</tbody></table>\n";
+        if ($inCode) $html .= "</pre>\n";
+
+        return view('admin.resources.features', [
+            'title' => 'Features — CartLite',
+            'content' => $html
+        ]);
+    }
+
+    // --- Resources: Download Brochure ---
+    public function brochure()
+    {
+        $path = storage_path('app/docs/brochure.pdf');
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="CartLite-Brochure.pdf"',
+        ]);
+    }
+
+    // --- Resources: Download Admin SOP ---
+    public function adminGuide()
+    {
+        $path = storage_path('app/docs/admin-panel-user-guideline-sop.pdf');
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="CartLite-Admin-Guide-SOP.pdf"',
+        ]);
+    }
 }
