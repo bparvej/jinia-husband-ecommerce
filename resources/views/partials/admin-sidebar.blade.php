@@ -102,7 +102,7 @@
                 <span>Feature List</span>
             </a>
 
-            <a href="/admin/resources/brochure" class="sidebar-link {{ request()->is('admin/resources/brochure') ? 'active' : '' }}" target="_blank">
+            <a href="/admin/resources/brochure" class="sidebar-link {{ request()->is('admin/resources/brochure') ? 'active' : '' }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                     <circle cx="8.5" cy="8.5" r="1.5"></circle>
@@ -111,7 +111,7 @@
                 <span>Brochure</span>
             </a>
 
-            <a href="/admin/resources/guide" class="sidebar-link {{ request()->is('admin/resources/guide') ? 'active' : '' }}" target="_blank">
+            <a href="/admin/resources/guide" class="sidebar-link {{ request()->is('admin/resources/guide') ? 'active' : '' }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>

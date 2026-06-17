@@ -444,23 +444,19 @@ class AdminController extends Controller
         ]);
     }
 
-    // --- Resources: Download Brochure ---
+    // --- Resources: Brochure ---
     public function brochure()
     {
-        $path = storage_path('app/docs/brochure.pdf');
-        return response()->file($path, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="CartLite-Brochure.pdf"',
+        return view('admin.resources.brochure', [
+            'title' => 'Brochure — CartLite'
         ]);
     }
 
-    // --- Resources: Download Admin SOP ---
+    // --- Resources: Admin SOP Guide ---
     public function adminGuide()
     {
-        $path = storage_path('app/docs/admin-panel-user-guideline-sop.pdf');
-        return response()->file($path, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="CartLite-Admin-Guide-SOP.pdf"',
+        return view('admin.resources.guide', [
+            'title' => 'Admin Guide SOP — CartLite'
         ]);
     }
 }
