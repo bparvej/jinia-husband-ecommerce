@@ -20,6 +20,9 @@ Route::post('/cart/add', [StorefrontController::class, 'addToCart'])->name('cart
 Route::post('/cart/update/{productId}', [StorefrontController::class, 'updateCartQuantity'])->name('cart.update');
 Route::post('/cart/remove/{productId}', [StorefrontController::class, 'removeFromCart'])->name('cart.remove');
 Route::post('/checkout', [StorefrontController::class, 'checkout'])->name('checkout');
+Route::get('/product/{slug}', [StorefrontController::class, 'productDetail'])->name('product.detail');
+Route::get('/buy/{slug}', [StorefrontController::class, 'quickBuy'])->name('product.buy');
+Route::post('/quick-checkout', [StorefrontController::class, 'quickCheckout'])->name('quick.checkout');
 
 // Auth
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -42,6 +45,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/orders', [AdminController::class, 'adminOrders'])->name('admin.orders.index');
     Route::get('/orders/{id}', [AdminController::class, 'adminOrderDetail'])->name('admin.orders.detail');
     Route::put('/orders/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.status');
+    Route::get('/orders/{id}/invoice', [AdminController::class, 'invoice'])->name('admin.orders.invoice');
 
     // Inventory
     Route::get('/inventory', [AdminController::class, 'adminInventory'])->name('admin.inventory.index');
@@ -51,4 +55,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     // Reports
     Route::get('/reports', [AdminController::class, 'adminReports'])->name('admin.reports.index');
+
+    // Resources
+    Route::get('/resources/features', [AdminController::class, 'features'])->name('admin.resources.features');
+    Route::get('/resources/brochure', [AdminController::class, 'brochure'])->name('admin.resources.brochure');
+    Route::get('/resources/guide', [AdminController::class, 'adminGuide'])->name('admin.resources.guide');
 });

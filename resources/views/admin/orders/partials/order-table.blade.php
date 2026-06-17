@@ -35,9 +35,14 @@
                         <td><span class="status-badge status-{{ $order->status }}">{{ $order->status }}</span></td>
                         <td class="text-muted">{{ \Carbon\Carbon::parse($order->created_at)->format('d M Y') }}</td>
                         <td>
-                            <a href="/admin/orders/{{ $order->id }}" class="action-btn-sm view" title="View Details">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </a>
+                            <div class="action-btns">
+                                <a href="/admin/orders/{{ $order->id }}" class="action-btn-sm view" title="View Details">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                </a>
+                                <a href="/admin/orders/{{ $order->id }}/invoice" class="action-btn-sm save" title="Generate Invoice" target="_blank">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

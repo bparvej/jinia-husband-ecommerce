@@ -123,11 +123,48 @@ class AdminController extends Controller
             'status' => 'required|string'
         ]);
 
-        $order = Order::findOrFail($id);
-        $order->status = $request->input('status');
+        $order = Order::with(['items', 'payment'])->findOrFail($id);
+        $previousStatus = $order->status;
+        $newStatus = $request->input('status');
+        $order->status = $newStatus;
         $order->save();
 
-        Log::info("Order status updated: {$order->order_number} -> {$order->status}");
+        // Handle side effects based on status transitions
+        DB::beginTransaction();
+        try {
+            // Delivered — mark payment as completed
+            if ($newStatus === 'delivered' && $order->payment) {
+                $order->payment->status = 'completed';
+                $order->payment->paid_at = now();
+                $order->payment->save();
+            }
+
+            // Cancelled or Refunded — restore inventory & mark payment refunded
+            if (in_array($newStatus, ['cancelled', 'refunded']) && !in_array($previousStatus, ['cancelled', 'refunded'])) {
+                foreach ($order->items as $item) {
+                    $inventory = Inventory::where('product_id', $item->product_id)->lockForUpdate()->first();
+                    if ($inventory) {
+                        $inventory->quantity += $item->quantity;
+                        $inventory->save();
+                    }
+                    $product = Product::find($item->product_id);
+                    if ($product) {
+                        $product->sold_count = max(0, $product->sold_count - $item->quantity);
+                        $product->save();
+                    }
+                }
+                if ($order->payment) {
+                    $order->payment->status = 'refunded';
+                    $order->payment->save();
+                }
+            }
+
+            DB::commit();
+            Log::info("Order status updated: {$order->order_number} {$previousStatus} -> {$newStatus}");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Order status update side effects failed: " . $e->getMessage());
+        }
 
         if ($request->headers->has('hx-request')) {
             return view('admin.orders.partials.status-badge', [
@@ -136,6 +173,17 @@ class AdminController extends Controller
         }
 
         return redirect("/admin/orders/{$id}");
+    }
+
+    // --- ADMIN: Invoice Generator ---
+    public function invoice($id)
+    {
+        $order = Order::with(['user', 'items.product', 'payment', 'coupon'])->findOrFail($id);
+
+        return view('admin.orders.invoice', [
+            'title' => "Invoice {$order->order_number}",
+            'order' => $order
+        ]);
     }
 
     // --- ADMIN: Inventory Listing ---
@@ -213,7 +261,7 @@ class AdminController extends Controller
         }
 
         // Sales Report
-        $sales = Order::whereNotIn('status', ['cancelled', 'refunded'])
+        $salesData = Order::whereNotIn('status', ['cancelled', 'refunded'])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->selectRaw("DATE(created_at) as date, SUM(total) as revenue, COUNT(id) as orders")
             ->groupByRaw("DATE(created_at)")
@@ -244,13 +292,171 @@ class AdminController extends Controller
             ->groupBy('payments.method')
             ->get();
 
+        // Summary calculations
+        $totalRevenue = $salesData->sum('revenue');
+        $totalOrders = $salesData->sum('orders');
+        $totalProducts = Product::where('is_active', true)->count();
+        $totalCustomers = User::whereHas('role', function($q) {
+            $q->where('name', 'customer');
+        })->count();
+
+        // Average order value
+        $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+
+        // Period-over-period comparison (previous same-length period)
+        $periodLength = $startDate->diffInDays($endDate);
+        $prevStartDate = (clone $startDate)->subDays($periodLength);
+        $prevPeriodRevenue = Order::whereNotIn('status', ['cancelled', 'refunded'])
+            ->whereBetween('created_at', [$prevStartDate, $startDate])
+            ->sum('total');
+        $revenueGrowth = $prevPeriodRevenue > 0
+            ? round((($totalRevenue - $prevPeriodRevenue) / $prevPeriodRevenue) * 100, 1)
+            : 100;
+
+        $sales = (object)[
+            'totalRevenue' => $totalRevenue,
+            'totalOrders' => $totalOrders,
+            'totalProducts' => $totalProducts,
+            'totalCustomers' => $totalCustomers,
+            'avgOrderValue' => $avgOrderValue,
+            'revenueGrowth' => $revenueGrowth,
+        ];
+
+        // Build chart labels & values for the frontend
+        $chartDates = $salesData->pluck('date')->map(fn($d) => \Carbon\Carbon::parse($d)->format('M d'));
+        $chartRevenue = $salesData->pluck('revenue')->map(fn($v) => floatval($v));
+        $chartOrders = $salesData->pluck('orders');
+
+        if ($request->headers->has('hx-request')) {
+            return view('admin.reports.partials.sales-report', [
+                'salesData' => $salesData,
+                'topProducts' => $topProducts,
+                'categorySales' => $categorySales,
+                'paymentSales' => $paymentSales,
+                'sales' => $sales,
+                'chartDates' => $chartDates,
+                'chartRevenue' => $chartRevenue,
+                'chartOrders' => $chartOrders,
+                'range' => $range
+            ]);
+        }
+
         return view('admin.reports.index', [
             'title' => 'Reports — HomeI Admin',
             'sales' => $sales,
+            'salesData' => $salesData,
             'topProducts' => $topProducts,
             'categorySales' => $categorySales,
             'paymentSales' => $paymentSales,
+            'chartDates' => $chartDates,
+            'chartRevenue' => $chartRevenue,
+            'chartOrders' => $chartOrders,
             'range' => $range
+        ]);
+    }
+
+    // --- Resources: Feature List ---
+    public function features()
+    {
+        $content = file_get_contents(base_path('feature.md'));
+        $lines = explode("\n", $content);
+        $html = '';
+        $inList = false;
+        $inTable = false;
+        $inCode = false;
+        $listType = '';
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+
+            // Code block
+            if (str_starts_with($trimmed, '```')) {
+                if ($inCode) { $html .= "</pre>\n"; $inCode = false; } else { $html .= "<pre class=\"code-block\">"; $inCode = true; }
+                continue;
+            }
+            if ($inCode) { $html .= htmlspecialchars($line) . "\n"; continue; }
+
+            // Close list if not a list item
+            if ($inList && !str_starts_with($trimmed, '- ') && !str_starts_with($trimmed, '* ') && !str_starts_with($trimmed, '1. ')) {
+                $html .= $listType === 'ol' ? "</ol>\n" : "</ul>\n";
+                $inList = false;
+            }
+
+            // Close table
+            if ($inTable && (!str_contains($line, '|') || str_starts_with($trimmed, '---'))) {
+                if (str_starts_with($trimmed, '---')) continue;
+                $html .= "</tbody></table>\n";
+                $inTable = false;
+            }
+
+            // Heading
+            if (str_starts_with($line, '### ')) { $html .= "<h3>" . htmlspecialchars(substr($line, 4)) . "</h3>\n"; }
+            elseif (str_starts_with($line, '## ')) { $html .= "<h2>" . htmlspecialchars(substr($line, 3)) . "</h2>\n"; }
+            elseif (str_starts_with($line, '# ')) { $html .= "<h1>" . htmlspecialchars(substr($line, 2)) . "</h1>\n"; }
+
+            // Table
+            elseif (str_contains($line, '|') && preg_match('/^\|.+\|$/', $trimmed)) {
+                if (!$inTable) {
+                    $html .= "<table><thead><tr>";
+                    $cols = explode('|', trim($trimmed, '|'));
+                    foreach ($cols as $c) $html .= "<th>" . htmlspecialchars(trim($c)) . "</th>";
+                    $html .= "</tr></thead><tbody>\n";
+                    $inTable = true;
+                } else {
+                    $cols = explode('|', trim($trimmed, '|'));
+                    $html .= "<tr>";
+                    foreach ($cols as $c) $html .= "<td>" . htmlspecialchars(trim($c)) . "</td>";
+                    $html .= "</tr>\n";
+                }
+            }
+            // Sep line in table
+            elseif ($inTable && str_starts_with($trimmed, '|---')) { continue; }
+
+            // List item
+            elseif (str_starts_with($trimmed, '- ') || str_starts_with($trimmed, '* ')) {
+                if (!$inList) { $html .= "<ul>\n"; $inList = true; $listType = 'ul'; }
+                $html .= "<li>" . htmlspecialchars(substr($trimmed, 2)) . "</li>\n";
+            }
+            elseif (preg_match('/^\d+\.\s/', $trimmed)) {
+                if (!$inList) { $html .= "<ol>\n"; $inList = true; $listType = 'ol'; }
+                $html .= "<li>" . htmlspecialchars(preg_replace('/^\d+\.\s/', '', $trimmed)) . "</li>\n";
+            }
+
+            // Bold line
+            elseif (str_starts_with($trimmed, '**') && str_ends_with($trimmed, '**')) {
+                $html .= "<p><strong>" . htmlspecialchars(trim($trimmed, '*')) . "</strong></p>\n";
+            }
+
+            // Empty line
+            elseif (empty($trimmed)) { $html .= "<br>\n"; }
+
+            // Paragraph
+            else { $html .= "<p>" . htmlspecialchars($trimmed) . "</p>\n"; }
+        }
+
+        if ($inList) $html .= $listType === 'ol' ? "</ol>\n" : "</ul>\n";
+        if ($inTable) $html .= "</tbody></table>\n";
+        if ($inCode) $html .= "</pre>\n";
+
+        return view('admin.resources.features', [
+            'title' => 'Features — CartLite',
+            'content' => $html
+        ]);
+    }
+
+    // --- Resources: Brochure ---
+    public function brochure()
+    {
+        return view('admin.resources.brochure', [
+            'title' => 'Brochure — CartLite'
+        ]);
+    }
+
+    // --- Resources: Admin SOP Guide ---
+    public function adminGuide()
+    {
+        return view('admin.resources.guide', [
+            'title' => 'Admin Guide SOP — CartLite'
         ]);
     }
 }

@@ -14,7 +14,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($sales as $day)
+                        @foreach ($salesData as $day)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($day->date)->format('d M Y') }}</td>
                                 <td>{{ $day->orders }}</td>
