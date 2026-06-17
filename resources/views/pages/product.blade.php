@@ -127,11 +127,7 @@
                         <button class="qty-btn" onclick="changeQty(1)">+</button>
                     </div>
 
-                    <button class="btn btn-primary btn-lg add-to-cart-detail-btn"
-                            hx-post="/cart/add"
-                            hx-vals='{"product_id": "{{ $product->id }}", "quantity": "1"}'
-                            hx-target="#cart-drawer-body"
-                            onclick="syncQty(event)">
+                    <button class="btn btn-primary btn-lg add-to-cart-detail-btn" onclick="addToCartDetail(event)">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                         Add to Cart
                     </button>
@@ -229,6 +225,7 @@
 
 <script>
 let qty = document.getElementById('detail-qty');
+let cartBody = document.getElementById('cart-drawer-body');
 
 function changeQty(delta) {
     let val = parseInt(qty.value) + delta;
@@ -237,11 +234,46 @@ function changeQty(delta) {
     qty.value = val;
 }
 
-function syncQty(e) {
+function addToCartDetail(e) {
+    e.preventDefault();
     let btn = e.currentTarget;
     let q = parseInt(qty.value);
-    btn.setAttribute('hx-vals', JSON.stringify({"product_id": "{{ $product->id }}", "quantity": q}));
-    htmx.trigger(btn, 'click');
+    let productId = {{ $product->id }};
+    let formData = new FormData();
+    formData.append('product_id', productId);
+    formData.append('quantity', q);
+
+    fetch('/cart/add', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(r => r.text())
+    .then(html => {
+        if (cartBody) cartBody.innerHTML = html;
+        let cartDrawer = document.getElementById('cart-drawer');
+        let cartBackdrop = document.getElementById('cart-drawer-backdrop');
+        if (cartDrawer) cartDrawer.classList.add('active');
+        if (cartBackdrop) cartBackdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        let countEl = document.getElementById('cart-count');
+        if (countEl) {
+            let newCount = parseInt(countEl.textContent || '0') + q;
+            countEl.textContent = newCount;
+        }
+
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Added!';
+        btn.style.background = 'var(--clr-success)';
+        setTimeout(() => {
+            btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Add to Cart';
+            btn.style.background = '';
+        }, 2000);
+    })
+    .catch(err => console.error('Cart add failed:', err));
 }
 
 let mainImg = document.getElementById('main-product-img');

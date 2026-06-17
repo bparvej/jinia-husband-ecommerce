@@ -45,6 +45,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/orders', [AdminController::class, 'adminOrders'])->name('admin.orders.index');
     Route::get('/orders/{id}', [AdminController::class, 'adminOrderDetail'])->name('admin.orders.detail');
     Route::put('/orders/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.status');
+    Route::get('/orders/{id}/invoice', [AdminController::class, 'invoice'])->name('admin.orders.invoice');
 
     // Inventory
     Route::get('/inventory', [AdminController::class, 'adminInventory'])->name('admin.inventory.index');

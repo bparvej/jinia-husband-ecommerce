@@ -325,11 +325,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add to cart buttons visual feedback (HTMX handles logic)
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            // Button feedback
             const originalText = btn.textContent;
             btn.textContent = '✓ Added!';
             btn.style.background = 'var(--clr-success)';
-            
             setTimeout(() => {
                 btn.textContent = originalText;
                 btn.style.background = '';

@@ -1,8 +1,12 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="page-header">
+<div class="page-header" style="display:flex;align-items:center;justify-content:space-between">
     <a href="/admin/orders" class="back-link">← Back to Orders</a>
+    <a href="/admin/orders/{{ $order->id }}/invoice" class="btn-admin btn-primary-admin" target="_blank" title="Generate Invoice">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        Invoice
+    </a>
 </div>
 
 <div class="order-detail-grid">
@@ -72,7 +76,7 @@
         <div class="panel">
             <div class="panel-header"><h3>Update Status</h3></div>
             <div class="panel-body">
-                <form hx-put="/api/v1/orders/{{ $order->id }}/status" hx-target="#order-status-container" hx-swap="innerHTML">
+                <form hx-put="/admin/orders/{{ $order->id }}/status" hx-target="#order-status-container" hx-swap="innerHTML">
                     @csrf
                     <div class="form-group">
                         <select name="status" class="form-select">

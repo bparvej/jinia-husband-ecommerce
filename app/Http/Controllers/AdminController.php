@@ -123,11 +123,48 @@ class AdminController extends Controller
             'status' => 'required|string'
         ]);
 
-        $order = Order::findOrFail($id);
-        $order->status = $request->input('status');
+        $order = Order::with(['items', 'payment'])->findOrFail($id);
+        $previousStatus = $order->status;
+        $newStatus = $request->input('status');
+        $order->status = $newStatus;
         $order->save();
 
-        Log::info("Order status updated: {$order->order_number} -> {$order->status}");
+        // Handle side effects based on status transitions
+        DB::beginTransaction();
+        try {
+            // Delivered — mark payment as completed
+            if ($newStatus === 'delivered' && $order->payment) {
+                $order->payment->status = 'completed';
+                $order->payment->paid_at = now();
+                $order->payment->save();
+            }
+
+            // Cancelled or Refunded — restore inventory & mark payment refunded
+            if (in_array($newStatus, ['cancelled', 'refunded']) && !in_array($previousStatus, ['cancelled', 'refunded'])) {
+                foreach ($order->items as $item) {
+                    $inventory = Inventory::where('product_id', $item->product_id)->lockForUpdate()->first();
+                    if ($inventory) {
+                        $inventory->quantity += $item->quantity;
+                        $inventory->save();
+                    }
+                    $product = Product::find($item->product_id);
+                    if ($product) {
+                        $product->sold_count = max(0, $product->sold_count - $item->quantity);
+                        $product->save();
+                    }
+                }
+                if ($order->payment) {
+                    $order->payment->status = 'refunded';
+                    $order->payment->save();
+                }
+            }
+
+            DB::commit();
+            Log::info("Order status updated: {$order->order_number} {$previousStatus} -> {$newStatus}");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Order status update side effects failed: " . $e->getMessage());
+        }
 
         if ($request->headers->has('hx-request')) {
             return view('admin.orders.partials.status-badge', [
@@ -136,6 +173,17 @@ class AdminController extends Controller
         }
 
         return redirect("/admin/orders/{$id}");
+    }
+
+    // --- ADMIN: Invoice Generator ---
+    public function invoice($id)
+    {
+        $order = Order::with(['user', 'items.product', 'payment', 'coupon'])->findOrFail($id);
+
+        return view('admin.orders.invoice', [
+            'title' => "Invoice {$order->order_number}",
+            'order' => $order
+        ]);
     }
 
     // --- ADMIN: Inventory Listing ---
@@ -213,7 +261,7 @@ class AdminController extends Controller
         }
 
         // Sales Report
-        $sales = Order::whereNotIn('status', ['cancelled', 'refunded'])
+        $salesData = Order::whereNotIn('status', ['cancelled', 'refunded'])
             ->whereBetween('created_at', [$startDate, $endDate])
             ->selectRaw("DATE(created_at) as date, SUM(total) as revenue, COUNT(id) as orders")
             ->groupByRaw("DATE(created_at)")
@@ -244,12 +292,65 @@ class AdminController extends Controller
             ->groupBy('payments.method')
             ->get();
 
+        // Summary calculations
+        $totalRevenue = $salesData->sum('revenue');
+        $totalOrders = $salesData->sum('orders');
+        $totalProducts = Product::where('is_active', true)->count();
+        $totalCustomers = User::whereHas('role', function($q) {
+            $q->where('name', 'customer');
+        })->count();
+
+        // Average order value
+        $avgOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+
+        // Period-over-period comparison (previous same-length period)
+        $periodLength = $startDate->diffInDays($endDate);
+        $prevStartDate = (clone $startDate)->subDays($periodLength);
+        $prevPeriodRevenue = Order::whereNotIn('status', ['cancelled', 'refunded'])
+            ->whereBetween('created_at', [$prevStartDate, $startDate])
+            ->sum('total');
+        $revenueGrowth = $prevPeriodRevenue > 0
+            ? round((($totalRevenue - $prevPeriodRevenue) / $prevPeriodRevenue) * 100, 1)
+            : 100;
+
+        $sales = (object)[
+            'totalRevenue' => $totalRevenue,
+            'totalOrders' => $totalOrders,
+            'totalProducts' => $totalProducts,
+            'totalCustomers' => $totalCustomers,
+            'avgOrderValue' => $avgOrderValue,
+            'revenueGrowth' => $revenueGrowth,
+        ];
+
+        // Build chart labels & values for the frontend
+        $chartDates = $salesData->pluck('date')->map(fn($d) => \Carbon\Carbon::parse($d)->format('M d'));
+        $chartRevenue = $salesData->pluck('revenue')->map(fn($v) => floatval($v));
+        $chartOrders = $salesData->pluck('orders');
+
+        if ($request->headers->has('hx-request')) {
+            return view('admin.reports.partials.sales-report', [
+                'salesData' => $salesData,
+                'topProducts' => $topProducts,
+                'categorySales' => $categorySales,
+                'paymentSales' => $paymentSales,
+                'sales' => $sales,
+                'chartDates' => $chartDates,
+                'chartRevenue' => $chartRevenue,
+                'chartOrders' => $chartOrders,
+                'range' => $range
+            ]);
+        }
+
         return view('admin.reports.index', [
             'title' => 'Reports — HomeI Admin',
             'sales' => $sales,
+            'salesData' => $salesData,
             'topProducts' => $topProducts,
             'categorySales' => $categorySales,
             'paymentSales' => $paymentSales,
+            'chartDates' => $chartDates,
+            'chartRevenue' => $chartRevenue,
+            'chartOrders' => $chartOrders,
             'range' => $range
         ]);
     }
