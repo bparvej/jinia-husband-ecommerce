@@ -20,6 +20,9 @@ Route::post('/cart/add', [StorefrontController::class, 'addToCart'])->name('cart
 Route::post('/cart/update/{productId}', [StorefrontController::class, 'updateCartQuantity'])->name('cart.update');
 Route::post('/cart/remove/{productId}', [StorefrontController::class, 'removeFromCart'])->name('cart.remove');
 Route::post('/checkout', [StorefrontController::class, 'checkout'])->name('checkout');
+Route::get('/product/{slug}', [StorefrontController::class, 'productDetail'])->name('product.detail');
+Route::get('/buy/{slug}', [StorefrontController::class, 'quickBuy'])->name('product.buy');
+Route::post('/quick-checkout', [StorefrontController::class, 'quickCheckout'])->name('quick.checkout');
 
 // Auth
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

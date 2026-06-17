@@ -303,6 +303,158 @@ class StorefrontController extends Controller
         }
     }
 
+    // --- Product Detail Page ---
+    public function productDetail($slug)
+    {
+        $product = Product::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $categories = Category::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+
+        $relatedProducts = Product::where('is_active', true)
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
+        $images = [$product->image];
+        if ($product->images && is_array($product->images)) {
+            $images = array_merge($images, $product->images);
+        }
+
+        return view('pages.product', [
+            'title' => $product->name . ' — HomeI Cozy Living',
+            'product' => $product,
+            'categories' => $categories,
+            'relatedProducts' => $relatedProducts,
+            'images' => $images
+        ]);
+    }
+
+    // --- Quick Buy / Checkout Page (for digital marketing) ---
+    public function quickBuy($slug)
+    {
+        $product = Product::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $categories = Category::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+
+        return view('pages.checkout', [
+            'title' => 'Buy ' . $product->name . ' — HomeI Cozy Living',
+            'product' => $product,
+            'categories' => $categories
+        ]);
+    }
+
+    // --- Quick Checkout (direct product order from /buy/{slug}) ---
+    public function quickCheckout(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'shipping_name' => 'required|string|max:100',
+            'shipping_phone' => 'required|string|max:20',
+            'shipping_address' => 'required|string',
+            'shipping_city' => 'required|string|max:100',
+            'payment_method' => 'required|string'
+        ]);
+
+        $product = Product::findOrFail($request->input('product_id'));
+        $quantity = intval($request->input('quantity', 1));
+
+        DB::beginTransaction();
+
+        try {
+            $userId = Auth::id();
+
+            if (!$userId) {
+                $shippingPhone = $request->input('shipping_phone');
+                $user = User::where('phone', $shippingPhone)->first();
+
+                if (!$user) {
+                    $cleanPhone = preg_replace('/\s+/', '', $shippingPhone);
+                    $guestEmail = "guest_{$cleanPhone}@homei.com.bd";
+                    $user = User::where('email', $guestEmail)->first();
+
+                    if (!$user) {
+                        $role = Role::where('name', 'customer')->first();
+                        $roleId = $role ? $role->id : 4;
+                        $dummyPassword = Hash::make('Guest@' . Str::random(6) . '2026');
+
+                        $user = User::create([
+                            'name' => $request->input('shipping_name'),
+                            'email' => $guestEmail,
+                            'password' => $dummyPassword,
+                            'phone' => $shippingPhone,
+                            'role_id' => $roleId,
+                            'is_active' => true
+                        ]);
+                    }
+                }
+                $userId = $user->id;
+            }
+
+            $product = Product::lockForUpdate()->find($product->id);
+            $inventory = Inventory::where('product_id', $product->id)->lockForUpdate()->first();
+
+            if (!$inventory || $inventory->quantity < $quantity) {
+                throw new \Exception("Insufficient stock for " . $product->name);
+            }
+
+            $inventory->quantity -= $quantity;
+            $inventory->save();
+
+            $product->sold_count += $quantity;
+            $product->save();
+
+            $itemTotal = floatval($product->price) * $quantity;
+            $subtotal = $itemTotal;
+            $shippingCost = $subtotal >= 5000 ? 0 : 200;
+            $total = $subtotal + $shippingCost;
+
+            $orderNumber = 'HI-' . date('Ymd') . '-' . strtoupper(Str::random(6));
+
+            $order = Order::create([
+                'order_number' => $orderNumber,
+                'user_id' => $userId,
+                'status' => 'pending',
+                'subtotal' => $subtotal,
+                'shipping_cost' => $shippingCost,
+                'total' => $total,
+                'shipping_name' => $request->input('shipping_name'),
+                'shipping_phone' => $request->input('shipping_phone'),
+                'shipping_address' => $request->input('shipping_address'),
+                'shipping_city' => $request->input('shipping_city'),
+                'notes' => $request->input('notes')
+            ]);
+
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'quantity' => $quantity,
+                'unit_price' => $product->price,
+                'total_price' => $itemTotal
+            ]);
+
+            Payment::create([
+                'order_id' => $order->id,
+                'method' => $request->input('payment_method'),
+                'status' => 'pending',
+                'amount' => $total
+            ]);
+
+            DB::commit();
+
+            Log::info("Quick order placed successfully: " . $order->order_number);
+
+            return view('partials.checkout-success', [
+                'order' => $order
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Quick checkout failed: " . $e->getMessage());
+            return response('<div class="toast toast-error">Checkout failed: ' . $e->getMessage() . '</div>', 400);
+        }
+    }
+
     // --- Helper to aggregate session & DB cart ---
     private function getCartData(Request $request)
     {

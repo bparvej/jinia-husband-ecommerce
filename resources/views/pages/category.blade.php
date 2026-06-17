@@ -87,7 +87,9 @@
             @foreach ($products as $product)
             <div class="product-card" data-category="{{ $product->category ? $product->category->slug : 'all' }}">
                 <div class="product-image">
-                    <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" loading="lazy">
+                    <a href="/product/{{ $product->slug }}">
+                        <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" loading="lazy">
+                    </a>
                     @if ($product->badge)
                     <div class="product-badges">
                         <span class="badge badge-{{ str_replace(' ', '-', strtolower($product->badge)) === 'best-seller' ? 'hot' : strtolower($product->badge) }}">{{ $product->badge }}</span>
@@ -109,7 +111,7 @@
                 </div>
                 <div class="product-info">
                     <span class="product-category">{{ $product->category ? $product->category->name : '' }}</span>
-                    <h3 class="product-name">{{ $product->name }}</h3>
+                    <h3 class="product-name"><a href="/product/{{ $product->slug }}">{{ $product->name }}</a></h3>
                     <div class="product-rating">
                         <div class="stars">
                             @for ($s = 0; $s < round($product->avg_rating ?? 0); $s++)<span>★</span>@endfor
