@@ -5,6 +5,7 @@ use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,14 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     // Reports
     Route::get('/reports', [AdminController::class, 'adminReports'])->name('admin.reports.index');
+
+    // Categories
+    Route::get('/categories', [CategoryController::class, 'adminIndex'])->name('admin.categories.index');
+    Route::get('/categories/create', [CategoryController::class, 'adminCreate'])->name('admin.categories.create');
+    Route::post('/categories', [CategoryController::class, 'adminStore'])->name('admin.categories.store');
+    Route::get('/categories/{id}/edit', [CategoryController::class, 'adminEdit'])->name('admin.categories.edit');
+    Route::put('/categories/{id}', [CategoryController::class, 'adminUpdate'])->name('admin.categories.update');
+    Route::delete('/categories/{id}', [CategoryController::class, 'adminDelete'])->name('admin.categories.delete');
 
     // Resources
     Route::get('/resources/features', [AdminController::class, 'features'])->name('admin.resources.features');

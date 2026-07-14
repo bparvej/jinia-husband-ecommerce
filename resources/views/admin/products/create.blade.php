@@ -118,7 +118,7 @@
             </div>
 
             <div class="panel">
-                <div class="panel-header"><h3>Product Image</h3></div>
+                <div class="panel-header"><h3>Main Image</h3></div>
                 <div class="panel-body">
                     <div class="form-group" x-data="{ preview: null }">
                         <div class="image-upload" @click="$refs.fileInput.click()">
@@ -128,13 +128,41 @@
                             <template x-if="!preview">
                                 <div class="upload-placeholder">
                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                                    <span>Click to upload image</span>
+                                    <span>Click to upload main image</span>
                                     <small>JPEG, PNG, WebP (max 5MB)</small>
                                 </div>
                             </template>
                         </div>
                         <input type="file" name="image_file" x-ref="fileInput" accept="image/*" style="display:none"
                             @change="preview = URL.createObjectURL($event.target.files[0])">
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><h3>Gallery Images</h3></div>
+                <div class="panel-body">
+                    <div class="form-group" x-data="{ previews: [] }">
+                        <div class="gallery-upload">
+                            <div class="gallery-thumbs" x-show="previews.length">
+                                <template x-for="(src, i) in previews" :key="i">
+                                    <div class="gallery-thumb">
+                                        <img :src="src" alt="Gallery preview">
+                                        <button type="button" class="gallery-remove"
+                                            @click="previews = previews.filter((_, idx) => idx !== i); $refs.fileInput.files = null">&times;</button>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="image-upload" @click="$refs.fileInput.click()">
+                                <div class="upload-placeholder upload-placeholder-sm">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                    <span>Add gallery images</span>
+                                    <small>Select multiple images</small>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="file" name="gallery_images[]" x-ref="fileInput" accept="image/*" multiple style="display:none"
+                            @change="previews = Array.from($event.target.files).map(f => URL.createObjectURL(f))">
                     </div>
                 </div>
             </div>
