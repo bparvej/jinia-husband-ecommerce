@@ -111,6 +111,17 @@ class ProductController extends Controller
                 $productData['image'] = '/uploads/products/' . $filename;
             }
 
+            // Gallery images upload
+            $galleryImages = [];
+            if ($request->hasFile('gallery_images')) {
+                foreach ($request->file('gallery_images') as $file) {
+                    $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('uploads/products/gallery'), $filename);
+                    $galleryImages[] = '/uploads/products/gallery/' . $filename;
+                }
+            }
+            $productData['images'] = $galleryImages;
+
             $product = Product::create($productData);
 
             // Create inventory entry
@@ -188,6 +199,25 @@ class ProductController extends Controller
                 $file->move(public_path('uploads/products'), $filename);
                 $productData['image'] = '/uploads/products/' . $filename;
             }
+
+            // Gallery images handling
+            $existingImages = [];
+            if ($request->input('existing_images')) {
+                $existingImages = json_decode($request->input('existing_images'), true);
+                $existingImages = is_array($existingImages) ? $existingImages : [];
+            } else {
+                $existingImages = $product->images ?? [];
+            }
+
+            $newImages = [];
+            if ($request->hasFile('gallery_images')) {
+                foreach ($request->file('gallery_images') as $file) {
+                    $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('uploads/products/gallery'), $filename);
+                    $newImages[] = '/uploads/products/gallery/' . $filename;
+                }
+            }
+            $productData['images'] = array_merge($existingImages, $newImages);
 
             $product->update($productData);
 

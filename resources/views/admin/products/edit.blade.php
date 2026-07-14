@@ -103,7 +103,7 @@
             </div>
 
             <div class="panel">
-                <div class="panel-header"><h3>Product Image</h3></div>
+                <div class="panel-header"><h3>Main Image</h3></div>
                 <div class="panel-body">
                     <div class="form-group" x-data="{ preview: '{{ $product->image ?? '' }}' }">
                         @if ($product->image)
@@ -118,6 +118,44 @@
                             </div>
                         </div>
                         <input type="file" name="image_file" x-ref="fileInput" accept="image/*" style="display:none">
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><h3>Gallery Images</h3></div>
+                <div class="panel-body">
+                    <div class="form-group" x-data="{
+                        existing: {{ json_encode($product->images ?? []) }},
+                        newPreviews: [],
+                        removeIndex: null,
+                        get allExisting() { return this.existing.map((src, i) => ({ src, id: i, isExisting: true })) },
+                        get allNew() { return this.newPreviews.map((src, i) => ({ src, id: i, isExisting: false })) },
+                        removeExisting(i) { this.existing.splice(i, 1); this.$refs.removedInput.value = JSON.stringify(this.existing) }
+                    }">
+                        <div class="gallery-upload">
+                            <template x-if="existing.length || newPreviews.length">
+                                <div class="gallery-thumbs">
+                                    <template x-for="(item, i) in [...allExisting, ...allNew]" :key="item.id">
+                                        <div class="gallery-thumb">
+                                            <img :src="item.src" alt="Gallery image">
+                                            <button type="button" class="gallery-remove"
+                                                @click="item.isExisting ? removeExisting(item.id) : (newPreviews = newPreviews.filter((_, idx) => idx !== item.id))">&times;</button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <div class="image-upload" @click="$refs.fileInput.click()">
+                                <div class="upload-placeholder upload-placeholder-sm">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                    <span>Add gallery images</span>
+                                    <small>Select multiple images</small>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="existing_images" x-ref="removedInput" :value="JSON.stringify(existing)">
+                        <input type="file" name="gallery_images[]" x-ref="fileInput" accept="image/*" multiple style="display:none"
+                            @change="newPreviews = Array.from($event.target.files).map(f => URL.createObjectURL(f))">
                     </div>
                 </div>
             </div>

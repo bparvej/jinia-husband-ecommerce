@@ -89,6 +89,20 @@
         </div>
 
         <div class="nav-section">
+            <span class="nav-section-title">Setup Settings</span>
+
+            <a href="/admin/categories" class="sidebar-link {{ request()->is('admin/categories*') ? 'active' : '' }}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h6v6H4z"></path>
+                    <path d="M14 4h6v6h-6z"></path>
+                    <path d="M4 14h6v6H4z"></path>
+                    <path d="M14 14h6v6h-6z"></path>
+                </svg>
+                <span>Categories</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
             <span class="nav-section-title">Resources</span>
 
             <a href="/admin/resources/features" class="sidebar-link {{ request()->is('admin/resources/features') ? 'active' : '' }}">
