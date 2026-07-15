@@ -77,7 +77,8 @@ class ProductController extends Controller
                 'name' => 'required|string|max:255',
                 'price' => 'required|numeric|min:0',
                 'sku' => 'nullable|string|max:100|unique:products,sku',
-                'image_file' => 'nullable|image|max:2048'
+                'image_file' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
+                'gallery_images.*' => 'nullable|image|mimes:jpeg,png,webp|max:2048'
             ]);
 
             $slug = Str::slug($request->input('name'));
@@ -175,7 +176,8 @@ class ProductController extends Controller
                 'name' => 'required|string|max:255',
                 'price' => 'required|numeric|min:0',
                 'sku' => 'nullable|string|max:100|unique:products,sku,' . $id,
-                'image_file' => 'nullable|image|max:2048'
+                'image_file' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
+                'gallery_images.*' => 'nullable|image|mimes:jpeg,png,webp|max:2048'
             ]);
 
             $productData = [
