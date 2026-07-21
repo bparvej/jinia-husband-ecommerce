@@ -21,7 +21,8 @@
                 <a href="/">Home</a>
                 <a href="/#new-arrivals">New Arrivals</a>
                 <a href="/#categories">Categories</a>
-                <a href="/#about">Our Story</a>
+                <a href="/our-story">Our Story</a>
+                <a href="/about">About Us</a>
             </div>
             <div class="footer-links">
                 <h4>Categories</h4>
@@ -33,10 +34,10 @@
             </div>
             <div class="footer-links">
                 <h4>Customer Service</h4>
-                <a href="#">Track Order</a>
-                <a href="#">Shipping Policy</a>
-                <a href="#">Returns & Exchanges</a>
-                <a href="#">FAQs</a>
+                <a href="/shipping">Shipping Policy</a>
+                <a href="/returns">Returns & Exchanges</a>
+                <a href="/faqs">FAQs</a>
+                <a href="/contact">Contact Us</a>
             </div>
             <div class="footer-contact">
                 <h4>Get in Touch</h4>

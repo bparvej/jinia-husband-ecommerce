@@ -117,7 +117,7 @@
                                 <span>Upload new image</span>
                             </div>
                         </div>
-                        <input type="file" name="image_file" x-ref="fileInput" accept="image/*" style="display:none">
+                        <input type="file" name="image_file" x-ref="fileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
                     </div>
                 </div>
             </div>
@@ -149,12 +149,12 @@
                                 <div class="upload-placeholder upload-placeholder-sm">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                                     <span>Add gallery images</span>
-                                    <small>Select multiple images</small>
+                                    <small>JPEG, PNG, WebP — select multiple</small>
                                 </div>
                             </div>
                         </div>
                         <input type="hidden" name="existing_images" x-ref="removedInput" :value="JSON.stringify(existing)">
-                        <input type="file" name="gallery_images[]" x-ref="fileInput" accept="image/*" multiple style="display:none"
+                        <input type="file" name="gallery_images[]" x-ref="fileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none"
                             @change="newPreviews = Array.from($event.target.files).map(f => URL.createObjectURL(f))">
                     </div>
                 </div>
