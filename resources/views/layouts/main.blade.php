@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="/css/styles.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+    <script src="https://unpkg.com/@alpinejs/collapse@3.14.8/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.body.setAttribute('hx-headers', JSON.stringify({

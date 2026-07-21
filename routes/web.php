@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,14 @@ Route::post('/checkout', [StorefrontController::class, 'checkout'])->name('check
 Route::get('/product/{slug}', [StorefrontController::class, 'productDetail'])->name('product.detail');
 Route::get('/buy/{slug}', [StorefrontController::class, 'quickBuy'])->name('product.buy');
 Route::post('/quick-checkout', [StorefrontController::class, 'quickCheckout'])->name('quick.checkout');
+
+// Info Pages
+Route::get('/about', [PageController::class, 'about'])->name('page.about');
+Route::get('/contact', [PageController::class, 'contact'])->name('page.contact');
+Route::get('/our-story', [PageController::class, 'ourStory'])->name('page.our-story');
+Route::get('/returns', [PageController::class, 'returns'])->name('page.returns');
+Route::get('/shipping', [PageController::class, 'shipping'])->name('page.shipping');
+Route::get('/faqs', [PageController::class, 'faqs'])->name('page.faqs');
 
 // Auth
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
