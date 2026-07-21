@@ -30,7 +30,7 @@
                 </li>
                 <li><a href="#new-arrivals" class="nav-link">New Arrivals</a></li>
                 <li><a href="#best-sellers" class="nav-link">Best Sellers</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="/our-story" class="nav-link">About</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
         </nav>
@@ -83,7 +83,7 @@
         <p class="hero-subtitle">Handcrafted wooden furniture & home décor that brings warmth, style, and soul to every corner of your home.</p>
         <div class="hero-cta">
             <a href="#categories" class="btn btn-primary" id="hero-shop-btn">Explore Collection</a>
-            <a href="#about" class="btn btn-outline" id="hero-about-btn">Our Story</a>
+            <a href="/our-story" class="btn btn-outline" id="hero-about-btn">Our Story</a>
         </div>
         <div class="hero-stats">
             <div class="stat">

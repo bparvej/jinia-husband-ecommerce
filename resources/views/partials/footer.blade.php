@@ -22,7 +22,7 @@
                 <a href="/#new-arrivals">New Arrivals</a>
                 <a href="/#categories">Categories</a>
                 <a href="/our-story">Our Story</a>
-                <a href="/about">About Us</a>
+                <a href="/our-story">Our Story</a>
             </div>
             <div class="footer-links">
                 <h4>Categories</h4>

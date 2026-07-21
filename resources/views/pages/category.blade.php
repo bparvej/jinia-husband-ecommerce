@@ -23,7 +23,7 @@
                 </li>
                 <li><a href="/#new-arrivals" class="nav-link">New Arrivals</a></li>
                 <li><a href="/#best-sellers" class="nav-link">Best Sellers</a></li>
-                <li><a href="/#about" class="nav-link">About</a></li>
+                <li><a href="/our-story" class="nav-link">About</a></li>
             </ul>
         </nav>
 
