@@ -27,11 +27,18 @@ class StorefrontController extends Controller
         $categories = Category::where('is_active', true)->orderBy('sort_order', 'asc')->get();
         $featuredProducts = Product::where('is_active', true)->where('is_featured', true)->take(8)->get();
 
+        $totalProducts = Product::where('is_active', true)->count();
+        $totalOrders = \App\Models\Order::where('status', 'delivered')->count();
+        $avgRating = Product::where('is_active', true)->where('avg_rating', '>', 0)->avg('avg_rating');
+
         return view('pages.home', [
             'title' => 'HomeI — Cozy Living | Wooden & Home Decor Furniture',
             'products' => $products,
             'categories' => $categories,
-            'featuredProducts' => $featuredProducts
+            'featuredProducts' => $featuredProducts,
+            'totalProducts' => $totalProducts,
+            'totalOrders' => $totalOrders,
+            'avgRating' => round($avgRating, 1)
         ]);
     }
 
