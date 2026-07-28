@@ -41,9 +41,9 @@
             </div>
             <div class="footer-contact">
                 <h4>Get in Touch</h4>
-                <p>📍 Dhaka, Bangladesh</p>
-                <p>📞 +880 1XXX-XXXXXX</p>
-                <p>✉️ hello@homei.com.bd</p>
+                <p>📍 Section 11/C, 10/13/16, Mirpur, Dhaka-1216</p>
+                <p>📞 +880 1787656135</p>
+                <p>✉️ homeibd26@gmail.com</p>
             </div>
         </div>
         <div class="footer-bottom">

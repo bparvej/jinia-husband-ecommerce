@@ -54,24 +54,24 @@
                     <div class="contact-info-card">
                         <div class="contact-info-icon">📍</div>
                         <h3>Visit Us</h3>
-                        <p>Dhaka, Bangladesh</p>
+                        <p>Section 11/C, 10/13/16, Mirpur, Dhaka-1216</p>
                     </div>
                     <div class="contact-info-card">
                         <div class="contact-info-icon">📞</div>
                         <h3>Call Us</h3>
-                        <p>+880 1XXX-XXXXXX</p>
+                        <p>+880 1787656135</p>
                         <small>Sat–Thu, 10AM–8PM</small>
                     </div>
                     <div class="contact-info-card">
                         <div class="contact-info-icon">✉️</div>
                         <h3>Email Us</h3>
-                        <p>hello@homei.com.bd</p>
+                        <p>homeibd26@gmail.com</p>
                         <small>We reply within 24 hours</small>
                     </div>
                     <div class="contact-info-card">
                         <div class="contact-info-icon">💬</div>
                         <h3>WhatsApp</h3>
-                        <p>+880 1XXX-XXXXXX</p>
+                        <p>+880 1787656135</p>
                         <small>Quick responses</small>
                     </div>
                 </div>
