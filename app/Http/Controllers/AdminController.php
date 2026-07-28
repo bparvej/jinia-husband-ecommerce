@@ -33,9 +33,10 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-        // 3. Low stock inventory
+// 3. Low stock inventory
         $lowStock = Inventory::with('product')
             ->whereRaw('quantity <= low_stock_threshold')
+            ->whereNotNull('product_id')
             ->get();
 
         // 4. Sales report for last 7 days

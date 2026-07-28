@@ -1,39 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-<header class="header" id="header">
-    <div class="container header-inner">
-        <a href="/" class="logo" id="logo">
-            <span class="logo-text">HOMEI</span>
-            <span class="logo-tagline">Cozy Living</span>
-        </a>
-
-        <nav class="nav" id="main-nav">
-            <ul class="nav-list">
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li class="has-dropdown">
-                    <a href="/#categories" class="nav-link">Shop <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
-                    <div class="dropdown" id="shop-dropdown">
-                        @if (isset($categories))
-                            @foreach ($categories as $cat)
-                            <a href="/category/{{ $cat->slug }}" class="dropdown-link">{{ $cat->name }}</a>
-                            @endforeach
-                        @endif
-                    </div>
-                </li>
-                <li><a href="/#new-arrivals" class="nav-link">New Arrivals</a></li>
-                <li><a href="/#best-sellers" class="nav-link">Best Sellers</a></li>
-            </ul>
-        </nav>
-
-        <div class="header-actions">
-            <button class="icon-btn cart-btn" id="cart-btn" aria-label="Cart">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span class="cart-count" id="cart-count">0</span>
-            </button>
-        </div>
-    </div>
-</header>
+@include('partials.header')
 
 <section class="quick-checkout-page">
     <div class="container">

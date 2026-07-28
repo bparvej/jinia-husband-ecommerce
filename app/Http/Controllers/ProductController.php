@@ -74,11 +74,23 @@ class ProductController extends Controller
     {
         try {
             $request->validate([
-                'name' => 'required|string|max:255',
-                'price' => 'required|numeric|min:0',
-                'sku' => 'nullable|string|max:100|unique:products,sku',
-                'image_file' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
-                'gallery_images.*' => 'nullable|image|mimes:jpeg,png,webp|max:2048'
+                'name' => 'required|string|max:255|regex:/^[\p{L}\s\-.\\'0-9]+$/u|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'slug' => 'nullable|string|max:280|unique:products,slug|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                'description' => 'nullable|string|max:65535|not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i',
+                'short_description' => 'nullable|string|max:500|not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i',
+                'price' => 'required|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
+                'compare_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
+                'cost_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
+                'sku' => 'nullable|string|max:100|unique:products,sku|regex:/^[A-Z0-9\-_]+$/i|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'category_id' => 'nullable|integer|exists:categories,id|not_regex:/^test_/i',
+                'image_file' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200',
+                'gallery_images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500',
+                'badge' => 'nullable|string|max:50|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'is_active' => 'required|boolean',
+                'is_featured' => 'required|boolean',
+                'stock_quantity' => 'required|integer|min:0|max:9999|not_regex:/^test_/i',
+                'low_stock_threshold' => 'required|integer|min:1|max:100|not_regex:/^test_/i',
+                'warehouse_location' => 'nullable|string|max:100|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
             ]);
 
             $slug = Str::slug($request->input('name'));
@@ -89,6 +101,56 @@ class ProductController extends Controller
                 $slug = $originalSlug . '-' . $count++;
             }
 
+            // Server-side validation using product model
+            $validationErrors = $product->validateProductData($request->all(), $operation: 'update');
+            if (!empty($validationErrors)) {
+                $errorMessages = [];
+                foreach ($validationErrors as $field => $errors) {
+                    $errorMessages[] = implode(', ', $errors);
+                }
+                
+                $errorMessage = "Validation failed: " . implode('; ', $errorMessages);
+                
+                Log::warning("Product update validation error: " . $errorMessage . " for product ID: " . $id . ", User ID: " . auth()->id());
+                
+                if ($request->headers->has('hx-request')) {
+                    return response()->json(['errors' => $validationErrors, 'message' => $errorMessage], 422);
+                }
+                
+                $categories = Category::all();
+                return view('admin.products.edit', [
+                    'product' => $product,
+                    'categories' => $categories,
+                    'error' => $errorMessage,
+                    'title' => 'Edit ' . $product->name . ' — HomeI Admin'
+                ]);
+            }
+            
+            // Validate product data on server-side
+            $validationErrors = Product::validateProductData($request->all(), $operation: 'store');
+            if (!empty($validationErrors)) {
+                $errorMessages = [];
+                foreach ($validationErrors as $field => $errors) {
+                    $errorMessages[] = implode(', ', $errors);
+                }
+                
+                $errorMessage = "Validation failed: " . implode('; ', $errorMessages);
+                
+                Log::warning("Product creation validation error: " . $errorMessage . ", User ID: " . auth()->id());
+                
+                if ($request->headers->has('hx-request')) {
+                    return response()->json(['errors' => $validationErrors, 'message' => $errorMessage], 422);
+                }
+                
+                $categories = Category::all();
+                return view('admin.products.create', [
+                    'categories' => $categories,
+                    'product' => (object) $request->all(),
+                    'error' => $errorMessage,
+                    'title' => 'Add Product — HomeI Admin'
+                ]);
+            }
+            
             $productData = [
                 'name' => $request->input('name'),
                 'slug' => $slug,
@@ -173,11 +235,25 @@ class ProductController extends Controller
 
         try {
             $request->validate([
-                'name' => 'required|string|max:255',
-                'price' => 'required|numeric|min:0',
-                'sku' => 'nullable|string|max:100|unique:products,sku,' . $id,
-                'image_file' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
-                'gallery_images.*' => 'nullable|image|mimes:jpeg,png,webp|max:2048'
+                'name' => 'required|string|max:255|regex:/^[\p{L}\s\-.\\'0-9]+$/u|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'slug' => 'nullable|string|max:280|unique:products,slug,' . $id . '|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                'description' => 'nullable|string|max:65535|not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i',
+                'short_description' => 'nullable|string|max:500|not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i',
+                'price' => 'required|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
+                'compare_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
+                'cost_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
+                'sku' => 'nullable|string|max:100|unique:products,sku,' . $id . '|regex:/^[A-Z0-9\-_]+$/i|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'category_id' => 'nullable|integer|exists:categories,id|not_regex:/^test_/i',
+                'image_file' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200',
+                'gallery_images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500',
+                'badge' => 'nullable|string|max:50|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'is_active' => 'required|boolean',
+                'is_featured' => 'required|boolean',
+                'stock_quantity' => 'required|integer|min:0|max:9999',
+                'low_stock_threshold' => 'required|integer|min:1|max:100',
+                'warehouse_location' => 'nullable|string|max:100|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'existing_images' => 'nullable|string',
+                'existing_images.*' => 'nullable|string|max:500',
             ]);
 
             $productData = [

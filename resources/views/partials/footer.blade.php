@@ -6,7 +6,7 @@
                     <span class="logo-text">HOMEI</span>
                     <span class="logo-tagline">Cozy Living</span>
                 </a>
-                <p>Handcrafted wooden furniture and home décor for the modern Bangladeshi home.</p>
+                <p>Handcrafted wooden lamps, shelves and home décor that brings warmth, style, and soul to every corner of your home.</p>
                 <div class="social-links">
                     <a href="#" aria-label="Facebook" class="social-link">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -22,7 +22,6 @@
                 <a href="/#new-arrivals">New Arrivals</a>
                 <a href="/#categories">Categories</a>
                 <a href="/our-story">Our Story</a>
-                <a href="/about">About Us</a>
             </div>
             <div class="footer-links">
                 <h4>Categories</h4>
@@ -41,9 +40,9 @@
             </div>
             <div class="footer-contact">
                 <h4>Get in Touch</h4>
-                <p>📍 Dhaka, Bangladesh</p>
-                <p>📞 +880 1XXX-XXXXXX</p>
-                <p>✉️ hello@homei.com.bd</p>
+                <p>📍 Section 11/C, 10/13/16, Mirpur, Dhaka-1216</p>
+                <p>📞 +880 1787656135</p>
+                <p>✉️ homeibd26@gmail.com</p>
             </div>
         </div>
         <div class="footer-bottom">

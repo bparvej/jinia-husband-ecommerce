@@ -8,69 +8,7 @@
     <button class="announcement-close" id="announcement-close" aria-label="Close announcement">&times;</button>
 </div>
 
-<header class="header" id="header">
-    <div class="container header-inner">
-        <a href="/" class="logo" id="logo">
-            <span class="logo-text">HOMEI</span>
-            <span class="logo-tagline">Cozy Living</span>
-        </a>
-
-        <nav class="nav" id="main-nav">
-            <ul class="nav-list">
-                <li><a href="/" class="nav-link active">Home</a></li>
-                <li class="has-dropdown">
-                    <a href="#categories" class="nav-link">Shop <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
-                    <div class="dropdown" id="shop-dropdown">
-                        @if (isset($categories))
-                            @foreach ($categories as $cat)
-                            <a href="/category/{{ $cat->slug }}" class="dropdown-link">{{ $cat->name }}</a>
-                            @endforeach
-                        @endif
-                    </div>
-                </li>
-                <li><a href="#new-arrivals" class="nav-link">New Arrivals</a></li>
-                <li><a href="#best-sellers" class="nav-link">Best Sellers</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
-        </nav>
-
-        <div class="header-actions">
-            <button class="icon-btn" id="search-btn" aria-label="Search">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            </button>
-            <button class="icon-btn" id="wishlist-btn" aria-label="Wishlist">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            </button>
-            <button class="icon-btn cart-btn" id="cart-btn" aria-label="Cart">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span class="cart-count" id="cart-count">0</span>
-            </button>
-            @auth
-            <a href="{{ auth()->user()->role === 'customer' ? '#' : '/admin/dashboard' }}" class="icon-btn user-btn" aria-label="Account">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </a>
-            @else
-            <a href="/login" class="icon-btn user-btn" id="user-btn" aria-label="Login">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </a>
-            @endauth
-            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
-    </div>
-
-    <div class="search-overlay" id="search-overlay">
-        <div class="container">
-            <div class="search-bar">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input type="text" placeholder="Search for furniture, décor, rooms..." id="search-input" autocomplete="off">
-                <button class="search-close" id="search-close">&times;</button>
-            </div>
-        </div>
-    </div>
-</header>
+@include('partials.header', ['activePage' => 'home'])
 
 <section class="hero" id="hero">
     <div class="hero-bg">
@@ -80,24 +18,24 @@
     <div class="container hero-content">
         <div class="hero-badge">New Collection 2026</div>
         <h1 class="hero-title">Crafted for <br><em>Cozy Living</em></h1>
-        <p class="hero-subtitle">Handcrafted wooden furniture & home décor that brings warmth, style, and soul to every corner of your home.</p>
+        <p class="hero-subtitle">Handcrafted wooden lamps, shelves and home décor that brings warmth, style, and soul to every corner of your home.</p>
         <div class="hero-cta">
             <a href="#categories" class="btn btn-primary" id="hero-shop-btn">Explore Collection</a>
-            <a href="#about" class="btn btn-outline" id="hero-about-btn">Our Story</a>
+            <a href="/our-story" class="btn btn-outline" id="hero-about-btn">Our Story</a>
         </div>
         <div class="hero-stats">
             <div class="stat">
-                <span class="stat-number" data-count="{{ isset($products) ? count($products) * 60 : 500 }}">0</span><span class="stat-suffix">+</span>
+                <span class="stat-number" data-count="{{ $totalProducts ?? 0 }}">100</span><span class="stat-suffix">+</span>
                 <span class="stat-label">Products</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat">
-                <span class="stat-number" data-count="2000">0</span><span class="stat-suffix">+</span>
+                <span class="stat-number" data-count="{{ $totalOrders ?? 0 }}">30</span><span class="stat-suffix">+</span>
                 <span class="stat-label">Happy Homes</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat">
-                <span class="stat-number" data-count="4">0</span><span class="stat-suffix">.9★</span>
+                <span class="stat-number" data-count="{{ $avgRating ?? 0 }}">8</span><span class="stat-suffix">★</span>
                 <span class="stat-label">Avg Rating</span>
             </div>
         </div>
@@ -308,7 +246,7 @@
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 
-<a href="https://wa.me/880" target="_blank" rel="noopener" class="whatsapp-float" id="whatsapp-float" aria-label="Chat on WhatsApp">
+<a href="https://wa.me/880176970" target="_blank" rel="noopener" class="whatsapp-float" id="whatsapp-float" aria-label="Chat on WhatsApp">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 

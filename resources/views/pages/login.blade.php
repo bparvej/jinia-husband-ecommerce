@@ -39,9 +39,9 @@
             </button>
         </form>
 
-        <div class="login-footer">
+        <!-- <div class="login-footer">
             <p>Default: <strong>admin@homei.com</strong> / <strong>Admin@123</strong></p>
-        </div>
+        </div> -->
     </div>
 </div>
 
