@@ -1,18 +1,4 @@
 
-I can see the issue clearly now - there are multiple syntax problems in the StorefrontController.php file:
-1. Line 352 has `print_r(` which is debugging code left in
-2. Lines 225, 230, 404, 461 have `\\Exception` (improperly escaped backslashes in exception handling)
-3. Lines 378, 392 have `grep(` instead of `preg_replace(` (invalid function calls)
-4. Lines 451, 461, 468, 484, etc. show duplicate or inconsistent method signatures and implementations
-5. Incomplete method structures with improper braces/closing
-6. Various mixed indentation and formatting issues
-7. Multiple duplicate method bodies appearing side-by-side
-
-Let me clean up the StorefrontController.php file to fix all these issues:I see the issues in the StorefrontController.php file. Let me fix all the syntax errors and improve the code structure:
-
-## StorefrontController - Fixed & Optimized
-
-```php
 <?php
 
 namespace App\Http\Controllers;
