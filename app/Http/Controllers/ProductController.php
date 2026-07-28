@@ -102,7 +102,11 @@ class ProductController extends Controller
             }
 
             // Server-side validation using product model
-            $validationErrors = $product->validateProductData($request->all(), $operation: 'update');
+            //$validationErrors = $product->validateProductData($request->all(), $operation: 'update');
+            $validationErrors = $product->validateProductData(
+                                    data: $request->all(),
+                                    operation: 'update'
+                                );
             if (!empty($validationErrors)) {
                 $errorMessages = [];
                 foreach ($validationErrors as $field => $errors) {
