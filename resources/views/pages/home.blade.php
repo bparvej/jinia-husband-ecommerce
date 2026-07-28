@@ -25,17 +25,17 @@
         </div>
         <div class="hero-stats">
             <div class="stat">
-                <span class="stat-number" data-count="{{ $totalProducts ?? 0 }}">0</span><span class="stat-suffix">+</span>
+                <span class="stat-number" data-count="{{ $totalProducts ?? 0 }}">100</span><span class="stat-suffix">+</span>
                 <span class="stat-label">Products</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat">
-                <span class="stat-number" data-count="{{ $totalOrders ?? 0 }}">0</span><span class="stat-suffix">+</span>
+                <span class="stat-number" data-count="{{ $totalOrders ?? 0 }}">30</span><span class="stat-suffix">+</span>
                 <span class="stat-label">Happy Homes</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat">
-                <span class="stat-number" data-count="{{ $avgRating ?? 0 }}">0</span><span class="stat-suffix">★</span>
+                <span class="stat-number" data-count="{{ $avgRating ?? 0 }}">8</span><span class="stat-suffix">★</span>
                 <span class="stat-label">Avg Rating</span>
             </div>
         </div>

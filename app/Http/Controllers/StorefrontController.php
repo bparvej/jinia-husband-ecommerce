@@ -447,6 +447,100 @@ class StorefrontController extends Controller
                 'amount' => $total
             ]);
 
+            // Send order confirmation emails
+            $this->sendOrderEmails($order, $product, $quantity, $total, $orderNumber);
+
+            DB::commit();
+
+            Log::info("Quick order placed successfully: " . $order->order_number);
+
+            return view('partials.checkout-success', [
+                'order' => $order
+            ]);
+
+        } catch (\\Exception $e) {
+            DB::rollBack();
+            Log::error("Quick checkout failed: " . $e->getMessage());
+            return response('<div class="toast toast-error">Checkout failed: ' . $e->getMessage() . '</div>', 400);
+        }
+    }
+
+    // --- Email helper methods ---
+    private function sendOrderEmail($userId, $order, $userName, $shippingPhone, $shippingAddress, $shippingCity)
+    {
+        $user = User::find($userId);
+        if ($user && !empty($user->email)) {
+            Mail::send('emails.order-confirmation', [
+                'user' => $user,
+                'order' => $order,
+                'orderNumber' => $order ? $order->order_number : null
+            ], function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Order Confirmation - HomeI - Order #' . ($order ? $order->order_number : ''))
+                        ->from('shop@homeibd.com', 'HomeI');
+            });
+        }
+    }
+
+    private function sendOrderNotificationEmail($userName, $total)
+    {
+        Mail::send('emails.order-notification', [
+            'userName' => $userName,
+            'total' => $total
+        ], function ($message) {
+            $message->to('homeibd26@gmail.com')
+                    ->cc('homeibd26@gmail.com')
+                    ->subject('New Order Notification - HomeI')
+                    ->from('shop@homeibd.com', 'HomeI');
+        });
+    }
+
+    private function sendOrderEmails($order, $product, $quantity, $total, $orderNumber)
+    {
+        $user = User::find($order->user_id);
+        if ($user && !empty($user->email)) {
+            // Send customer order confirmation
+            Mail::send('emails.order-confirmation', [
+                'user' => $user,
+                'order' => $order
+            ], function ($message) use ($user, $order) {
+                $message->to($user->email)
+                        ->subject('Order Confirmation - HomeI - Order #' . $order->order_number)
+                        ->from('shop@homeibd.com', 'HomeI');
+            });
+
+            // Send admin notification with order details
+            Mail::send('emails.admin-order-notification', [
+                'user' => $user,
+                'order' => $order,
+                'product' => $product,
+                'quantity' => $quantity,
+                'total' => $total
+            ], function ($message) use ($order) {
+                $message->to('homeibd26@gmail.com')
+                        ->bcc('homeibd26@gmail.com')
+                        ->subject('🚚 New Order Received - HomeI - Order #' . $order->order_number)
+                        ->from('shop@homeibd.com', 'HomeI');
+            });
+        } else {
+            // Guest user (email comes from cart)
+            $guestEmail = 'guest_' . ($user ? $user->phone : '') . '@homei.com.bd';
+            if (isset($user->phone) && !empty($user->phone)) {
+                Mail::send('emails.guest-order-notification', [
+                    'user' => $user,
+                    'order' => $order,
+                    'product' => $product,
+                    'quantity' => $quantity,
+                    'total' => $total
+                ], function ($message) use ($order, $guestEmail) {
+                    $message->to('homeibd26@gmail.com')
+                            ->subject('🚚 New Guest Order Received - HomeI - Order #' . $order->order_number)
+                            ->from('shop@homeibd.com', 'HomeI');
+                });
+            }
+        }
+    }
+
             DB::commit();
 
             Log::info("Quick order placed successfully: " . $order->order_number);
