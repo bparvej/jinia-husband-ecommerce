@@ -349,212 +349,203 @@ class StorefrontController extends Controller
         ]);
     }
 
-    // --- Quick Checkout (direct product order from /buy/{slug}) ---
-    public function quickCheckout(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-            'shipping_name' => 'required|string|max:100',
-            'shipping_phone' => 'required|string|max:20',
-            'shipping_address' => 'required|string',
-            'shipping_city' => 'required|string|max:100',
-            'payment_method' => 'required|string'
-        ]);
+        // --- Quick Checkout (direct product order from /buy/{slug}) ---
+        public function quickCheckout(Request $request)
+        {
+            $request->validate([
+                'product_id' => 'required|exists:products,id',
+                'quantity' => 'required|integer|min:1',
+                'shipping_name' => 'required|string|max:100',
+                'shipping_phone' => 'required|string|max:20',
+                'shipping_address' => 'required|string',
+                'shipping_city' => 'required|string|max:100',
+                'payment_method' => 'required|string'
+            ]);
 
-        $product = Product::findOrFail($request->input('product_id'));
-        $quantity = intval($request->input('quantity', 1));
+            $product = Product::findOrFail($request->input('product_id'));
+            $quantity = intval($request->input('quantity', 1));
 
-        DB::beginTransaction();
+            DB::beginTransaction();
 
-        try {
-            $userId = Auth::id();
+            try {
+                $userId = Auth::id();
 
-            if (!$userId) {
-                $shippingPhone = $request->input('shipping_phone');
-                $user = User::where('phone', $shippingPhone)->first();
-
-                if (!$user) {
-                    $cleanPhone = preg_replace('/\s+/', '', $shippingPhone);
-                    $guestEmail = "guest_{$cleanPhone}@homei.com.bd";
-                    $user = User::where('email', $guestEmail)->first();
+                if (!$userId) {
+                    $shippingPhone = $request->input('shipping_phone');
+                    $user = User::where('phone', $shippingPhone)->first();
 
                     if (!$user) {
-                        $role = Role::where('name', 'customer')->first();
-                        $roleId = $role ? $role->id : 4;
-                        $dummyPassword = Hash::make('Guest@' . Str::random(6) . '2026');
+                        $cleanPhone = preg_replace('/\s+/', '', $shippingPhone);
+                        $guestEmail = "guest_{$cleanPhone}@homei.com.bd";
+                        $user = User::where('email', $guestEmail)->first();
 
-                        $user = User::create([
-                            'name' => $request->input('shipping_name'),
-                            'email' => $guestEmail,
-                            'password' => $dummyPassword,
-                            'phone' => $shippingPhone,
-                            'role_id' => $roleId,
-                            'is_active' => true
-                        ]);
+                        if (!$user) {
+                            $role = Role::where('name', 'customer')->first();
+                            $roleId = $role ? $role->id : 4;
+                            $dummyPassword = Hash::make('Guest@' . Str::random(6) . '2026');
+
+                            $user = User::create([
+                                'name' => $request->input('shipping_name'),
+                                'email' => $guestEmail,
+                                'password' => $dummyPassword,
+                                'phone' => $shippingPhone,
+                                'role_id' => $roleId,
+                                'is_active' => true
+                            ]);
+                        }
                     }
+                    $userId = $user->id;
                 }
-                $userId = $user->id;
+
+                $product = Product::lockForUpdate()->find($product->id);
+                $inventory = Inventory::where('product_id', $product->id)->lockForUpdate()->first();
+
+                if (!$inventory || $inventory->quantity < $quantity) {
+                    throw new \Exception("Insufficient stock for " . $product->name);
+                }
+
+                $inventory->quantity -= $quantity;
+                $inventory->save();
+
+                $product->sold_count += $quantity;
+                $product->save();
+
+                $itemTotal = floatval($product->price) * $quantity;
+                $subtotal = $itemTotal;
+                $shippingCost = $subtotal >= 5000 ? 0 : 200;
+                $total = $subtotal + $shippingCost;
+
+                $orderNumber = 'HI-' . date('Ymd') . '-' . strtoupper(Str::random(6));
+
+                $order = Order::create([
+                    'order_number' => $orderNumber,
+                    'user_id' => $userId,
+                    'status' => 'pending',
+                    'subtotal' => $subtotal,
+                    'shipping_cost' => $shippingCost,
+                    'total' => $total,
+                    'shipping_name' => $request->input('shipping_name'),
+                    'shipping_phone' => $request->input('shipping_phone'),
+                    'shipping_address' => $request->input('shipping_address'),
+                    'shipping_city' => $request->input('shipping_city'),
+                    'notes' => $request->input('notes')
+                ]);
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'quantity' => $quantity,
+                    'unit_price' => $product->price,
+                    'total_price' => $itemTotal
+                ]);
+
+                Payment::create([
+                    'order_id' => $order->id,
+                    'method' => $request->input('payment_method'),
+                    'status' => 'pending',
+                    'amount' => $total
+                ]);
+
+                // Send order confirmation emails
+                $this->sendOrderEmails($order, $product, $quantity, $total, $orderNumber);
+
+                DB::commit();
+
+                Log::info("Quick order placed successfully: " . $order->order_number);
+
+                return view('partials.checkout-success', [
+                    'order' => $order
+                ]);
+
+            } catch (\\Exception $e) {
+                DB::rollBack();
+                Log::error("Quick checkout failed: " . $e->getMessage());
+                return response('<div class="toast toast-error">Checkout failed: ' . $e->getMessage() . '</div>', 400);
             }
+        }
 
-            $product = Product::lockForUpdate()->find($product->id);
-            $inventory = Inventory::where('product_id', $product->id)->lockForUpdate()->first();
-
-            if (!$inventory || $inventory->quantity < $quantity) {
-                throw new \Exception("Insufficient stock for " . $product->name);
+        // --- Email helper methods ---
+        private function sendOrderEmail(string $userId, ?object $order, string $userName, string $shippingPhone, string $shippingAddress, string $shippingCity): void
+        {
+            $user = User::find($userId);
+            if ($user && !empty($user->email)) {
+                Mail::send('emails.order-confirmation', [
+                    'user' => $user,
+                    'order' => $order
+                ], function ($message) use ($user, $order) {
+                    $message->to($user->email)
+                            ->subject('Order Confirmation - HomeI - Order #' . ($order ? $order->order_number : ''))
+                            ->from('shop@homeibd.com', 'HomeI');
+                });
             }
-
-            $inventory->quantity -= $quantity;
-            $inventory->save();
-
-            $product->sold_count += $quantity;
-            $product->save();
-
-            $itemTotal = floatval($product->price) * $quantity;
-            $subtotal = $itemTotal;
-            $shippingCost = $subtotal >= 5000 ? 0 : 200;
-            $total = $subtotal + $shippingCost;
-
-            $orderNumber = 'HI-' . date('Ymd') . '-' . strtoupper(Str::random(6));
-
-            $order = Order::create([
-                'order_number' => $orderNumber,
-                'user_id' => $userId,
-                'status' => 'pending',
-                'subtotal' => $subtotal,
-                'shipping_cost' => $shippingCost,
-                'total' => $total,
-                'shipping_name' => $request->input('shipping_name'),
-                'shipping_phone' => $request->input('shipping_phone'),
-                'shipping_address' => $request->input('shipping_address'),
-                'shipping_city' => $request->input('shipping_city'),
-                'notes' => $request->input('notes')
-            ]);
-
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'quantity' => $quantity,
-                'unit_price' => $product->price,
-                'total_price' => $itemTotal
-            ]);
-
-            Payment::create([
-                'order_id' => $order->id,
-                'method' => $request->input('payment_method'),
-                'status' => 'pending',
-                'amount' => $total
-            ]);
-
-            // Send order confirmation emails
-            $this->sendOrderEmails($order, $product, $quantity, $total, $orderNumber);
-
-            DB::commit();
-
-            Log::info("Quick order placed successfully: " . $order->order_number);
-
-            return view('partials.checkout-success', [
-                'order' => $order
-            ]);
-
-        } catch (\\Exception $e) {
-            DB::rollBack();
-            Log::error("Quick checkout failed: " . $e->getMessage());
-            return response('<div class="toast toast-error">Checkout failed: ' . $e->getMessage() . '</div>', 400);
         }
-    }
 
-    // --- Email helper methods ---
-    private function sendOrderEmail($userId, $order, $userName, $shippingPhone, $shippingAddress, $shippingCity)
-    {
-        $user = User::find($userId);
-        if ($user && !empty($user->email)) {
-            Mail::send('emails.order-confirmation', [
-                'user' => $user,
-                'order' => $order,
-                'orderNumber' => $order ? $order->order_number : null
-            ], function ($message) use ($user) {
-                $message->to($user->email)
-                        ->subject('Order Confirmation - HomeI - Order #' . ($order ? $order->order_number : ''))
-                        ->from('shop@homeibd.com', 'HomeI');
-            });
-        }
-    }
-
-    private function sendOrderNotificationEmail($userName, $total)
-    {
-        Mail::send('emails.order-notification', [
-            'userName' => $userName,
-            'total' => $total
-        ], function ($message) {
-            $message->to('homeibd26@gmail.com')
-                    ->cc('homeibd26@gmail.com')
-                    ->subject('New Order Notification - HomeI')
-                    ->from('shop@homeibd.com', 'HomeI');
-        });
-    }
-
-    private function sendOrderEmails($order, $product, $quantity, $total, $orderNumber)
-    {
-        $user = User::find($order->user_id);
-        if ($user && !empty($user->email)) {
-            // Send customer order confirmation
-            Mail::send('emails.order-confirmation', [
-                'user' => $user,
-                'order' => $order
-            ], function ($message) use ($user, $order) {
-                $message->to($user->email)
-                        ->subject('Order Confirmation - HomeI - Order #' . $order->order_number)
-                        ->from('shop@homeibd.com', 'HomeI');
-            });
-
-            // Send admin notification with order details
-            Mail::send('emails.admin-order-notification', [
-                'user' => $user,
-                'order' => $order,
-                'product' => $product,
-                'quantity' => $quantity,
+        private function sendOrderNotificationEmail(string $userName, float $total): void
+        {
+            Mail::send('emails.order-notification', [
+                'userName' => $userName,
                 'total' => $total
-            ], function ($message) use ($order) {
+            ], function ($message) {
                 $message->to('homeibd26@gmail.com')
-                        ->bcc('homeibd26@gmail.com')
-                        ->subject('🚚 New Order Received - HomeI - Order #' . $order->order_number)
+                        ->cc('homeibd26@gmail.com')
+                        ->subject('New Order Notification - HomeI')
                         ->from('shop@homeibd.com', 'HomeI');
             });
-        } else {
-            // Guest user (email comes from cart)
-            $guestEmail = 'guest_' . ($user ? $user->phone : '') . '@homei.com.bd';
-            if (isset($user->phone) && !empty($user->phone)) {
-                Mail::send('emails.guest-order-notification', [
+        }
+
+        private function sendOrderEmails(
+            object $order,
+            object $product,
+            int $quantity,
+            float $total,
+            string $orderNumber
+        ): void
+        {
+            $user = User::find($order->user_id);
+            if ($user && !empty($user->email)) {
+                // Send customer order confirmation
+                Mail::send('emails.order-confirmation', [
+                    'user' => $user,
+                    'order' => $order
+                ], function ($message) use ($user, $order) {
+                    $message->to($user->email)
+                            ->subject('Order Confirmation - HomeI - Order #' . $order->order_number)
+                            ->from('shop@homeibd.com', 'HomeI');
+                });
+
+                // Send admin notification with order details
+                Mail::send('emails.admin-order-notification', [
                     'user' => $user,
                     'order' => $order,
                     'product' => $product,
                     'quantity' => $quantity,
                     'total' => $total
-                ], function ($message) use ($order, $guestEmail) {
+                ], function ($message) use ($order) {
                     $message->to('homeibd26@gmail.com')
-                            ->subject('🚚 New Guest Order Received - HomeI - Order #' . $order->order_number)
+                            ->bcc('homeibd26@gmail.com')
+                            ->subject('🚚 New Order Received - HomeI - Order #' . $order->order_number)
                             ->from('shop@homeibd.com', 'HomeI');
                 });
+            } else {
+                // Guest user - send admin notification
+                $guestPhone = $user ? $user->phone : '';
+                $guestEmail = 'guest_' . $guestPhone . '@homei.com.bd';
+                if (!empty($guestPhone)) {
+                    Mail::send('emails.guest-order-notification', [
+                        'user' => $user,
+                        'order' => $order,
+                        'product' => $product,
+                        'quantity' => $quantity,
+                        'total' => $total
+                    ], function ($message) use ($order) {
+                        $message->to('homeibd26@gmail.com')
+                                ->subject('🚚 New Guest Order Received - HomeI - Order #' . $order->order_number)
+                                ->from('shop@homeibd.com', 'HomeI');
+                    });
+                }
             }
         }
-    }
-
-            DB::commit();
-
-            Log::info("Quick order placed successfully: " . $order->order_number);
-
-            return view('partials.checkout-success', [
-                'order' => $order
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Quick checkout failed: " . $e->getMessage());
-            return response('<div class="toast toast-error">Checkout failed: ' . $e->getMessage() . '</div>', 400);
-        }
-    }
 
     // --- Helper to aggregate session & DB cart ---
     private function getCartData(Request $request)
