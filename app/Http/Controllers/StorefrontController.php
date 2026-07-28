@@ -458,7 +458,7 @@ class StorefrontController extends Controller
                     'order' => $order
                 ]);
 
-            } catch (\\Exception $e) {
+            } catch (Exception $e) {
                 DB::rollBack();
                 Log::error("Quick checkout failed: " . $e->getMessage());
                 return response('<div class="toast toast-error">Checkout failed: ' . $e->getMessage() . '</div>', 400);
