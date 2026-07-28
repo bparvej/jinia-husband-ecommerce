@@ -203,7 +203,7 @@ class ProductController extends Controller
 
             return redirect('/admin/products');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $categories = Category::all();
             return view('admin.products.create', [
                 'categories' => $categories,
@@ -307,7 +307,7 @@ class ProductController extends Controller
 
             return redirect('/admin/products');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $categories = Category::all();
             return view('admin.products.edit', [
                 'product' => $product,
