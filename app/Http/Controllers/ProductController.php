@@ -243,7 +243,7 @@ class ProductController extends Controller
 
         try {
             $request->validate([
-                'name' => 'required|string|max:255|regex:/^[\p{L}\s\-.\\'0-9]+$/u|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'name' => 'required|string|max:255|regex:/^[\p{L}\s\-.\'0-9]+$/u|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
                 'slug' => 'nullable|string|max:280|unique:products,slug,' . $id . '|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
                 'description' => 'nullable|string|max:65535|not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i',
                 'short_description' => 'nullable|string|max:500|not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i',
