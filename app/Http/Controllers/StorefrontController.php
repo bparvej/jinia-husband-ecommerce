@@ -588,8 +588,7 @@ class StorefrontController extends Controller
                     }
                 }
             }
-        }
 
-        return ['cart' => $cart, 'count' => $count];
+            return ['cart' => $cart, 'count' => $count];
     }
 }
