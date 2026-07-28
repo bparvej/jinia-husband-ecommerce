@@ -18,7 +18,7 @@
     <div class="container hero-content">
         <div class="hero-badge">New Collection 2026</div>
         <h1 class="hero-title">Crafted for <br><em>Cozy Living</em></h1>
-        <p class="hero-subtitle">Handcrafted wooden furniture & home décor that brings warmth, style, and soul to every corner of your home.</p>
+        <p class="hero-subtitle">Handcrafted wooden lamps, shelves and home décor that brings warmth, style, and soul to every corner of your home.</p>
         <div class="hero-cta">
             <a href="#categories" class="btn btn-primary" id="hero-shop-btn">Explore Collection</a>
             <a href="/our-story" class="btn btn-outline" id="hero-about-btn">Our Story</a>
