@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Inventory;
 use App\Models\Category;
+use App\Models\Role;
 
 class AdminController extends Controller
 {
@@ -162,7 +163,7 @@ class AdminController extends Controller
 
             DB::commit();
             Log::info("Order status updated: {$order->order_number} {$previousStatus} -> {$newStatus}");
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error("Order status update side effects failed: " . $e->getMessage());
         }
@@ -229,9 +230,11 @@ class AdminController extends Controller
         }
 
         $users = $query->orderBy('created_at', 'desc')->paginate(12);
+        $roles = Role::all();
 
         $viewData = [
             'users' => $users,
+            'roles' => $roles,
             'filters' => [
                 'search' => $search
             ],
@@ -244,6 +247,7 @@ class AdminController extends Controller
 
         return view('admin.users.index', $viewData);
     }
+
 
     // --- ADMIN: Reports & Analytics ---
     public function adminReports(Request $request)

@@ -127,6 +127,7 @@ class Product extends Model
         return $slug;
     }
 
+
     public function variants()
     {
         return $this->hasMany(ProductVariant::class);
