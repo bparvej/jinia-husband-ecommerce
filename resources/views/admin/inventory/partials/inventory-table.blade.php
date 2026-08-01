@@ -18,13 +18,13 @@
                     <tr x-data="{ qty: {{ $item->quantity }}, editing: false }">
                         <td>
                             <div class="product-cell">
-                                <img src="{{ $item->product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $item->product->name }}" class="product-thumb">
-                                <span class="product-cell-name">{{ $item->product->name }}</span>
+                                <img src="{{ $item->product ? ($item->product->image ?? '/assets/images/category-bookshelf.png') : '/assets/images/category-bookshelf.png' }}" alt="{{ $item->product ? $item->product->name : 'Unknown Product' }}" class="product-thumb">
+                                <span class="product-cell-name">{{ $item->product ? $item->product->name : 'Unknown Product' }}</span>
                             </div>
                         </td>
-                        <td class="text-mono">{{ $item->product->sku ?? '—' }}</td>
-                        <td>{{ $item->product->category ? $item->product->category->name : '—' }}</td>
-                        <td>৳{{ number_format($item->product->price) }}</td>
+                        <td class="text-mono">{{ $item->product ? ($item->product->sku ?? '—') : '—' }}</td>
+                        <td>{{ ($item->product && $item->product->category) ? $item->product->category->name : '—' }}</td>
+                        <td>৳{{ number_format($item->product ? $item->product->price : 0) }}</td>
                         <td>
                             <template x-if="!editing">
                                 <span class="stock-badge {{ $item->quantity <= $item->low_stock_threshold ? ($item->quantity <= 5 ? 'critical' : 'low') : 'ok' }}" @click="editing = true" style="cursor:pointer" title="Click to edit">
