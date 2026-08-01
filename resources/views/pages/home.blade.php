@@ -46,6 +46,30 @@
     </div>
 </section>
 
+
+<section class="categories" id="categories">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-tag">Browse</span>
+            <h2 class="section-title">Shop by Category</h2>
+            <p class="section-desc">Find the perfect piece for every room in your home</p>
+        </div>
+        <div class="category-grid">
+            @if (isset($categories) && count($categories) > 0)
+                @foreach ($categories as $i => $cat)
+                <a href="/category/{{ $cat->slug }}" class="category-card {{ $i === 0 || $i === 4 ? 'category-wide' : '' }}">
+                    <img src="{{ $cat->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $cat->name }}" loading="lazy">
+                    <div class="category-info">
+                        <h3>{{ $cat->name }}</h3>
+                        <span class="category-count">Shop Now</span>
+                    </div>
+                </a>
+                @endforeach
+            @endif
+        </div>
+    </div>
+</section>
+
 <section class="features" id="features">
     <div class="container features-grid">
         <div class="feature-card">
@@ -79,28 +103,6 @@
     </div>
 </section>
 
-<section class="categories" id="categories">
-    <div class="container">
-        <div class="section-header">
-            <span class="section-tag">Browse</span>
-            <h2 class="section-title">Shop by Category</h2>
-            <p class="section-desc">Find the perfect piece for every room in your home</p>
-        </div>
-        <div class="category-grid">
-            @if (isset($categories) && count($categories) > 0)
-                @foreach ($categories as $i => $cat)
-                <a href="/category/{{ $cat->slug }}" class="category-card {{ $i === 0 || $i === 4 ? 'category-wide' : '' }}">
-                    <img src="{{ $cat->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $cat->name }}" loading="lazy">
-                    <div class="category-info">
-                        <h3>{{ $cat->name }}</h3>
-                        <span class="category-count">Shop Now</span>
-                    </div>
-                </a>
-                @endforeach
-            @endif
-        </div>
-    </div>
-</section>
 
 <section class="products featured-products" id="best-sellers">
     <div class="container">
