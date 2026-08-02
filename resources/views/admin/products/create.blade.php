@@ -5,8 +5,18 @@
     <a href="/admin/products" class="back-link">← Back to Products</a>
 </div>
 
-@if ($error)
+@if (!empty($error))
 <div class="alert alert-error">{{ $error }}</div>
+@endif
+
+@if ($errors->any())
+<div class="alert alert-error">
+    <ul style="margin: 0; padding-left: 1.5rem;">
+        @foreach ($errors->all() as $validationError)
+            <li>{{ $validationError }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif
 
 <form action="/admin/products" method="POST" enctype="multipart/form-data" class="product-form">

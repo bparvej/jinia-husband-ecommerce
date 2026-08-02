@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Inventory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class ProductController extends Controller
 {
@@ -74,23 +75,23 @@ class ProductController extends Controller
     {
         try {
             $request->validate([
-                'name' => 'required|string|max:255|regex:/^[\p{L}\s\-.\'0-9]+$/u|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'slug' => 'nullable|string|max:280|unique:products,slug|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-                'description' => 'nullable|string|max:65535|not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i',
-                'short_description' => 'nullable|string|max:500|not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i',
-                'price' => 'required|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'compare_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'cost_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'sku' => 'nullable|string|max:100|unique:products,sku|regex:/^[A-Z0-9\-_]+$/i|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'category_id' => 'nullable|integer|exists:categories,id|not_regex:/^test_/i',
-                'image_file' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200',
-                'gallery_images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500',
-                'badge' => 'nullable|string|max:50|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'is_active' => 'required|boolean',
-                'is_featured' => 'required|boolean',
-                'stock_quantity' => 'required|integer|min:0|max:9999|not_regex:/^test_/i',
-                'low_stock_threshold' => 'required|integer|min:1|max:100|not_regex:/^test_/i',
-                'warehouse_location' => 'nullable|string|max:100|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s\-.\'0-9]+$/u', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'slug' => ['nullable', 'string', 'max:280', 'unique:products,slug', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
+                'description' => ['nullable', 'string', 'max:65535', 'not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i'],
+                'short_description' => ['nullable', 'string', 'max:500', 'not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i'],
+                'price' => ['required', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'compare_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'cost_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'sku' => ['nullable', 'string', 'max:100', 'unique:products,sku', 'regex:/^[A-Z0-9\-_]+$/i', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'category_id' => ['nullable', 'integer', 'exists:categories,id', 'not_regex:/^test_/i'],
+                'image_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200'],
+                'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500'],
+                'badge' => ['nullable', 'string', 'max:50', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'is_active' => ['required', 'boolean'],
+                'is_featured' => ['required', 'boolean'],
+                'stock_quantity' => ['required', 'integer', 'min:0', 'max:9999', 'not_regex:/^test_/i'],
+                'low_stock_threshold' => ['required', 'integer', 'min:1', 'max:100', 'not_regex:/^test_/i'],
+                'warehouse_location' => ['nullable', 'string', 'max:100', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
             ]);
 
             $slug = Str::slug($request->input('name'));
@@ -243,30 +244,25 @@ class ProductController extends Controller
 
         try {
             $request->validate([
-                //'name' => "required|string|max:255|regex:/^[\p{L}\s.\-'0-9]+$/u|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i",
-                'name' => [
-                            'required',
-                            'string',
-                            'max:255'
-                            ],
-                'slug' => 'nullable|string|max:280|unique:products,slug,' . $id . '|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-                'description' => 'nullable|string|max:65535|not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i',
-                'short_description' => 'nullable|string|max:500|not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i',
-                'price' => 'required|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'compare_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'cost_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'sku' => 'nullable|string|max:100|unique:products,sku,' . $id . '|regex:/^[A-Z0-9\-_]+$/i|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'category_id' => 'nullable|integer|exists:categories,id|not_regex:/^test_/i',
-                'image_file' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200',
-                'gallery_images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500',
-                'badge' => 'nullable|string|max:50|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'is_active' => 'required|boolean',
-                'is_featured' => 'required|boolean',
-                'stock_quantity' => 'required|integer|min:0|max:9999',
-                'low_stock_threshold' => 'required|integer|min:1|max:100',
-                'warehouse_location' => 'nullable|string|max:100|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'existing_images' => 'nullable|string',
-                'existing_images.*' => 'nullable|string|max:500',
+                'name' => ['required', 'string', 'max:255'],
+                'slug' => ['nullable', 'string', 'max:280', 'unique:products,slug,' . $id, 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
+                'description' => ['nullable', 'string', 'max:65535', 'not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i'],
+                'short_description' => ['nullable', 'string', 'max:500', 'not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i'],
+                'price' => ['required', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'compare_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'cost_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'sku' => ['nullable', 'string', 'max:100', 'unique:products,sku,' . $id, 'regex:/^[A-Z0-9\-_]+$/i', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'category_id' => ['nullable', 'integer', 'exists:categories,id', 'not_regex:/^test_/i'],
+                'image_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200'],
+                'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500'],
+                'badge' => ['nullable', 'string', 'max:50', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'is_active' => ['required', 'boolean'],
+                'is_featured' => ['required', 'boolean'],
+                'stock_quantity' => ['required', 'integer', 'min:0', 'max:9999'],
+                'low_stock_threshold' => ['required', 'integer', 'min:1', 'max:100'],
+                'warehouse_location' => ['nullable', 'string', 'max:100', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'existing_images' => ['nullable', 'string'],
+                'existing_images.*' => ['nullable', 'string', 'max:500'],
             ]);
 
             $productData = [
