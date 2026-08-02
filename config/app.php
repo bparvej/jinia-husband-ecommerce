@@ -185,7 +185,6 @@ return [
         /*
          * Package Service Providers...
          */
-        Opcodes\LogViewer\LogViewerServiceProvider::class,
 
         /*
          * Application Service Providers...
