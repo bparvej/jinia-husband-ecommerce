@@ -334,15 +334,20 @@ class ProductController extends Controller
     // --- ADMIN: Delete Product ---
     public function adminDelete(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->delete();
+        try {
+            $product = Product::findOrFail($id);
+            $product->delete();
 
-        Log::info("Product deleted: " . $product->name);
+            Log::info("Product deleted: " . $product->name);
 
-        if ($request->headers->has('hx-request')) {
-            return response('');
+            if ($request->headers->has('hx-request')) {
+                return response('');
+            }
+
+            return redirect('/admin/products');
+        } catch (\Exception $e) {
+            Log::error("Failed to delete product: " . $e->getMessage());
+            return redirect('/admin/products')->with('error', 'Failed to delete product: ' . $e->getMessage());
         }
-
-        return redirect('/admin/products');
     }
 }
