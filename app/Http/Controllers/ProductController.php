@@ -74,6 +74,11 @@ class ProductController extends Controller
     public function adminStore(Request $request)
     {
         try {
+            $request->merge([
+                'is_active' => $request->has('is_active'),
+                'is_featured' => $request->has('is_featured'),
+            ]);
+
             $request->validate([
                 'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s\-.\'0-9]+$/u', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
                 'slug' => ['nullable', 'string', 'max:280', 'unique:products,slug', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
@@ -92,6 +97,19 @@ class ProductController extends Controller
                 'stock_quantity' => ['required', 'integer', 'min:0', 'max:9999', 'not_regex:/^test_/i'],
                 'low_stock_threshold' => ['required', 'integer', 'min:1', 'max:100', 'not_regex:/^test_/i'],
                 'warehouse_location' => ['nullable', 'string', 'max:100', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+            ], [
+                'name.required' => 'Please provide a product title.',
+                'name.max' => 'The product title is too long.',
+                'name.regex' => 'The product title contains invalid characters.',
+                'name.not_regex' => 'The product title looks like dummy text.',
+                'description.max' => 'The description is too long.',
+                'short_description.max' => 'The short description is too long.',
+                'price.required' => 'A price is required.',
+                'price.not_regex' => 'Please enter a valid real price (not 0.00 or dummy).',
+                'sku.unique' => 'This SKU is already in use.',
+                'image_file.image' => 'The main file must be an image.',
+                'image_file.max' => 'The main image must not be larger than 2MB.',
+                'stock_quantity.required' => 'Please specify the stock quantity.',
             ]);
 
             $slug = Str::slug($request->input('name'));
@@ -171,8 +189,8 @@ class ProductController extends Controller
                 'sku' => $request->input('sku'),
                 'category_id' => $request->input('category_id') ? intval($request->input('category_id')) : null,
                 'badge' => $request->input('badge'),
-                'is_active' => $request->input('is_active') === 'on' || $request->input('is_active') === 'true' || $request->input('is_active') === '1',
-                'is_featured' => $request->input('is_featured') === 'on' || $request->input('is_featured') === 'true' || $request->input('is_featured') === '1',
+                'is_active' => (bool) $request->input('is_active'),
+                'is_featured' => (bool) $request->input('is_featured'),
             ];
 
             // Image file upload
@@ -243,6 +261,11 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         try {
+            $request->merge([
+                'is_active' => $request->has('is_active'),
+                'is_featured' => $request->has('is_featured'),
+            ]);
+
             $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'slug' => ['nullable', 'string', 'max:280', 'unique:products,slug,' . $id, 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
@@ -263,6 +286,17 @@ class ProductController extends Controller
                 'warehouse_location' => ['nullable', 'string', 'max:100', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
                 'existing_images' => ['nullable', 'string'],
                 'existing_images.*' => ['nullable', 'string', 'max:500'],
+            ], [
+                'name.required' => 'Please provide a product title.',
+                'name.max' => 'The product title is too long.',
+                'description.max' => 'The description is too long.',
+                'short_description.max' => 'The short description is too long.',
+                'price.required' => 'A price is required.',
+                'price.not_regex' => 'Please enter a valid real price (not 0.00 or dummy).',
+                'sku.unique' => 'This SKU is already in use.',
+                'image_file.image' => 'The main file must be an image.',
+                'image_file.max' => 'The main image must not be larger than 2MB.',
+                'stock_quantity.required' => 'Please specify the stock quantity.',
             ]);
 
             $productData = [
@@ -275,8 +309,8 @@ class ProductController extends Controller
                 'sku' => $request->input('sku'),
                 'category_id' => $request->input('category_id') ? intval($request->input('category_id')) : null,
                 'badge' => $request->input('badge'),
-                'is_active' => $request->input('is_active') === 'on' || $request->input('is_active') === 'true' || $request->input('is_active') === '1',
-                'is_featured' => $request->input('is_featured') === 'on' || $request->input('is_featured') === 'true' || $request->input('is_featured') === '1',
+                'is_active' => (bool) $request->input('is_active'),
+                'is_featured' => (bool) $request->input('is_featured'),
             ];
 
             // Image file upload
