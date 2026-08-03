@@ -120,35 +120,7 @@ class ProductController extends Controller
                 $slug = $originalSlug . '-' . $count++;
             }
 
-            // Server-side validation using product model
-            //$validationErrors = $product->validateProductData($request->all(), $operation: 'update');
-            $validationErrors = $product->validateProductData(
-                                    data: $request->all(),
-                                    operation: 'update'
-                                );
-            if (!empty($validationErrors)) {
-                $errorMessages = [];
-                foreach ($validationErrors as $field => $errors) {
-                    $errorMessages[] = implode(', ', $errors);
-                }
-                
-                $errorMessage = "Validation failed: " . implode('; ', $errorMessages);
-                
-                Log::warning("Product update validation error: " . $errorMessage . " for product ID: " . $id . ", User ID: " . auth()->id());
-                
-                if ($request->headers->has('hx-request')) {
-                    return response()->json(['errors' => $validationErrors, 'message' => $errorMessage], 422);
-                }
-                
-                $categories = Category::all();
-                return view('admin.products.edit', [
-                    'product' => $product,
-                    'categories' => $categories,
-                    'error' => $errorMessage,
-                    'title' => 'Edit ' . $product->name . ' — HomeI Admin'
-                ]);
-            }
-            
+
             // Validate product data on server-side
             //$validationErrors = Product::validateProductData($request->all(), $operation: 'store');
             $validationErrors = Product::validateProductData(
