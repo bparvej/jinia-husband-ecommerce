@@ -113,6 +113,25 @@
             </div>
 
             <div class="panel">
+                <div class="panel-header"><h3>Inventory</h3></div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="stock_quantity">Stock Quantity</label>
+                        <input type="number" id="stock_quantity" name="stock_quantity" value="{{ old('stock_quantity', $product->inventory->quantity ?? 0) }}" min="0">
+                        <small class="text-muted">Set the new on-hand quantity. A ledger adjustment will be recorded.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="low_stock_threshold">Low Stock Alert At</label>
+                        <input type="number" id="low_stock_threshold" name="low_stock_threshold" value="{{ old('low_stock_threshold', $product->inventory->low_stock_threshold ?? 10) }}" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="warehouse_location">Warehouse Location</label>
+                        <input type="text" id="warehouse_location" name="warehouse_location" value="{{ old('warehouse_location', $product->inventory->warehouse_location ?? '') }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
                 <div class="panel-header"><h3>Main Image</h3></div>
                 <div class="panel-body">
                     <div class="form-group" x-data="{ preview: '{{ $product->image ?? '' }}' }">

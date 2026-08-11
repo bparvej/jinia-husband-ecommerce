@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Inventory;
+use App\Models\InventoryLedger;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Exception;
@@ -187,11 +188,21 @@ class ProductController extends Controller
             $product = Product::create($productData);
 
             // Create inventory entry
+            $stockQuantity = intval($request->input('stock_quantity', 0));
             Inventory::create([
                 'product_id' => $product->id,
-                'quantity' => intval($request->input('stock_quantity', 0)),
+                'quantity' => $stockQuantity,
                 'low_stock_threshold' => intval($request->input('low_stock_threshold', 10)),
-                'warehouse_location' => 'Dhaka Main'
+                'warehouse_location' => $request->input('warehouse_location') ?: 'Dhaka Main'
+            ]);
+
+            InventoryLedger::create([
+                'product_id' => $product->id,
+                'type' => 'opening',
+                'quantity' => $stockQuantity,
+                'balance_after' => $stockQuantity,
+                'note' => 'Opening stock for new product',
+                'user_id' => auth()->id(),
             ]);
 
             Log::info("Product created: " . $product->name);
@@ -313,6 +324,48 @@ class ProductController extends Controller
             $productData['images'] = array_merge($existingImages, $newImages);
 
             $product->update($productData);
+
+            // Sync inventory from the edit form (prevents mismatch with inventory list)
+            $newStock = intval($request->input('stock_quantity', 0));
+            $newThreshold = intval($request->input('low_stock_threshold', 10));
+            $warehouseLocation = $request->input('warehouse_location');
+
+            $inventory = Inventory::where('product_id', $product->id)->first();
+
+            if ($inventory) {
+                $delta = $newStock - $inventory->quantity;
+
+                $inventory->low_stock_threshold = $newThreshold;
+                if ($warehouseLocation) {
+                    $inventory->warehouse_location = $warehouseLocation;
+                }
+                $inventory->save();
+
+                if ($delta !== 0) {
+                    Inventory::adjustStock(
+                        $product->id,
+                        $delta,
+                        'adjustment',
+                        'Stock changed while editing product "' . $product->name . '"'
+                    );
+                }
+            } else {
+                Inventory::create([
+                    'product_id' => $product->id,
+                    'quantity' => $newStock,
+                    'low_stock_threshold' => $newThreshold,
+                    'warehouse_location' => $warehouseLocation ?: 'Dhaka Main'
+                ]);
+
+                InventoryLedger::create([
+                    'product_id' => $product->id,
+                    'type' => 'opening',
+                    'quantity' => $newStock,
+                    'balance_after' => $newStock,
+                    'note' => 'Opening stock while editing product',
+                    'user_id' => auth()->id(),
+                ]);
+            }
 
             Log::info("Product updated: " . $product->name);
 

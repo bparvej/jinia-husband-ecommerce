@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Inventory;
+use App\Models\InventoryLedger;
 use App\Models\Category;
 use App\Models\Role;
 
@@ -144,11 +145,14 @@ class AdminController extends Controller
             // Cancelled or Refunded — restore inventory & mark payment refunded
             if (in_array($newStatus, ['cancelled', 'refunded']) && !in_array($previousStatus, ['cancelled', 'refunded'])) {
                 foreach ($order->items as $item) {
-                    $inventory = Inventory::where('product_id', $item->product_id)->lockForUpdate()->first();
-                    if ($inventory) {
-                        $inventory->quantity += $item->quantity;
-                        $inventory->save();
-                    }
+                    Inventory::adjustStock(
+                        $item->product_id,
+                        $item->quantity,
+                        'return',
+                        'Restocked after order ' . $order->order_number . ' was ' . $newStatus,
+                        'order',
+                        $order->id
+                    );
                     $product = Product::find($item->product_id);
                     if ($product) {
                         $product->sold_count = max(0, $product->sold_count - $item->quantity);
@@ -218,6 +222,100 @@ class AdminController extends Controller
         return view('admin.inventory.index', $viewData);
     }
 
+    // --- ADMIN: Update Stock (HTMX from inventory list) ---
+    public function updateInventoryStock(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'quantity' => 'required|integer|min:0|max:9999999',
+            ]);
+
+            $inventory = Inventory::where('product_id', $id)->first();
+            if (!$inventory) {
+                $inventory = Inventory::create([
+                    'product_id' => $id,
+                    'quantity' => 0,
+                    'low_stock_threshold' => 10,
+                    'warehouse_location' => 'Dhaka Main',
+                ]);
+            }
+
+            $delta = intval($request->input('quantity')) - $inventory->quantity;
+
+            Inventory::adjustStock(
+                $id,
+                $delta,
+                'adjustment',
+                'Manual stock update to ' . intval($request->input('quantity'))
+            );
+
+            if ($request->headers->has('hx-request')) {
+                return '<span class="toast toast-success">Stock updated!</span>';
+            }
+
+            return redirect('/admin/inventory');
+        } catch (Exception $e) {
+            if ($request->headers->has('hx-request')) {
+                return response('<span class="toast toast-error">' . e($e->getMessage()) . '</span>', 400);
+            }
+            return redirect('/admin/inventory')->with('error', $e->getMessage());
+        }
+    }
+
+    // --- ADMIN: Inventory Ledger ---
+    public function inventoryLedger(Request $request)
+    {
+        $query = InventoryLedger::with(['product', 'user']);
+
+        $search = $request->query('search');
+        if ($search) {
+            $query->whereHas('product', function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('sku', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $type = $request->query('type');
+        if ($type) {
+            $query->where('type', $type);
+        }
+
+        $dateFrom = $request->query('date_from');
+        if ($dateFrom) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+
+        $dateTo = $request->query('date_to');
+        if ($dateTo) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        $ledger = $query->orderBy('created_at', 'desc')->paginate(20);
+
+        $summary = (object)[
+            'total_in' => InventoryLedger::where('quantity', '>', 0)->sum('quantity'),
+            'total_out' => InventoryLedger::where('quantity', '<', 0)->sum('quantity'),
+        ];
+
+        $viewData = [
+            'ledger' => $ledger,
+            'summary' => $summary,
+            'filters' => [
+                'search' => $search,
+                'type' => $type,
+                'date_from' => $dateFrom,
+                'date_to' => $dateTo,
+            ],
+            'title' => 'Inventory Ledger — HomeI Admin'
+        ];
+
+        if ($request->headers->has('hx-request')) {
+            return view('admin.inventory.partials.ledger-table', $viewData);
+        }
+
+        return view('admin.inventory.ledger', $viewData);
+    }
+
     // --- ADMIN: Users Listing ---
     public function adminUsers(Request $request)
     {
@@ -225,8 +323,16 @@ class AdminController extends Controller
 
         $search = $request->query('search');
         if ($search) {
-            $query->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%")
+                  ->orWhere('phone', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $roleId = $request->query('role_id');
+        if ($roleId) {
+            $query->where('role_id', $roleId);
         }
 
         $users = $query->orderBy('created_at', 'desc')->paginate(12);
@@ -236,7 +342,8 @@ class AdminController extends Controller
             'users' => $users,
             'roles' => $roles,
             'filters' => [
-                'search' => $search
+                'search' => $search,
+                'role_id' => $roleId
             ],
             'title' => 'Users — HomeI Admin'
         ];

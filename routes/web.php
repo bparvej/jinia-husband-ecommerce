@@ -59,6 +59,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     // Inventory
     Route::get('/inventory', [AdminController::class, 'adminInventory'])->name('admin.inventory.index');
+    Route::put('/inventory/{id}', [AdminController::class, 'updateInventoryStock'])->name('admin.inventory.update');
+    Route::get('/inventory/ledger', [AdminController::class, 'inventoryLedger'])->name('admin.inventory.ledger');
 
     // Users
     Route::get('/users', [AdminController::class, 'adminUsers'])->name('admin.users.index');

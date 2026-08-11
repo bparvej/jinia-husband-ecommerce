@@ -18,6 +18,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Inventory;
+use App\Models\InventoryLedger;
 use Exception;
 
 class StorefrontController extends Controller
@@ -299,6 +300,18 @@ class StorefrontController extends Controller
                     'amount' => $total
                 ]);
 
+                // Record sale debit in the inventory ledger (stock was already deducted above)
+                InventoryLedger::create([
+                    'product_id' => $itemData['product_id'],
+                    'type' => 'sale',
+                    'quantity' => -intval($itemData['quantity']),
+                    'balance_after' => Inventory::where('product_id', $itemData['product_id'])->value('quantity') ?? 0,
+                    'reference_type' => 'order',
+                    'reference_id' => $order->id,
+                    'note' => 'Sold with order ' . $orderNumber,
+                    'user_id' => $order->user_id,
+                ]);
+
                 // Send order confirmation emails (async to avoid blocking response)
                 try {
                     $this->sendOrderEmails($order, $itemData['product'], $itemData['quantity'], $total, $orderNumber);
@@ -454,6 +467,18 @@ class StorefrontController extends Controller
                 'method' => $request->input('payment_method'),
                 'status' => 'pending',
                 'amount' => $total
+            ]);
+
+            // Record sale debit in the inventory ledger (stock was already deducted above)
+            InventoryLedger::create([
+                'product_id' => $product->id,
+                'type' => 'sale',
+                'quantity' => -$quantity,
+                'balance_after' => Inventory::where('product_id', $product->id)->value('quantity') ?? 0,
+                'reference_type' => 'order',
+                'reference_id' => $order->id,
+                'note' => 'Sold with order ' . $orderNumber,
+                'user_id' => $order->user_id,
             ]);
 
             // Send order confirmation emails
