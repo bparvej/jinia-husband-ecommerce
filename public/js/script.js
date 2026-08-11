@@ -351,6 +351,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Place-order error feedback
+    function showCheckoutError(message, contextElt) {
+        let container = contextElt ? contextElt.closest('#checkout-form, #quick-checkout-form') : null;
+        if (!container) return;
+        let host = document.getElementById('cart-drawer-body');
+        let alertId = 'checkout-error-alert';
+        if (host && host.contains(container)) {
+            host = host;
+        } else {
+            host = container;
+            alertId = 'quick-checkout-error-alert';
+        }
+        let alert = document.getElementById(alertId);
+        if (!alert) {
+            alert = document.createElement('div');
+            alert.id = alertId;
+            alert.style.cssText = 'padding:1rem;border-radius:10px;background:#FEE2E2;color:#991B1B;border:1px solid #FCA5A5;margin-bottom:1rem;font-size:0.9rem;';
+            host.prepend(alert);
+        }
+        alert.innerHTML = '<strong>We could not place your order.</strong><br>' + message +
+            ' <button type="button" style="margin-top:0.5rem;padding:0.35rem 0.9rem;border:1px solid #991B1B;border-radius:6px;background:#fff;color:#991B1B;cursor:pointer;" onclick="this.parentElement.remove(); location.reload();">Refresh & Try Again</button>';
+    }
+
+    document.body.addEventListener('htmx:sendError', (e) => {
+        if (e.detail && e.detail.elt && e.detail.elt.closest('#checkout-form, #quick-checkout-form')) {
+            showCheckoutError('The request did not reach the server. Please try again.', e.detail.elt);
+        }
+    });
+
+    document.body.addEventListener('htmx:responseError', (e) => {
+        if (e.detail && e.detail.elt && e.detail.elt.closest('#checkout-form, #quick-checkout-form')) {
+            const status = e.detail.xhr ? e.detail.xhr.status : 0;
+            if (status === 419) {
+                showCheckoutError('Your session expired. Please refresh the page and try again.', e.detail.elt);
+            } else {
+                showCheckoutError('The server returned an error (' + status + '). Please try again.', e.detail.elt);
+            }
+        }
+    });
+
     // ========================
     // WISHLIST TOGGLE (DEMO)
     // ========================

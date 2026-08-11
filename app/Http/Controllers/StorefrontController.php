@@ -21,6 +21,7 @@ use App\Models\Inventory;
 use App\Models\InventoryLedger;
 use Illuminate\Validation\ValidationException;
 use Exception;
+use Throwable;
 
 class StorefrontController extends Controller
 {
@@ -347,7 +348,7 @@ class StorefrontController extends Controller
                 'notes' => $request->input('notes')
             ]);
 
-            // Save order items and send emails
+            // Save order items
             foreach ($orderItemsData as $itemData) {
                 $itemData['order_id'] = $order->id;
                 OrderItem::create($itemData);
@@ -370,16 +371,6 @@ class StorefrontController extends Controller
                     'note' => 'Sold with order ' . $orderNumber,
                     'user_id' => $order->user_id,
                 ]);
-
-                // Send order confirmation emails (async to avoid blocking response)
-                try {
-                    $this->sendOrderEmails($order, $itemData['product'], $itemData['quantity'], $total, $orderNumber);
-                } catch (Exception $e) {
-                    Log::warning("Failed to send order emails after order creation", [
-                        'order_id' => $order->id,
-                        'error' => $e->getMessage()
-                    ]);
-                }
             }
 
             // Clear Cart
@@ -395,6 +386,11 @@ class StorefrontController extends Controller
             DB::commit();
 
             Log::info("Order placed successfully: " . $order->order_number);
+
+            // Send confirmation emails AFTER commit, non-blocking (runs after the response is sent)
+            foreach ($orderItemsData as $itemData) {
+                $this->dispatchOrderEmails($order, $itemData['product'], intval($itemData['quantity']), $total, $orderNumber);
+            }
 
             return $this->orderSuccessResponse($request, $orderNumber);
 
@@ -537,12 +533,12 @@ class StorefrontController extends Controller
                 'user_id' => $order->user_id,
             ]);
 
-            // Send order confirmation emails
-            $this->sendOrderEmails($order, $product, $quantity, $total, $orderNumber);
-
             DB::commit();
 
             Log::info("Quick order placed successfully: " . $order->order_number);
+
+            // Send confirmation emails AFTER commit, non-blocking (runs after the response is sent)
+            $this->dispatchOrderEmails($order, $product, $quantity, $total, $orderNumber);
 
             return $this->orderSuccessResponse($request, $orderNumber);
 
@@ -685,6 +681,18 @@ class StorefrontController extends Controller
                             ->from('shop@homeibd.com', 'HomeI');
                 });
             }
+        }
+    }
+
+    // --- Dispatch order confirmation emails after the response is sent (non-blocking) ---
+    private function dispatchOrderEmails(object $order, object $product, int $quantity, float $total, string $orderNumber): void
+    {
+        try {
+            dispatch(function () use ($order, $product, $quantity, $total, $orderNumber) {
+                $this->sendOrderEmails($order, $product, $quantity, $total, $orderNumber);
+            })->afterResponse();
+        } catch (Throwable $e) {
+            Log::warning("Could not queue order confirmation emails for order " . $orderNumber . ": " . $e->getMessage());
         }
     }
 
