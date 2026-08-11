@@ -48,7 +48,7 @@
                         </td>
                         <td>
                             <button x-ref="submitBtn" class="action-btn-sm save"
-                                hx-put="/api/v1/inventory/{{ $item->product_id }}"
+                                hx-put="/admin/inventory/{{ $item->product_id }}"
                                 :hx-vals="JSON.stringify({ quantity: qty, _token: '{{ csrf_token() }}' })"
                                 hx-swap="none"
                                 @click="editing = false"

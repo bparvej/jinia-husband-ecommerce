@@ -7,8 +7,10 @@ use Illuminate\Support\Str;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Inventory;
+use App\Models\InventoryLedger;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class ProductController extends Controller
 {
@@ -73,24 +75,42 @@ class ProductController extends Controller
     public function adminStore(Request $request)
     {
         try {
+            $request->merge([
+                'is_active' => $request->has('is_active'),
+                'is_featured' => $request->has('is_featured'),
+            ]);
+
             $request->validate([
-                'name' => 'required|string|max:255|regex:/^[\p{L}\s\-.\'0-9]+$/u|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'slug' => 'nullable|string|max:280|unique:products,slug|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-                'description' => 'nullable|string|max:65535|not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i',
-                'short_description' => 'nullable|string|max:500|not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i',
-                'price' => 'required|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'compare_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'cost_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'sku' => 'nullable|string|max:100|unique:products,sku|regex:/^[A-Z0-9\-_]+$/i|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'category_id' => 'nullable|integer|exists:categories,id|not_regex:/^test_/i',
-                'image_file' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200',
-                'gallery_images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500',
-                'badge' => 'nullable|string|max:50|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'is_active' => 'required|boolean',
-                'is_featured' => 'required|boolean',
-                'stock_quantity' => 'required|integer|min:0|max:9999|not_regex:/^test_/i',
-                'low_stock_threshold' => 'required|integer|min:1|max:100|not_regex:/^test_/i',
-                'warehouse_location' => 'nullable|string|max:100|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
+                'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s\-.\'0-9]+$/u', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'slug' => ['nullable', 'string', 'max:280', 'unique:products,slug', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
+                'description' => ['nullable', 'string', 'max:65535', 'not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i'],
+                'short_description' => ['nullable', 'string', 'max:500', 'not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i'],
+                'price' => ['required', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'compare_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'cost_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'sku' => ['nullable', 'string', 'max:100', 'unique:products,sku', 'regex:/^[A-Z0-9\-_]+$/i', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'category_id' => ['nullable', 'integer', 'exists:categories,id', 'not_regex:/^test_/i'],
+                'image_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200'],
+                'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500'],
+                'badge' => ['nullable', 'string', 'max:50', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'is_active' => ['required', 'boolean'],
+                'is_featured' => ['required', 'boolean'],
+                'stock_quantity' => ['required', 'integer', 'min:0', 'max:9999', 'not_regex:/^test_/i'],
+                'low_stock_threshold' => ['required', 'integer', 'min:1', 'max:100', 'not_regex:/^test_/i'],
+                'warehouse_location' => ['nullable', 'string', 'max:100', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+            ], [
+                'name.required' => 'Please provide a product title.',
+                'name.max' => 'The product title is too long.',
+                'name.regex' => 'The product title contains invalid characters.',
+                'name.not_regex' => 'The product title looks like dummy text.',
+                'description.max' => 'The description is too long.',
+                'short_description.max' => 'The short description is too long.',
+                'price.required' => 'A price is required.',
+                'price.not_regex' => 'Please enter a valid real price (not 0.00 or dummy).',
+                'sku.unique' => 'This SKU is already in use.',
+                'image_file.image' => 'The main file must be an image.',
+                'image_file.max' => 'The main image must not be larger than 2MB.',
+                'stock_quantity.required' => 'Please specify the stock quantity.',
             ]);
 
             $slug = Str::slug($request->input('name'));
@@ -101,35 +121,7 @@ class ProductController extends Controller
                 $slug = $originalSlug . '-' . $count++;
             }
 
-            // Server-side validation using product model
-            //$validationErrors = $product->validateProductData($request->all(), $operation: 'update');
-            $validationErrors = $product->validateProductData(
-                                    data: $request->all(),
-                                    operation: 'update'
-                                );
-            if (!empty($validationErrors)) {
-                $errorMessages = [];
-                foreach ($validationErrors as $field => $errors) {
-                    $errorMessages[] = implode(', ', $errors);
-                }
-                
-                $errorMessage = "Validation failed: " . implode('; ', $errorMessages);
-                
-                Log::warning("Product update validation error: " . $errorMessage . " for product ID: " . $id . ", User ID: " . auth()->id());
-                
-                if ($request->headers->has('hx-request')) {
-                    return response()->json(['errors' => $validationErrors, 'message' => $errorMessage], 422);
-                }
-                
-                $categories = Category::all();
-                return view('admin.products.edit', [
-                    'product' => $product,
-                    'categories' => $categories,
-                    'error' => $errorMessage,
-                    'title' => 'Edit ' . $product->name . ' — HomeI Admin'
-                ]);
-            }
-            
+
             // Validate product data on server-side
             //$validationErrors = Product::validateProductData($request->all(), $operation: 'store');
             $validationErrors = Product::validateProductData(
@@ -170,8 +162,8 @@ class ProductController extends Controller
                 'sku' => $request->input('sku'),
                 'category_id' => $request->input('category_id') ? intval($request->input('category_id')) : null,
                 'badge' => $request->input('badge'),
-                'is_active' => $request->input('is_active') === 'on' || $request->input('is_active') === 'true' || $request->input('is_active') === '1',
-                'is_featured' => $request->input('is_featured') === 'on' || $request->input('is_featured') === 'true' || $request->input('is_featured') === '1',
+                'is_active' => (bool) $request->input('is_active'),
+                'is_featured' => (bool) $request->input('is_featured'),
             ];
 
             // Image file upload
@@ -196,11 +188,21 @@ class ProductController extends Controller
             $product = Product::create($productData);
 
             // Create inventory entry
+            $stockQuantity = intval($request->input('stock_quantity', 0));
             Inventory::create([
                 'product_id' => $product->id,
-                'quantity' => intval($request->input('stock_quantity', 0)),
+                'quantity' => $stockQuantity,
                 'low_stock_threshold' => intval($request->input('low_stock_threshold', 10)),
-                'warehouse_location' => 'Dhaka Main'
+                'warehouse_location' => $request->input('warehouse_location') ?: 'Dhaka Main'
+            ]);
+
+            InventoryLedger::create([
+                'product_id' => $product->id,
+                'type' => 'opening',
+                'quantity' => $stockQuantity,
+                'balance_after' => $stockQuantity,
+                'note' => 'Opening stock for new product',
+                'user_id' => auth()->id(),
             ]);
 
             Log::info("Product created: " . $product->name);
@@ -242,31 +244,42 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         try {
+            $request->merge([
+                'is_active' => $request->has('is_active'),
+                'is_featured' => $request->has('is_featured'),
+            ]);
+
             $request->validate([
-                //'name' => "required|string|max:255|regex:/^[\p{L}\s.\-'0-9]+$/u|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i",
-                'name' => [
-                            'required',
-                            'string',
-                            'max:255'
-                            ],
-                'slug' => 'nullable|string|max:280|unique:products,slug,' . $id . '|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-                'description' => 'nullable|string|max:65535|not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i',
-                'short_description' => 'nullable|string|max:500|not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i',
-                'price' => 'required|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'compare_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'cost_price' => 'nullable|numeric|min:0|max:999999999.99|not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i',
-                'sku' => 'nullable|string|max:100|unique:products,sku,' . $id . '|regex:/^[A-Z0-9\-_]+$/i|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'category_id' => 'nullable|integer|exists:categories,id|not_regex:/^test_/i',
-                'image_file' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200',
-                'gallery_images.*' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:max_width=2500,max_height=2500',
-                'badge' => 'nullable|string|max:50|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'is_active' => 'required|boolean',
-                'is_featured' => 'required|boolean',
-                'stock_quantity' => 'required|integer|min:0|max:9999',
-                'low_stock_threshold' => 'required|integer|min:1|max:100',
-                'warehouse_location' => 'nullable|string|max:100|not_regex:/^(test_|invalid_|dummy_|sample_).*$/i',
-                'existing_images' => 'nullable|string',
-                'existing_images.*' => 'nullable|string|max:500',
+                'name' => ['required', 'string', 'max:255'],
+                'slug' => ['nullable', 'string', 'max:280', 'unique:products,slug,' . $id, 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
+                'description' => ['nullable', 'string', 'max:65535', 'not_regex:/^(test_|invalid_|dummy_|sample_).{100,}$/i'],
+                'short_description' => ['nullable', 'string', 'max:500', 'not_regex:/^(test_|invalid_|dummy_|sample_).{150,}$/i'],
+                'price' => ['required', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'compare_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'cost_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
+                'sku' => ['nullable', 'string', 'max:100', 'unique:products,sku,' . $id, 'regex:/^[A-Z0-9\-_]+$/i', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'category_id' => ['nullable', 'integer', 'exists:categories,id', 'not_regex:/^test_/i'],
+                'image_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200'],
+                'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500'],
+                'badge' => ['nullable', 'string', 'max:50', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'is_active' => ['required', 'boolean'],
+                'is_featured' => ['required', 'boolean'],
+                'stock_quantity' => ['required', 'integer', 'min:0', 'max:9999'],
+                'low_stock_threshold' => ['required', 'integer', 'min:1', 'max:100'],
+                'warehouse_location' => ['nullable', 'string', 'max:100', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
+                'existing_images' => ['nullable', 'string'],
+                'existing_images.*' => ['nullable', 'string', 'max:500'],
+            ], [
+                'name.required' => 'Please provide a product title.',
+                'name.max' => 'The product title is too long.',
+                'description.max' => 'The description is too long.',
+                'short_description.max' => 'The short description is too long.',
+                'price.required' => 'A price is required.',
+                'price.not_regex' => 'Please enter a valid real price (not 0.00 or dummy).',
+                'sku.unique' => 'This SKU is already in use.',
+                'image_file.image' => 'The main file must be an image.',
+                'image_file.max' => 'The main image must not be larger than 2MB.',
+                'stock_quantity.required' => 'Please specify the stock quantity.',
             ]);
 
             $productData = [
@@ -279,8 +292,8 @@ class ProductController extends Controller
                 'sku' => $request->input('sku'),
                 'category_id' => $request->input('category_id') ? intval($request->input('category_id')) : null,
                 'badge' => $request->input('badge'),
-                'is_active' => $request->input('is_active') === 'on' || $request->input('is_active') === 'true' || $request->input('is_active') === '1',
-                'is_featured' => $request->input('is_featured') === 'on' || $request->input('is_featured') === 'true' || $request->input('is_featured') === '1',
+                'is_active' => (bool) $request->input('is_active'),
+                'is_featured' => (bool) $request->input('is_featured'),
             ];
 
             // Image file upload
@@ -312,6 +325,48 @@ class ProductController extends Controller
 
             $product->update($productData);
 
+            // Sync inventory from the edit form (prevents mismatch with inventory list)
+            $newStock = intval($request->input('stock_quantity', 0));
+            $newThreshold = intval($request->input('low_stock_threshold', 10));
+            $warehouseLocation = $request->input('warehouse_location');
+
+            $inventory = Inventory::where('product_id', $product->id)->first();
+
+            if ($inventory) {
+                $delta = $newStock - $inventory->quantity;
+
+                $inventory->low_stock_threshold = $newThreshold;
+                if ($warehouseLocation) {
+                    $inventory->warehouse_location = $warehouseLocation;
+                }
+                $inventory->save();
+
+                if ($delta !== 0) {
+                    Inventory::adjustStock(
+                        $product->id,
+                        $delta,
+                        'adjustment',
+                        'Stock changed while editing product "' . $product->name . '"'
+                    );
+                }
+            } else {
+                Inventory::create([
+                    'product_id' => $product->id,
+                    'quantity' => $newStock,
+                    'low_stock_threshold' => $newThreshold,
+                    'warehouse_location' => $warehouseLocation ?: 'Dhaka Main'
+                ]);
+
+                InventoryLedger::create([
+                    'product_id' => $product->id,
+                    'type' => 'opening',
+                    'quantity' => $newStock,
+                    'balance_after' => $newStock,
+                    'note' => 'Opening stock while editing product',
+                    'user_id' => auth()->id(),
+                ]);
+            }
+
             Log::info("Product updated: " . $product->name);
 
             if ($request->headers->has('hx-request')) {
@@ -334,15 +389,20 @@ class ProductController extends Controller
     // --- ADMIN: Delete Product ---
     public function adminDelete(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->delete();
+        try {
+            $product = Product::findOrFail($id);
+            $product->delete();
 
-        Log::info("Product deleted: " . $product->name);
+            Log::info("Product deleted: " . $product->name);
 
-        if ($request->headers->has('hx-request')) {
-            return response('');
+            if ($request->headers->has('hx-request')) {
+                return response('');
+            }
+
+            return redirect('/admin/products');
+        } catch (\Exception $e) {
+            Log::error("Failed to delete product: " . $e->getMessage());
+            return redirect('/admin/products')->with('error', 'Failed to delete product: ' . $e->getMessage());
         }
-
-        return redirect('/admin/products');
     }
 }

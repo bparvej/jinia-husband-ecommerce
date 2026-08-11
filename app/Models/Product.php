@@ -47,7 +47,7 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function validateProductData(array $data = [], string $operation = 'store'): array
+    public static function validateProductData(array $data = [], string $operation = 'store'): array
     {
         $errors = [];
         
@@ -65,7 +65,7 @@ class Product extends Model
         
         // Validate slug if provided
         if (!empty($data['slug'])) {
-            $cleanSlug = $this->cleanSlug($data['slug']);
+            $cleanSlug = self::cleanSlug($data['slug']);
             if (strlen($cleanSlug) < 2 || strlen($cleanSlug) > 280) {
                 $errors['slug'][] = 'Slug must be between 2 and 280 characters';
             } elseif (!preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $cleanSlug)) {
@@ -106,7 +106,7 @@ class Product extends Model
         return $errors;
     }
 
-    public function cleanSlug(string $slug): string
+    public static function cleanSlug(string $slug): string
     {
         // Convert to lowercase
         $slug = strtolower($slug);
@@ -119,8 +119,8 @@ class Product extends Model
         // Remove leading/trailing hyphens
         $slug = trim($slug, '-');
         
-        // Return original if very short but valid
-        if (strlen($slug) < 2 && preg_match('/^[a-z]$/i', $data['name'] ?? '')) {
+        // Return original if very short
+        if (strlen($slug) < 2) {
             $slug = 'product-' . $slug;
         }
         

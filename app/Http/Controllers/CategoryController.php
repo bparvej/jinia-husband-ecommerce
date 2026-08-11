@@ -158,19 +158,24 @@ class CategoryController extends Controller
 
     public function adminDelete(Request $request, $id)
     {
-        $category = Category::findOrFail($id);
+        try {
+            $category = Category::findOrFail($id);
 
-        // Reassign products to no category
-        \App\Models\Product::where('category_id', $id)->update(['category_id' => null]);
+            // Reassign products to no category
+            \App\Models\Product::where('category_id', $id)->update(['category_id' => null]);
 
-        $category->delete();
+            $category->delete();
 
-        Log::info("Category deleted: " . $category->name);
+            Log::info("Category deleted: " . $category->name);
 
-        if ($request->headers->has('hx-request')) {
-            return response('');
+            if ($request->headers->has('hx-request')) {
+                return response('');
+            }
+
+            return redirect('/admin/categories');
+        } catch (\Exception $e) {
+            Log::error("Failed to delete category: " . $e->getMessage());
+            return redirect('/admin/categories')->with('error', 'Failed to delete category: ' . $e->getMessage());
         }
-
-        return redirect('/admin/categories');
     }
 }

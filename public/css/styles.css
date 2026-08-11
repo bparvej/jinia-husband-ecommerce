@@ -2643,6 +2643,94 @@ textarea.form-control {
 }
 
 /* ============================================
+   ORDER SUCCESS PAGE
+   ============================================ */
+.order-success-section {
+    padding: var(--space-2xl) 0;
+}
+
+.order-success-card {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+    background: #fff;
+    border: 1px solid var(--clr-bg-muted);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl) var(--space-lg);
+    box-shadow: 0 10px 40px rgba(92, 61, 46, 0.08);
+}
+
+.order-success-card .success-icon {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto var(--space-lg);
+    border-radius: 50%;
+    background: rgba(90, 143, 90, 0.1);
+    color: var(--clr-success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: checkScale .3s ease-in-out .9s both;
+}
+
+.order-success-card h1 {
+    font-family: var(--font-heading);
+    font-size: 1.9rem;
+    color: var(--clr-primary-dark);
+    margin-bottom: var(--space-xs);
+}
+
+.success-order-number {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--clr-accent-dark);
+    margin-bottom: var(--space-sm);
+}
+
+.order-success-card .success-message {
+    max-width: 460px;
+    margin: 0 auto var(--space-lg);
+}
+
+.success-contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    font-size: 0.85rem;
+    color: var(--clr-text-secondary);
+    background: var(--clr-bg-warm);
+    border: 1px solid var(--clr-bg-muted);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.success-contact .contact-link {
+    color: var(--clr-accent-dark);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.success-contact .contact-link:hover {
+    text-decoration: underline;
+}
+
+.success-actions {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.success-actions .btn-outline {
+    background: transparent;
+    border: 1px solid var(--clr-primary);
+    color: var(--clr-primary);
+}
+
+/* ============================================
    BREADCRUMB
    ============================================ */
 .breadcrumb {
