@@ -19,6 +19,7 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Inventory;
 use App\Models\InventoryLedger;
+use Illuminate\Validation\ValidationException;
 use Exception;
 
 class StorefrontController extends Controller
@@ -65,18 +66,17 @@ class StorefrontController extends Controller
     // --- Cart Management ---
     public function getCartDrawer(Request $request)
     {
-        $cartData = $this->getCartData($request);
-        return view('partials.cart-drawer-content', [
-            'cart' => $cartData['cart'],
-            'count' => $cartData['count'],
-            'csrfToken' => csrf_token()
-        ]);
+        return $this->renderCartDrawer($request);
     }
 
     public function addToCart(Request $request)
     {
         $productId = $request->input('product_id');
         $quantity = intval($request->input('quantity', 1));
+
+        if ($quantity < 1) {
+            $quantity = 1;
+        }
 
         $product = Product::findOrFail($productId);
 
@@ -106,6 +106,7 @@ class StorefrontController extends Controller
                     break;
                 }
             }
+            unset($item);
             if (!$found) {
                 $cartItems[] = [
                     'product_id' => intval($productId),
@@ -115,17 +116,17 @@ class StorefrontController extends Controller
             $request->session()->put('cart.items', $cartItems);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Item added to cart',
-            'cart_count' => $this->getCartData($request)['count']
-        ]);
+        return $this->renderCartDrawer($request, 'open-cart');
     }
 
     public function updateCartQuantity(Request $request)
     {
         $productId = $request->input('product_id');
         $quantity = intval($request->input('quantity'));
+
+        if ($quantity < 1) {
+            $quantity = 1;
+        }
 
         if (Auth::check()) {
             $user = Auth::user();
@@ -145,14 +146,11 @@ class StorefrontController extends Controller
                     break;
                 }
             }
+            unset($item);
             $request->session()->put('cart.items', $cartItems);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cart updated',
-            'cart_count' => $this->getCartData($request)['count']
-        ]);
+        return $this->renderCartDrawer($request);
     }
 
     public function removeFromCart(Request $request)
@@ -173,63 +171,124 @@ class StorefrontController extends Controller
             $request->session()->put('cart.items', array_values($cartItems));
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Item removed from cart',
-            'cart_count' => $this->getCartData($request)['count']
+        return $this->renderCartDrawer($request);
+    }
+
+    // --- Shared: Build cart data for the current user/session ---
+    private function getCartData(Request $request): array
+    {
+        $cartItems = [];
+
+        if (Auth::check()) {
+            $cart = Cart::with('items.product')->where('user_id', Auth::id())->first();
+
+            if ($cart) {
+                foreach ($cart->items as $item) {
+                    if (!$item->product) {
+                        continue;
+                    }
+                    $cartItems[] = (object)[
+                        'id' => $item->id,
+                        'product_id' => $item->product_id,
+                        'quantity' => $item->quantity,
+                        'Product' => $item->product,
+                    ];
+                }
+            }
+        } else {
+            $sessionItems = $request->session()->get('cart.items', []);
+
+            foreach ($sessionItems as $item) {
+                $product = Product::find($item['product_id']);
+                if (!$product) {
+                    continue;
+                }
+                $cartItems[] = (object)[
+                    'id' => 'guest-' . $product->id,
+                    'product_id' => $product->id,
+                    'quantity' => intval($item['quantity']),
+                    'Product' => $product,
+                ];
+            }
+        }
+
+        $cart = new \stdClass();
+        $cart->CartItems = collect($cartItems);
+
+        return [
+            'cart' => $cart,
+            'count' => $cart->CartItems->sum('quantity'),
+        ];
+    }
+
+    private function renderCartDrawer(Request $request, ?string $trigger = null)
+    {
+        $cartData = $this->getCartData($request);
+
+        $response = response()->view('partials.cart-drawer-content', [
+            'cart' => $cartData['cart'],
+            'count' => $cartData['count'],
+            'csrfToken' => csrf_token()
         ]);
+
+        if ($trigger) {
+            $response->header('HX-Trigger', $trigger);
+        }
+
+        return $response;
     }
 
     // --- Order Processing ---
     public function checkout(Request $request)
     {
-        $request->validate([
-            'shipping_name' => 'required|string|max:100',
-            'shipping_phone' => 'required|string|max:20',
-            'shipping_address' => 'required|string',
-            'shipping_city' => 'required|string|max:100',
-            'payment_method' => 'required|string',
-        ]);
-
-        $cartData = $this->getCartData($request);
-        $cartItems = $cartData['cart']->CartItems;
-
-        if (count($cartItems) === 0) {
-            return response()->json(['success' => false, 'message' => 'Your cart is empty'], 400);
-        }
-
-        DB::beginTransaction();
-
         try {
-            $userId = Auth::id();
+            $request->validate([
+                'shipping_name' => 'required|string|max:100',
+                'shipping_phone' => 'required|string|max:20',
+                'shipping_address' => 'required|string',
+                'shipping_city' => 'required|string|max:100',
+                'payment_method' => 'required|string',
+            ]);
 
-            // Handle Guest Registration/Lookup
-            if (!$userId) {
-                $shippingPhone = $request->input('shipping_phone');
-                $user = User::where('phone', $shippingPhone)->first();
-                
-                if (!$user) {
-                    $cleanPhone = preg_replace('/\s+/', '', $shippingPhone);
-                    $guestEmail = "guest_{$cleanPhone}@homei.com.bd";
-                    $user = User::where('email', $guestEmail)->first();
+            $cartData = $this->getCartData($request);
+            $cartItems = $cartData['cart']->CartItems;
+
+            if (count($cartItems) === 0) {
+                return $this->orderErrorResponse($request, 'Your cart is empty');
+            }
+
+            DB::beginTransaction();
+
+            try {
+                $userId = Auth::id();
+
+                // Handle Guest Registration/Lookup
+                if (!$userId) {
+                    $shippingPhone = $request->input('shipping_phone');
+                    $user = User::where('phone', $shippingPhone)->first();
 
                     if (!$user) {
-                        $role = Role::where('name', 'customer')->first();
-                        $roleId = $role ? $role->id : 4;
-                        $dummyPassword = Hash::make('Guest@' . Str::random(6) . '2026');
+                        $cleanPhone = preg_replace('/\s+/', '', $shippingPhone);
+                        $guestEmail = "guest_{$cleanPhone}@homei.com.bd";
+                        $user = User::where('email', $guestEmail)->first();
 
-                        $user = User::create([
-                            'name' => $request->input('shipping_name'),
-                            'email' => $guestEmail,
-                            'password' => $dummyPassword,
-                            'phone' => $shippingPhone,
-                            'role_id' => $roleId,
-                            'is_active' => true
-                        ]);
+                        if (!$user) {
+                            $role = Role::where('name', 'customer')->first();
+                            $roleId = $role ? $role->id : 4;
+                            $dummyPassword = Hash::make('Guest@' . Str::random(6) . '2026');
+
+                            $user = User::create([
+                                'name' => $request->input('shipping_name'),
+                                'email' => $guestEmail,
+                                'password' => $dummyPassword,
+                                'phone' => $shippingPhone,
+                                'role_id' => $roleId,
+                                'is_active' => true
+                            ]);
+                        }
                     }
+                    $userId = $user->id;
                 }
-                $userId = $user->id;
-            }
 
             // Aggregate cart items into one order
             $orderItemsData = [];
@@ -337,24 +396,20 @@ class StorefrontController extends Controller
 
             Log::info("Order placed successfully: " . $order->order_number);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Order placed successfully',
-                'order_id' => $order->id,
-                'order_number' => $order->order_number
-            ]);
+            return $this->orderSuccessResponse($request, $orderNumber);
 
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error("Order placement failed: " . $e->getMessage(), [
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Order failed: ' . $e->getMessage()
-            ], 400);
+            } catch (Exception $e) {
+                DB::rollBack();
+                Log::error("Order placement failed: " . $e->getMessage(), [
+                    'error' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]);
+                return $this->orderErrorResponse($request, 'Order failed: ' . $e->getMessage());
+            }
+        } catch (ValidationException $e) {
+            $messages = collect($e->errors())->flatten()->unique()->implode(' ');
+            return $this->orderErrorResponse($request, 'Please correct the form: ' . $messages);
         }
     }
 
@@ -374,23 +429,24 @@ class StorefrontController extends Controller
     // --- Quick Checkout (direct product order from /buy/{slug}) ---
     public function quickCheckout(Request $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-            'shipping_name' => 'required|string|max:100',
-            'shipping_phone' => 'required|string|max:20',
-            'shipping_address' => 'required|string',
-            'shipping_city' => 'required|string|max:100',
-            'payment_method' => 'required|string'
-        ]);
-
-        $product = Product::findOrFail($request->input('product_id'));
-        $quantity = intval($request->input('quantity', 1));
-
-        DB::beginTransaction();
-
         try {
-            $userId = Auth::id();
+            $request->validate([
+                'product_id' => 'required|exists:products,id',
+                'quantity' => 'required|integer|min:1',
+                'shipping_name' => 'required|string|max:100',
+                'shipping_phone' => 'required|string|max:20',
+                'shipping_address' => 'required|string',
+                'shipping_city' => 'required|string|max:100',
+                'payment_method' => 'required|string'
+            ]);
+
+            $product = Product::findOrFail($request->input('product_id'));
+            $quantity = intval($request->input('quantity', 1));
+
+            DB::beginTransaction();
+
+            try {
+                $userId = Auth::id();
 
             if (!$userId) {
                 $shippingPhone = $request->input('shipping_phone');
@@ -488,21 +544,66 @@ class StorefrontController extends Controller
 
             Log::info("Quick order placed successfully: " . $order->order_number);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Quick checkout completed successfully',
-                'order_id' => $order->id,
-                'order_number' => $order->order_number
-            ]);
+            return $this->orderSuccessResponse($request, $orderNumber);
 
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error("Quick checkout failed: " . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Quick checkout failed: ' . $e->getMessage()
-            ], 400);
+            } catch (Exception $e) {
+                DB::rollBack();
+                Log::error("Quick checkout failed: " . $e->getMessage());
+                return $this->orderErrorResponse($request, 'Order failed: ' . $e->getMessage());
+            }
+        } catch (ValidationException $e) {
+            $messages = collect($e->errors())->flatten()->unique()->implode(' ');
+            return $this->orderErrorResponse($request, 'Please correct the form: ' . $messages);
         }
+    }
+
+    // --- Order success page ---
+    public function orderSuccess($orderNumber)
+    {
+        $order = Order::where('order_number', $orderNumber)->first();
+
+        $products = Product::where('is_active', true)
+            ->where('id', '!=', $order ? $order->items()->value('product_id') : null)
+            ->orderBy('created_at', 'desc')
+            ->take(8)
+            ->get();
+
+        if ($products->count() < 8) {
+            $featured = Product::where('is_active', true)->where('is_featured', true)->take(8)->get();
+            $products = $products->merge($featured)->unique('id')->take(8);
+        }
+
+        return view('pages.order-success', [
+            'title' => 'Order Confirmed — HomeI Cozy Living',
+            'order' => $order,
+            'products' => $products
+        ]);
+    }
+
+    // --- Shared: order success/error responses for HTMX forms ---
+    private function orderSuccessResponse(Request $request, string $orderNumber)
+    {
+        $url = '/order/success/' . $orderNumber;
+
+        if ($request->headers->has('hx-request')) {
+            return response('')->header('HX-Redirect', $url);
+        }
+
+        return redirect($url);
+    }
+
+    private function orderErrorResponse(Request $request, string $message)
+    {
+        $html = '<div class="alert alert-danger" style="padding:1rem;border-radius:10px;background:#FEE2E2;color:#991B1B;border:1px solid #FCA5A5;margin-bottom:1rem;font-size:0.9rem;">'
+            . '<strong>We could not place your order.</strong><br>' . e($message)
+            . '<br><button type="button" class="btn btn-secondary btn-sm" style="margin-top:0.75rem;" onclick="var c=document.getElementById(\'cart-drawer-close\'); if(c){c.click();}else{location.reload();}">Try Again</button>'
+            . '</div>';
+
+        if ($request->headers->has('hx-request')) {
+            return response($html, 200);
+        }
+
+        return back()->with('error', $message);
     }
 
     // --- Email helper methods ---

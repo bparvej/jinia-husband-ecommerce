@@ -202,7 +202,11 @@ function addToCartDetail(e) {
     })
     .then(r => r.text())
     .then(html => {
-        if (cartBody) cartBody.innerHTML = html;
+        if (cartBody) {
+            cartBody.innerHTML = html;
+            // Remove out-of-band elements injected as literal markup (plain-JS swap)
+            cartBody.querySelectorAll('[hx-swap-oob]').forEach(n => n.remove());
+        }
         let cartDrawer = document.getElementById('cart-drawer');
         let cartBackdrop = document.getElementById('cart-drawer-backdrop');
         if (cartDrawer) cartDrawer.classList.add('active');

@@ -25,6 +25,7 @@ Route::post('/checkout', [StorefrontController::class, 'checkout'])->name('check
 Route::get('/product/{slug}', [StorefrontController::class, 'productDetail'])->name('product.detail');
 Route::get('/buy/{slug}', [StorefrontController::class, 'quickBuy'])->name('product.buy');
 Route::post('/quick-checkout', [StorefrontController::class, 'quickCheckout'])->name('quick.checkout');
+Route::get('/order/success/{orderNumber}', [StorefrontController::class, 'orderSuccess'])->name('order.success');
 
 // Info Pages
 Route::get('/about', [PageController::class, 'about'])->name('page.about');
