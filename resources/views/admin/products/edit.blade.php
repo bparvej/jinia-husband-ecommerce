@@ -5,6 +5,12 @@
     <a href="/admin/products" class="back-link">← Back to Products</a>
 </div>
 
+@php
+$acceptString = implode(',', array_map(function($ext) { return 'image/' . trim($ext); }, explode(',', $supportedImageFormats ?? 'jpeg,jpg,png,webp')));
+$maxMb = round(($maxImageSize ?? 2048) / 1024, 1);
+$displayFormats = strtoupper(str_replace(',', ', ', $supportedImageFormats ?? 'jpeg, jpg, png, webp'));
+@endphp
+
 @if (!empty($error))
 <div class="alert alert-error">{{ $error }}</div>
 @endif
@@ -144,9 +150,10 @@
                             <div class="upload-placeholder">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
                                 <span>Upload new image</span>
+                                <small>{{ $displayFormats }} (max {{ $maxMb }}MB)</small>
                             </div>
                         </div>
-                        <input type="file" name="image_file" x-ref="fileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+                        <input type="file" name="image_file" x-ref="fileInput" accept="{{ $acceptString }}" style="display:none">
                     </div>
                 </div>
             </div>
@@ -178,12 +185,12 @@
                                 <div class="upload-placeholder upload-placeholder-sm">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                                     <span>Add gallery images</span>
-                                    <small>JPEG, PNG, WebP — select multiple</small>
+                                    <small>{{ $displayFormats }} — select multiple</small>
                                 </div>
                             </div>
                         </div>
                         <input type="hidden" name="existing_images" x-ref="removedInput" :value="JSON.stringify(existing)">
-                        <input type="file" name="gallery_images[]" x-ref="fileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none"
+                        <input type="file" name="gallery_images[]" x-ref="fileInput" accept="{{ $acceptString }}" multiple style="display:none"
                             @change="newPreviews = Array.from($event.target.files).map(f => URL.createObjectURL(f))">
                     </div>
                 </div>

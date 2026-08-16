@@ -5,6 +5,12 @@
     <a href="/admin/products" class="back-link">← Back to Products</a>
 </div>
 
+@php
+$acceptString = implode(',', array_map(function($ext) { return 'image/' . trim($ext); }, explode(',', $supportedImageFormats ?? 'jpeg,jpg,png,webp')));
+$maxMb = round(($maxImageSize ?? 2048) / 1024, 1);
+$displayFormats = strtoupper(str_replace(',', ', ', $supportedImageFormats ?? 'jpeg, jpg, png, webp'));
+@endphp
+
 @if (!empty($error))
 <div class="alert alert-error">{{ $error }}</div>
 @endif
@@ -139,11 +145,11 @@
                                 <div class="upload-placeholder">
                                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                                     <span>Click to upload main image</span>
-                                    <small>JPEG, PNG, WebP (max 5MB)</small>
+                                    <small>{{ $displayFormats }} (max {{ $maxMb }}MB)</small>
                                 </div>
                             </template>
                         </div>
-                        <input type="file" name="image_file" x-ref="fileInput" accept="image/jpeg,image/png,image/webp" style="display:none"
+                        <input type="file" name="image_file" x-ref="fileInput" accept="{{ $acceptString }}" style="display:none"
                             @change="preview = URL.createObjectURL($event.target.files[0])">
                     </div>
                 </div>
@@ -167,11 +173,11 @@
                                 <div class="upload-placeholder upload-placeholder-sm">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                                     <span>Add gallery images</span>
-                                    <small>JPEG, PNG, WebP — select multiple</small>
+                                    <small>{{ $displayFormats }} — select multiple</small>
                                 </div>
                             </div>
                         </div>
-                        <input type="file" name="gallery_images[]" x-ref="fileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none"
+                        <input type="file" name="gallery_images[]" x-ref="fileInput" accept="{{ $acceptString }}" multiple style="display:none"
                             @change="previews = Array.from($event.target.files).map(f => URL.createObjectURL(f))">
                     </div>
                 </div>
