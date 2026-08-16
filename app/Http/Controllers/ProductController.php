@@ -63,10 +63,15 @@ class ProductController extends Controller
     public function adminCreate()
     {
         $categories = Category::all();
+        $maxImageSize = \App\Models\Setting::get('max_image_size', '2048');
+        $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
+
         return view('admin.products.create', [
             'categories' => $categories,
             'product' => null,
             'error' => null,
+            'maxImageSize' => $maxImageSize,
+            'supportedImageFormats' => $supportedImageFormats,
             'title' => 'Add Product — HomeI Admin'
         ]);
     }
@@ -80,6 +85,9 @@ class ProductController extends Controller
                 'is_featured' => $request->has('is_featured'),
             ]);
 
+            $maxImageSize = \App\Models\Setting::get('max_image_size', '2048');
+            $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
+
             $request->validate([
                 'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s\-.\'0-9]+$/u', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
                 'slug' => ['nullable', 'string', 'max:280', 'unique:products,slug', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
@@ -90,8 +98,8 @@ class ProductController extends Controller
                 'cost_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
                 'sku' => ['nullable', 'string', 'max:100', 'unique:products,sku', 'regex:/^[A-Z0-9\-_]+$/i', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
                 'category_id' => ['nullable', 'integer', 'exists:categories,id', 'not_regex:/^test_/i'],
-                'image_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200'],
-                'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500'],
+                'image_file' => ['nullable', 'image', 'mimes:' . $supportedImageFormats, 'max:' . $maxImageSize, 'dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200'],
+                'gallery_images.*' => ['nullable', 'image', 'mimes:' . $supportedImageFormats, 'max:' . $maxImageSize, 'dimensions:max_width=2500,max_height=2500'],
                 'badge' => ['nullable', 'string', 'max:50', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
                 'is_active' => ['required', 'boolean'],
                 'is_featured' => ['required', 'boolean'],
@@ -109,7 +117,10 @@ class ProductController extends Controller
                 'price.not_regex' => 'Please enter a valid real price (not 0.00 or dummy).',
                 'sku.unique' => 'This SKU is already in use.',
                 'image_file.image' => 'The main file must be an image.',
-                'image_file.max' => 'The main image must not be larger than 2MB.',
+                'image_file.max' => 'The main image must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
+                'image_file.mimes' => 'The main image must be a file of type: ' . $supportedImageFormats . '.',
+                'gallery_images.*.max' => 'Gallery images must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
+                'gallery_images.*.mimes' => 'Gallery images must be a file of type: ' . $supportedImageFormats . '.',
                 'stock_quantity.required' => 'Please specify the stock quantity.',
             ]);
 
@@ -213,6 +224,8 @@ class ProductController extends Controller
 
             return redirect('/admin/products');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             $categories = Category::all();
             return view('admin.products.create', [
@@ -229,11 +242,15 @@ class ProductController extends Controller
     {
         $product = Product::with('inventory')->findOrFail($id);
         $categories = Category::all();
+        $maxImageSize = \App\Models\Setting::get('max_image_size', '2048');
+        $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
 
         return view('admin.products.edit', [
             'product' => $product,
             'categories' => $categories,
             'error' => null,
+            'maxImageSize' => $maxImageSize,
+            'supportedImageFormats' => $supportedImageFormats,
             'title' => 'Edit ' . $product->name . ' — HomeI Admin'
         ]);
     }
@@ -249,6 +266,9 @@ class ProductController extends Controller
                 'is_featured' => $request->has('is_featured'),
             ]);
 
+            $maxImageSize = \App\Models\Setting::get('max_image_size', '2048');
+            $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
+
             $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'slug' => ['nullable', 'string', 'max:280', 'unique:products,slug,' . $id, 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
@@ -259,8 +279,8 @@ class ProductController extends Controller
                 'cost_price' => ['nullable', 'numeric', 'min:0', 'max:999999999.99', 'not_regex:/^(0\.00|0\.01|0\.99|test_\d+\.\d+)$/i'],
                 'sku' => ['nullable', 'string', 'max:100', 'unique:products,sku,' . $id, 'regex:/^[A-Z0-9\-_]+$/i', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
                 'category_id' => ['nullable', 'integer', 'exists:categories,id', 'not_regex:/^test_/i'],
-                'image_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200'],
-                'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048', 'dimensions:max_width=2500,max_height=2500'],
+                'image_file' => ['nullable', 'image', 'mimes:' . $supportedImageFormats, 'max:' . $maxImageSize, 'dimensions:max_width=2500,max_height=2500,min_width=200,min_height=200'],
+                'gallery_images.*' => ['nullable', 'image', 'mimes:' . $supportedImageFormats, 'max:' . $maxImageSize, 'dimensions:max_width=2500,max_height=2500'],
                 'badge' => ['nullable', 'string', 'max:50', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
                 'is_active' => ['required', 'boolean'],
                 'is_featured' => ['required', 'boolean'],
@@ -278,7 +298,10 @@ class ProductController extends Controller
                 'price.not_regex' => 'Please enter a valid real price (not 0.00 or dummy).',
                 'sku.unique' => 'This SKU is already in use.',
                 'image_file.image' => 'The main file must be an image.',
-                'image_file.max' => 'The main image must not be larger than 2MB.',
+                'image_file.max' => 'The main image must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
+                'image_file.mimes' => 'The main image must be a file of type: ' . $supportedImageFormats . '.',
+                'gallery_images.*.max' => 'Gallery images must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
+                'gallery_images.*.mimes' => 'Gallery images must be a file of type: ' . $supportedImageFormats . '.',
                 'stock_quantity.required' => 'Please specify the stock quantity.',
             ]);
 
@@ -375,6 +398,8 @@ class ProductController extends Controller
 
             return redirect('/admin/products');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (Exception $e) {
             $categories = Category::all();
             return view('admin.products.edit', [

@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,4 +82,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/resources/features', [AdminController::class, 'features'])->name('admin.resources.features');
     Route::get('/resources/brochure', [AdminController::class, 'brochure'])->name('admin.resources.brochure');
     Route::get('/resources/guide', [AdminController::class, 'adminGuide'])->name('admin.resources.guide');
+
+    // Settings
+    Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings.index');
+    Route::post('/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
 });

@@ -37,10 +37,15 @@ class CategoryController extends Controller
     public function adminCreate()
     {
         $categories = Category::orderBy('name')->get();
+        $maxImageSize = \App\Models\Setting::get('max_image_size', '2048');
+        $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
+
         return view('admin.categories.create', [
             'categories' => $categories,
             'category' => null,
             'error' => null,
+            'maxImageSize' => $maxImageSize,
+            'supportedImageFormats' => $supportedImageFormats,
             'title' => 'Add Category — HomeI Admin'
         ]);
     }
@@ -48,9 +53,16 @@ class CategoryController extends Controller
     public function adminStore(Request $request)
     {
         try {
+            $maxImageSize = \App\Models\Setting::get('max_image_size', '2048');
+            $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
+
             $request->validate([
                 'name' => 'required|string|max:100',
-                'image_file' => 'nullable|image|max:2048'
+                'image_file' => 'nullable|image|mimes:' . $supportedImageFormats . '|max:' . $maxImageSize
+            ], [
+                'image_file.image' => 'The file must be an image.',
+                'image_file.max' => 'The image must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
+                'image_file.mimes' => 'The image must be a file of type: ' . $supportedImageFormats . '.',
             ]);
 
             $slug = Str::slug($request->input('name'));
@@ -86,6 +98,8 @@ class CategoryController extends Controller
 
             return redirect('/admin/categories');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             $categories = Category::orderBy('name')->get();
             return view('admin.categories.create', [
@@ -101,11 +115,15 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
         $categories = Category::where('id', '!=', $id)->orderBy('name')->get();
+        $maxImageSize = \App\Models\Setting::get('max_image_size', '2048');
+        $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
 
         return view('admin.categories.edit', [
             'category' => $category,
             'categories' => $categories,
             'error' => null,
+            'maxImageSize' => $maxImageSize,
+            'supportedImageFormats' => $supportedImageFormats,
             'title' => 'Edit ' . $category->name . ' — HomeI Admin'
         ]);
     }
@@ -115,9 +133,16 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         try {
+            $maxImageSize = \App\Models\Setting::get('max_image_size', '2048');
+            $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
+
             $request->validate([
                 'name' => 'required|string|max:100',
-                'image_file' => 'nullable|image|max:2048'
+                'image_file' => 'nullable|image|mimes:' . $supportedImageFormats . '|max:' . $maxImageSize
+            ], [
+                'image_file.image' => 'The file must be an image.',
+                'image_file.max' => 'The image must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
+                'image_file.mimes' => 'The image must be a file of type: ' . $supportedImageFormats . '.',
             ]);
 
             $data = [
@@ -145,6 +170,8 @@ class CategoryController extends Controller
 
             return redirect('/admin/categories');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             $categories = Category::where('id', '!=', $id)->orderBy('name')->get();
             return view('admin.categories.edit', [

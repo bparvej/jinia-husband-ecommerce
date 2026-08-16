@@ -5,8 +5,24 @@
     <a href="/admin/categories" class="back-link">← Back to Categories</a>
 </div>
 
-@if ($error)
+@php
+$acceptString = implode(',', array_map(function($ext) { return 'image/' . trim($ext); }, explode(',', $supportedImageFormats ?? 'jpeg,jpg,png,webp')));
+$maxMb = round(($maxImageSize ?? 2048) / 1024, 1);
+$displayFormats = strtoupper(str_replace(',', ', ', $supportedImageFormats ?? 'jpeg, jpg, png, webp'));
+@endphp
+
+@if (!empty($error))
 <div class="alert alert-error">{{ $error }}</div>
+@endif
+
+@if ($errors->any())
+<div class="alert alert-error">
+    <ul style="margin: 0; padding-left: 1.5rem;">
+        @foreach ($errors->all() as $validationError)
+            <li>{{ $validationError }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif
 
 <form action="/admin/categories/{{ $category->id }}" method="POST" enctype="multipart/form-data" class="product-form">
@@ -71,9 +87,10 @@
                             <div class="upload-placeholder">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
                                 <span>Upload new image</span>
+                                <small>{{ $displayFormats }} (max {{ $maxMb }}MB)</small>
                             </div>
                         </div>
-                        <input type="file" name="image_file" x-ref="fileInput" accept="image/*" style="display:none">
+                        <input type="file" name="image_file" x-ref="fileInput" accept="{{ $acceptString }}" style="display:none">
                     </div>
                 </div>
             </div>
