@@ -273,11 +273,12 @@ class StorefrontController extends Controller
                 // Handle Guest Registration/Lookup
                 if (!$userId) {
                     $shippingPhone = $request->input('shipping_phone');
+                    $shippingEmail = $request->input('shipping_email');
                     $user = User::where('phone', $shippingPhone)->first();
 
                     if (!$user) {
                         $cleanPhone = preg_replace('/\s+/', '', $shippingPhone);
-                        $guestEmail = "guest_{$cleanPhone}@homei.com.bd";
+                        $guestEmail = !empty($shippingEmail) ? $shippingEmail : "guest_{$cleanPhone}@homei.com.bd";
                         $user = User::where('email', $guestEmail)->first();
 
                         if (!$user) {
@@ -294,6 +295,8 @@ class StorefrontController extends Controller
                                 'is_active' => true
                             ]);
                         }
+                    } elseif (!empty($shippingEmail) && str_starts_with($user->email, 'guest_')) {
+                        $user->update(['email' => $shippingEmail]);
                     }
                     $userId = $user->id;
                 }
@@ -453,11 +456,12 @@ class StorefrontController extends Controller
 
             if (!$userId) {
                 $shippingPhone = $request->input('shipping_phone');
+                $shippingEmail = $request->input('shipping_email');
                 $user = User::where('phone', $shippingPhone)->first();
 
                 if (!$user) {
                     $cleanPhone = preg_replace('/\s+/', '', $shippingPhone);
-                    $guestEmail = "guest_{$cleanPhone}@homei.com.bd";
+                    $guestEmail = !empty($shippingEmail) ? $shippingEmail : "guest_{$cleanPhone}@homei.com.bd";
                     $user = User::where('email', $guestEmail)->first();
 
                     if (!$user) {
@@ -474,6 +478,8 @@ class StorefrontController extends Controller
                             'is_active' => true
                         ]);
                     }
+                } elseif (!empty($shippingEmail) && str_starts_with($user->email, 'guest_')) {
+                    $user->update(['email' => $shippingEmail]);
                 }
                 $userId = $user->id;
             }
