@@ -19,6 +19,7 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Inventory;
 use App\Models\InventoryLedger;
+use App\Models\Setting;
 use Illuminate\Validation\ValidationException;
 use Exception;
 use Throwable;
@@ -35,6 +36,8 @@ class StorefrontController extends Controller
         $totalOrders = Order::where('status', 'delivered')->count();
         $avgRating = Product::where('is_active', true)->where('avg_rating', '>', 0)->avg('avg_rating');
 
+        $bannerImage = Setting::get('banner_image', SettingsController::DEFAULT_BANNER);
+
         return view('pages.home', [
             'title' => 'HomeI — Cozy Living | Wooden & Home Decor Furniture',
             'products' => $products,
@@ -42,7 +45,8 @@ class StorefrontController extends Controller
             'featuredProducts' => $featuredProducts,
             'totalProducts' => $totalProducts,
             'totalOrders' => $totalOrders,
-            'avgRating' => round($avgRating, 1)
+            'avgRating' => round($avgRating, 1),
+            'bannerImage' => $bannerImage
         ]);
     }
 

@@ -86,4 +86,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     // Settings
     Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings.index');
     Route::post('/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
+    Route::get('/settings/banner', [SettingsController::class, 'banner'])->name('admin.settings.banner');
+    Route::post('/settings/banner', [SettingsController::class, 'updateBanner'])->name('admin.settings.banner.update');
+    Route::post('/settings/banner/reset', [SettingsController::class, 'resetBanner'])->name('admin.settings.banner.reset');
 });

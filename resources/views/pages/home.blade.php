@@ -12,7 +12,7 @@
 
 <section class="hero" id="hero">
     <div class="hero-bg">
-        <img src="/assets/images/hero-living-room.png" alt="Cozy wooden living room by HomeI" loading="eager">
+        <img src="{{ $bannerImage ?? '/assets/images/hero-living-room.png' }}" alt="Cozy wooden living room by HomeI" loading="eager">
         <div class="hero-overlay"></div>
     </div>
     <div class="container hero-content">
