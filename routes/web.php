@@ -89,4 +89,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/settings/banner', [SettingsController::class, 'banner'])->name('admin.settings.banner');
     Route::post('/settings/banner', [SettingsController::class, 'updateBanner'])->name('admin.settings.banner.update');
     Route::post('/settings/banner/reset', [SettingsController::class, 'resetBanner'])->name('admin.settings.banner.reset');
+
+    // Email Templates
+    Route::get('/settings/email-templates', [SettingsController::class, 'emailTemplates'])->name('admin.settings.email-templates');
+    Route::put('/settings/email-templates/{id}', [SettingsController::class, 'updateEmailTemplate'])->name('admin.settings.email-templates.update');
+    Route::post('/settings/email-templates/{id}/activate', [SettingsController::class, 'setActiveEmailTemplate'])->name('admin.settings.email-templates.activate');
+    Route::get('/settings/email-templates/{id}/preview', [SettingsController::class, 'previewEmailTemplate'])->name('admin.settings.email-templates.preview');
 });

@@ -297,5 +297,8 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         });
+
+        // Seed email templates (runs even if other data exists)
+        $this->call(EmailTemplateSeeder::class);
     }
 }

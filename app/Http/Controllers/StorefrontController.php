@@ -20,6 +20,9 @@ use App\Models\Payment;
 use App\Models\Inventory;
 use App\Models\InventoryLedger;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Blade;
+use App\Models\EmailTemplate;
 use Illuminate\Validation\ValidationException;
 use Exception;
 use Throwable;
@@ -607,34 +610,6 @@ class StorefrontController extends Controller
     }
 
     // --- Email helper methods ---
-    private function sendOrderEmail(string $userId, ?object $order, string $userName, string $shippingPhone, string $shippingAddress, string $shippingCity): void
-    {
-        $user = User::find($userId);
-        if ($user && !empty($user->email)) {
-            Mail::send('emails.order-confirmation', [
-                'user' => $user,
-                'order' => $order
-            ], function ($message) use ($user, $order) {
-                $message->to($user->email)
-                        ->subject('Order Confirmation - HomeI - Order #' . ($order ? $order->order_number : ''))
-                        ->from('shop@homeibd.com', 'HomeI');
-            });
-        }
-    }
-
-    private function sendOrderNotificationEmail(string $userName, float $total): void
-    {
-        Mail::send('emails.order-notification', [
-            'userName' => $userName,
-            'total' => $total
-        ], function ($message) {
-            $message->to('homeibd26@gmail.com')
-                    ->cc('homeibd26@gmail.com')
-                    ->subject('New Order Notification - HomeI')
-                    ->from('shop@homeibd.com', 'HomeI');
-        });
-    }
-
     private function sendOrderEmails(
         object $order,
         object $product,
@@ -644,18 +619,25 @@ class StorefrontController extends Controller
     ): void
     {
         $user = User::find($order->user_id);
+
+        $template = EmailTemplate::getActive();
+
         if ($user && !empty($user->email)) {
-            // Send customer order confirmation
-            Mail::send('emails.order-confirmation', [
-                'user' => $user,
-                'order' => $order
-            ], function ($message) use ($user, $order) {
+            $subject = $template
+                ? Blade::render($template->subject, ['order' => $order, 'user' => $user])
+                : 'Order Confirmation — Order #' . $order->order_number;
+
+            $htmlBody = $template
+                ? Blade::render($template->body_html, ['order' => $order, 'user' => $user])
+                : '<p>Thank you for your order #' . $order->order_number . '</p>';
+
+            Mail::send([], [], function ($message) use ($user, $subject, $htmlBody) {
                 $message->to($user->email)
-                        ->subject('Order Confirmation - HomeI - Order #' . $order->order_number)
+                        ->subject($subject)
+                        ->html($htmlBody)
                         ->from('shop@homeibd.com', 'HomeI');
             });
 
-            // Send admin notification with order details
             Mail::send('emails.admin-order-notification', [
                 'user' => $user,
                 'order' => $order,
@@ -665,13 +647,11 @@ class StorefrontController extends Controller
             ], function ($message) use ($order) {
                 $message->to('homeibd26@gmail.com')
                         ->bcc('homeibd26@gmail.com')
-                        ->subject('🚚 New Order Received - HomeI - Order #' . $order->order_number)
+                        ->subject('New Order Received - HomeI - Order #' . $order->order_number)
                         ->from('shop@homeibd.com', 'HomeI');
             });
         } else {
-            // Guest user - send admin notification
             $guestPhone = $user ? $user->phone : '';
-            $guestEmail = 'guest_' . $guestPhone . '@homei.com.bd';
             if (!empty($guestPhone)) {
                 Mail::send('emails.guest-order-notification', [
                     'user' => $user,
@@ -681,7 +661,7 @@ class StorefrontController extends Controller
                     'total' => $total
                 ], function ($message) use ($order) {
                     $message->to('homeibd26@gmail.com')
-                            ->subject('🚚 New Guest Order Received - HomeI - Order #' . $order->order_number)
+                            ->subject('New Guest Order Received - HomeI - Order #' . $order->order_number)
                             ->from('shop@homeibd.com', 'HomeI');
                 });
             }
