@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\UploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,7 @@ use App\Http\Controllers\SettingsController;
 
 // Storefront
 Route::get('/', [StorefrontController::class, 'home'])->name('home');
+Route::get('/uploads/{path}', [UploadController::class, 'show'])->where('path', '.*')->name('uploads.show');
 Route::get('/category/{slug}', [StorefrontController::class, 'category'])->name('category');
 Route::get('/cart/drawer', [StorefrontController::class, 'getCartDrawer'])->name('cart.drawer');
 Route::post('/cart/add', [StorefrontController::class, 'addToCart'])->name('cart.add');
@@ -89,4 +91,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/settings/banner', [SettingsController::class, 'banner'])->name('admin.settings.banner');
     Route::post('/settings/banner', [SettingsController::class, 'updateBanner'])->name('admin.settings.banner.update');
     Route::post('/settings/banner/reset', [SettingsController::class, 'resetBanner'])->name('admin.settings.banner.reset');
+
+    // Email Templates
+    Route::get('/settings/email-templates', [SettingsController::class, 'emailTemplates'])->name('admin.settings.email-templates');
+    Route::put('/settings/email-templates/{id}', [SettingsController::class, 'updateEmailTemplate'])->name('admin.settings.email-templates.update');
+    Route::post('/settings/email-templates/{id}/activate', [SettingsController::class, 'setActiveEmailTemplate'])->name('admin.settings.email-templates.activate');
+    Route::get('/settings/email-templates/{id}/preview', [SettingsController::class, 'previewEmailTemplate'])->name('admin.settings.email-templates.preview');
 });

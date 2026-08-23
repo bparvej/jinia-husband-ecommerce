@@ -35,7 +35,7 @@
                                 <td>
                                     <div class="product-cell">
                                         @if ($item->product)
-                                        <img src="{{ $item->product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $item->product_name }}" class="product-thumb">
+                                        <img src="{{ $item->product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $item->product_name }}" class="product-thumb" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                                         @endif
                                         <span>{{ $item->product_name }}</span>
                                     </div>

@@ -114,7 +114,7 @@
                 @if (isset($lowStock) && count($lowStock) > 0)
                     @foreach ($lowStock as $item)
                     <div class="low-stock-item">
-                        <img src="{{ $item->product ? $item->product->image ?? '/assets/images/category-bookshelf.png' : '/assets/images/category-bookshelf.png' }}" alt="{{ $item->product ? $item->product->name : 'Unknown Product' }}" class="low-stock-img">
+                        <img src="{{ $item->product ? $item->product->image ?? '/assets/images/category-bookshelf.png' : '/assets/images/category-bookshelf.png' }}" alt="{{ $item->product ? $item->product->name : 'Unknown Product' }}" class="low-stock-img" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                         <div class="low-stock-info">
                             <span class="low-stock-name">{{ $item->product ? $item->product->name : 'Unknown Product' }}</span>
                             <span class="low-stock-sku">{{ $item->product ? ($item->product->sku ?? 'No SKU') : 'No SKU' }}</span>

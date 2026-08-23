@@ -17,7 +17,7 @@
             <div class="checkout-product-summary">
                 <div class="checkout-product-card">
                     <div class="checkout-product-image">
-                        <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}">
+                        <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                     </div>
                     <div class="checkout-product-info">
                         <span class="checkout-product-category">{{ $product->category ? $product->category->name : '' }}</span>
@@ -92,6 +92,11 @@
                     <div class="form-group">
                         <label for="qc_phone">Phone Number *</label>
                         <input type="tel" id="qc_phone" name="shipping_phone" class="form-control" placeholder="E.g. 01712345678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="qc_email">Email (optional)</label>
+                        <input type="email" id="qc_email" name="shipping_email" class="form-control" placeholder="For order updates via email">
                     </div>
 
                     <div class="form-group">

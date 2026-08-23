@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Setting;
+use App\Models\EmailTemplate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 
 class SettingsController extends Controller
@@ -93,6 +95,12 @@ class SettingsController extends Controller
         try {
             $file = $request->file('banner_image');
             $filename = 'banner_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+
+            $dir = public_path('uploads/banners');
+            if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+                throw new \Exception("Failed to create upload directory: " . $dir);
+            }
+
             $file->move(public_path('uploads/banners'), $filename);
 
             $this->deleteUploadedBanner(Setting::get('banner_image', self::DEFAULT_BANNER));
@@ -139,5 +147,92 @@ class SettingsController extends Controller
         if (is_file($fullPath)) {
             @unlink($fullPath);
         }
+    }
+
+    // --- Email Template Management ---
+
+    public function emailTemplates()
+    {
+        $templates = EmailTemplate::orderBy('is_default', 'desc')->orderBy('label')->get();
+
+        return view('admin.settings.email-templates', [
+            'templates' => $templates,
+            'title' => 'Email Templates — HomeI Admin',
+        ]);
+    }
+
+    public function updateEmailTemplate(Request $request, $id)
+    {
+        $template = EmailTemplate::findOrFail($id);
+
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'body_html' => 'required|string',
+        ]);
+
+        try {
+            $template->update([
+                'subject' => $request->input('subject'),
+                'body_html' => $request->input('body_html'),
+            ]);
+
+            Log::info("Email template updated: " . $template->name . " by user ID: " . auth()->id());
+
+            return redirect()->route('admin.settings.email-templates')->with('success', 'Template "' . $template->label . '" updated successfully.');
+        } catch (\Exception $e) {
+            Log::error("Failed to update email template: " . $e->getMessage());
+            return redirect()->route('admin.settings.email-templates')->with('error', 'Failed to update template: ' . $e->getMessage());
+        }
+    }
+
+    public function setActiveEmailTemplate($id)
+    {
+        $template = EmailTemplate::findOrFail($id);
+
+        try {
+            EmailTemplate::where('is_active', true)->update(['is_active' => false]);
+            $template->update(['is_active' => true]);
+
+            Log::info("Active email template set to: " . $template->name . " by user ID: " . auth()->id());
+
+            return redirect()->route('admin.settings.email-templates')->with('success', '"' . $template->label . '" is now the active customer email template.');
+        } catch (\Exception $e) {
+            Log::error("Failed to set active email template: " . $e->getMessage());
+            return redirect()->route('admin.settings.email-templates')->with('error', 'Failed to set active template: ' . $e->getMessage());
+        }
+    }
+
+    public function previewEmailTemplate($id)
+    {
+        $template = EmailTemplate::findOrFail($id);
+
+        // Build a sample order for preview
+        $sampleOrder = (object) [
+            'order_number' => 'HI-20260817-DEMO01',
+            'subtotal' => 4500.00,
+            'shipping_cost' => 200.00,
+            'total' => 4700.00,
+            'shipping_name' => 'Jinia Akter',
+            'shipping_phone' => '01712345678',
+            'shipping_address' => '123 Tejgaon, Road 5',
+            'shipping_city' => 'Dhaka',
+            'items' => collect([
+                (object) ['product_name' => 'Wooden Coffee Table', 'quantity' => 1, 'unit_price' => 2500.00, 'total_price' => 2500.00],
+                (object) ['product_name' => 'Bamboo Planter Set', 'quantity' => 2, 'unit_price' => 1000.00, 'total_price' => 2000.00],
+            ]),
+        ];
+
+        $sampleUser = (object) [
+            'name' => 'Jinia Akter',
+            'email' => 'jinia@example.com',
+        ];
+
+        $renderedSubject = Blade::render($template->subject, ['order' => $sampleOrder, 'user' => $sampleUser]);
+        $renderedBody = Blade::render($template->body_html, ['order' => $sampleOrder, 'user' => $sampleUser]);
+
+        return response()->json([
+            'subject' => $renderedSubject,
+            'body_html' => $renderedBody,
+        ]);
     }
 }

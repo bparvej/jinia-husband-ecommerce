@@ -84,6 +84,7 @@ class CategoryController extends Controller
             if ($request->hasFile('image_file')) {
                 $file = $request->file('image_file');
                 $filename = 'cat_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+                $this->ensureDirectory(public_path('uploads/categories'));
                 $file->move(public_path('uploads/categories'), $filename);
                 $data['image'] = '/uploads/categories/' . $filename;
             }
@@ -156,6 +157,7 @@ class CategoryController extends Controller
             if ($request->hasFile('image_file')) {
                 $file = $request->file('image_file');
                 $filename = 'cat_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+                $this->ensureDirectory(public_path('uploads/categories'));
                 $file->move(public_path('uploads/categories'), $filename);
                 $data['image'] = '/uploads/categories/' . $filename;
             }
@@ -203,6 +205,16 @@ class CategoryController extends Controller
         } catch (\Exception $e) {
             Log::error("Failed to delete category: " . $e->getMessage());
             return redirect('/admin/categories')->with('error', 'Failed to delete category: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Make sure an upload directory exists before moving a file into it.
+     */
+    private function ensureDirectory(string $directory): void
+    {
+        if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
+            throw new \Exception("Failed to create upload directory: " . $directory);
         }
     }
 }

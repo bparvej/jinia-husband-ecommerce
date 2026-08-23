@@ -181,6 +181,7 @@ class ProductController extends Controller
             if ($request->hasFile('image_file')) {
                 $file = $request->file('image_file');
                 $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                $this->ensureDirectory(public_path('uploads/products'));
                 $file->move(public_path('uploads/products'), $filename);
                 $productData['image'] = '/uploads/products/' . $filename;
             }
@@ -188,6 +189,7 @@ class ProductController extends Controller
             // Gallery images upload
             $galleryImages = [];
             if ($request->hasFile('gallery_images')) {
+                $this->ensureDirectory(public_path('uploads/products/gallery'));
                 foreach ($request->file('gallery_images') as $file) {
                     $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
                     $file->move(public_path('uploads/products/gallery'), $filename);
@@ -323,6 +325,7 @@ class ProductController extends Controller
             if ($request->hasFile('image_file')) {
                 $file = $request->file('image_file');
                 $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                $this->ensureDirectory(public_path('uploads/products'));
                 $file->move(public_path('uploads/products'), $filename);
                 $productData['image'] = '/uploads/products/' . $filename;
             }
@@ -338,6 +341,7 @@ class ProductController extends Controller
 
             $newImages = [];
             if ($request->hasFile('gallery_images')) {
+                $this->ensureDirectory(public_path('uploads/products/gallery'));
                 foreach ($request->file('gallery_images') as $file) {
                     $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
                     $file->move(public_path('uploads/products/gallery'), $filename);
@@ -428,6 +432,16 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             Log::error("Failed to delete product: " . $e->getMessage());
             return redirect('/admin/products')->with('error', 'Failed to delete product: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Make sure an upload directory exists before moving a file into it.
+     */
+    private function ensureDirectory(string $directory): void
+    {
+        if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
+            throw new Exception("Failed to create upload directory: " . $directory);
         }
     }
 }

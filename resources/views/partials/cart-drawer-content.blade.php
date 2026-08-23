@@ -90,6 +90,11 @@
             </div>
 
             <div class="form-group">
+                <label for="shipping_email">Email (optional)</label>
+                <input type="email" id="shipping_email" name="shipping_email" class="form-control" placeholder="For order updates via email">
+            </div>
+
+            <div class="form-group">
                 <label for="shipping_address">Delivery Address *</label>
                 <textarea id="shipping_address" name="shipping_address" class="form-control" rows="2" placeholder="House no, Flat, Street, Area" required></textarea>
             </div>
