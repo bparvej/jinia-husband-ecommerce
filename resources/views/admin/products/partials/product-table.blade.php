@@ -18,7 +18,7 @@
                     <tr>
                         <td>
                             <div class="product-cell">
-                                <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" class="product-thumb">
+                                <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" class="product-thumb" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                                 <div>
                                     <span class="product-cell-name">{{ $product->name }}</span>
                                     @if ($product->badge)

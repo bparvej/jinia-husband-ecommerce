@@ -17,7 +17,7 @@
             <div class="checkout-product-summary">
                 <div class="checkout-product-card">
                     <div class="checkout-product-image">
-                        <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}">
+                        <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                     </div>
                     <div class="checkout-product-info">
                         <span class="checkout-product-category">{{ $product->category ? $product->category->name : '' }}</span>

@@ -95,6 +95,12 @@ class SettingsController extends Controller
         try {
             $file = $request->file('banner_image');
             $filename = 'banner_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+
+            $dir = public_path('uploads/banners');
+            if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+                throw new \Exception("Failed to create upload directory: " . $dir);
+            }
+
             $file->move(public_path('uploads/banners'), $filename);
 
             $this->deleteUploadedBanner(Setting::get('banner_image', self::DEFAULT_BANNER));

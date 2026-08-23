@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\UploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,7 @@ use App\Http\Controllers\SettingsController;
 
 // Storefront
 Route::get('/', [StorefrontController::class, 'home'])->name('home');
+Route::get('/uploads/{path}', [UploadController::class, 'show'])->where('path', '.*')->name('uploads.show');
 Route::get('/category/{slug}', [StorefrontController::class, 'category'])->name('category');
 Route::get('/cart/drawer', [StorefrontController::class, 'getCartDrawer'])->name('cart.drawer');
 Route::post('/cart/add', [StorefrontController::class, 'addToCart'])->name('cart.add');

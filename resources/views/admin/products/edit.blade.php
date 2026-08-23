@@ -143,7 +143,7 @@ $displayFormats = strtoupper(str_replace(',', ', ', $supportedImageFormats ?? 'j
                     <div class="form-group" x-data="{ preview: '{{ $product->image ?? '' }}' }">
                         @if ($product->image)
                         <div class="current-image">
-                            <img src="{{ $product->image }}" alt="Current image">
+                            <img src="{{ $product->image }}" alt="Current image" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                         </div>
                         @endif
                         <div class="image-upload" @click="$refs.fileInput.click()">
@@ -174,7 +174,7 @@ $displayFormats = strtoupper(str_replace(',', ', ', $supportedImageFormats ?? 'j
                                 <div class="gallery-thumbs">
                                     <template x-for="(item, i) in [...allExisting, ...allNew]" :key="item.id">
                                         <div class="gallery-thumb">
-                                            <img :src="item.src" alt="Gallery image">
+                                            <img :src="item.src" alt="Gallery image" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                                             <button type="button" class="gallery-remove"
                                                 @click="item.isExisting ? removeExisting(item.id) : (newPreviews = newPreviews.filter((_, idx) => idx !== item.id))">&times;</button>
                                         </div>
