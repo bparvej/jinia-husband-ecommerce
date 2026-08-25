@@ -104,8 +104,8 @@
                 <label for="shipping_city">Delivery Location *</label>
                 <select id="shipping_city" name="shipping_city" class="form-control" required onchange="updateCartShipping()">
                     <option value="" disabled selected>Select Location</option>
-                    <option value="Dhaka"{{ $freeShipping ? ' disabled' : '' }}>Inside Dhaka — ৳80{{ $freeShipping ? ' (Free above ৳5,000)' : '' }}</option>
-                    <option value="Outside Dhaka"{{ $freeShipping ? ' disabled' : '' }}>Outside Dhaka — ৳120{{ $freeShipping ? ' (Free above ৳5,000)' : '' }}</option>
+                    <option value="Dhaka">Inside Dhaka — ৳80</option>
+                    <option value="Outside Dhaka">Outside Dhaka — ৳120</option>
                 </select>
             </div>
 
@@ -129,38 +129,5 @@
         </form>
 
         <input type="hidden" id="cart-subtotal" value="{{ $subtotal }}">
-        <script>
-        (function() {
-            var subtotal = {{ $subtotal }};
-            var freeShipping = {{ $freeShipping ? 'true' : 'false' }};
-
-            window.updateCartShipping = function() {
-                var sel = document.getElementById('shipping_city');
-                var shippingLabel = document.getElementById('cart-shipping-label');
-                var totalLabel = document.getElementById('cart-total-label');
-                var btnTotal = document.getElementById('cart-btn-total');
-                if (!sel || !sel.value) return;
-                var shipping = 0;
-                if (!freeShipping) {
-                    shipping = sel.value === 'Dhaka' ? 80 : 120;
-                }
-                var total = subtotal + shipping;
-                shippingLabel.textContent = shipping === 0 ? 'Free' : '৳' + shipping.toLocaleString('en-US');
-                totalLabel.textContent = '৳' + total.toLocaleString('en-US');
-                btnTotal.textContent = '৳' + total.toLocaleString('en-US');
-            };
-
-            if (freeShipping) {
-                var sel = document.getElementById('shipping_city');
-                if (sel) {
-                    var opt = sel.querySelector('option[value="Dhaka"]');
-                    if (opt) { opt.disabled = false; opt.selected = true; opt.text = 'Inside Dhaka — Free'; }
-                    var opt2 = sel.querySelector('option[value="Outside Dhaka"]');
-                    if (opt2) { opt2.disabled = false; opt2.text = 'Outside Dhaka — Free'; }
-                    window.updateCartShipping();
-                }
-            }
-        })();
-        </script>
     </div>
 @endif
