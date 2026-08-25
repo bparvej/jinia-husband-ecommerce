@@ -104,7 +104,7 @@
         <div class="content-block">
             <h2>Need Help?</h2>
             <div class="contact-quick">
-                <p>📞 <a href="tel:+8801XXXXXXXXX">+880 1XXX-XXXXXX</a> (Sat–Thu, 10AM–8PM)</p>
+                <p>📞 <a href="tel:+8801787656135">+880 1787656135</a> (Sat–Thu, 10AM–8PM)</p>
                 <p>✉️ <a href="mailto:hello@homei.com.bd">hello@homei.com.bd</a></p>
             </div>
         </div>
