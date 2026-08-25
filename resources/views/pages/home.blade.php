@@ -12,7 +12,7 @@
 
 <section class="hero" id="hero">
     <div class="hero-bg">
-        <img src="{{ $bannerImage ?? '/assets/images/hero-living-room.png' }}" alt="Cozy wooden living room by HomeI" loading="eager">
+        <img src="{{ !empty($bannerImage) ? asset('storage/' . $bannerImage) : '/assets/images/hero-living-room.png' }}" alt="Cozy wooden living room by HomeI" loading="eager">
         <div class="hero-overlay"></div>
     </div>
     <div class="container hero-content">
@@ -58,7 +58,7 @@
             @if (isset($categories) && count($categories) > 0)
                 @foreach ($categories as $i => $cat)
                 <a href="/category/{{ $cat->slug }}" class="category-card {{ $i === 0 || $i === 4 ? 'category-wide' : '' }}">
-                    <img src="{{ $cat->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $cat->name }}" loading="lazy">
+                    <img src="{{ !empty($cat->image) ? asset('storage/' . $cat->image) : '/assets/images/category-bookshelf.png' }}" alt="{{ $cat->name }}" loading="lazy">
                     <div class="category-info">
                         <h3>{{ $cat->name }}</h3>
                         <span class="category-count">Shop Now</span>
@@ -117,7 +117,7 @@
                 <div class="product-card featured" data-category="{{ $product->category ? $product->category->slug : 'all' }}">
                     <div class="product-image">
                         <a href="/product/{{ $product->slug }}">
-                            <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" loading="lazy" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
+                            <img src="{{ !empty($product->image) ? asset('storage/' . $product->image) : '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" loading="lazy" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                         </a>
                         @if ($product->badge)
                         <div class="product-badges">
@@ -180,7 +180,7 @@
                 <div class="product-card" data-category="{{ $product->category ? $product->category->slug : 'all' }}">
                     <div class="product-image">
                         <a href="/product/{{ $product->slug }}">
-                            <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" loading="lazy" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
+                            <img src="{{ !empty($product->image) ? asset('storage/' . $product->image) : '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" loading="lazy" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                         </a>
                         @if ($product->badge)
                         <div class="product-badges">

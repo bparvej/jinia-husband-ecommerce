@@ -9,8 +9,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 
+use App\Traits\ImageOptimizerTrait;
+
 class SettingsController extends Controller
 {
+    use ImageOptimizerTrait;
+
     /**
      * Show the settings form.
      */
@@ -94,18 +98,13 @@ class SettingsController extends Controller
 
         try {
             $file = $request->file('banner_image');
-            $filename = 'banner_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
 
-            $dir = public_path('uploads/banners');
-            if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
-                throw new \Exception("Failed to create upload directory: " . $dir);
-            }
-
-            $file->move(public_path('uploads/banners'), $filename);
+            // Optimize and store the image using the trait
+            $storedPath = $this->optimizeAndStoreImage($file, 'uploads/banners');
 
             $this->deleteUploadedBanner(Setting::get('banner_image', self::DEFAULT_BANNER));
 
-            Setting::set('banner_image', '/uploads/banners/' . $filename);
+            Setting::set('banner_image', $storedPath);
 
             Log::info("Banner image updated by user ID: " . auth()->id());
 

@@ -18,7 +18,7 @@
                     <tr x-data="{ qty: {{ $item->quantity }}, editing: false }">
                         <td>
                             <div class="product-cell">
-                                <img src="{{ $item->product ? ($item->product->image ?? '/assets/images/category-bookshelf.png') : '/assets/images/category-bookshelf.png' }}" alt="{{ $item->product ? $item->product->name : 'Unknown Product' }}" class="product-thumb" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
+                                <img src="{{ !empty($item->product) && !empty($item->product->image) ? asset('storage/' . $item->product->image) : '/assets/images/category-bookshelf.png' }}" alt="{{ $item->product ? $item->product->name : 'Unknown Product' }}" class="product-thumb" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                                 <span class="product-cell-name">{{ $item->product ? $item->product->name : 'Unknown Product' }}</span>
                             </div>
                         </td>

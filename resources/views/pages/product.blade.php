@@ -18,11 +18,11 @@
         <div class="product-detail-layout">
             <div class="product-gallery">
                 <div class="product-main-image" id="product-main-image">
-<img src="{{ $images[0] ?? '/assets/images/category-bookshelf.png' }}"
+<img src="{{ !empty($images[0]) ? asset('storage/' . $images[0]) : '/assets/images/category-bookshelf.png' }}"
          alt="{{ $product->name }}"
          id="main-product-img"
          onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';"
-         data-zoom="{{ $images[0] ?? '/assets/images/category-bookshelf.png' }}">
+         data-zoom="{{ !empty($images[0]) ? asset('storage/' . $images[0]) : '/assets/images/category-bookshelf.png' }}">
                     @if ($product->badge)
                     <span class="badge badge-{{ str_replace(' ', '-', strtolower($product->badge)) === 'best-seller' ? 'hot' : strtolower($product->badge) }}">{{ $product->badge }}</span>
                     @endif
@@ -34,7 +34,7 @@
                     <button class="thumb-btn {{ $i === 0 ? 'active' : '' }}"
                             data-img="{{ $img }}"
                             onclick="switchImage(this)">
-                        <img src="{{ $img }}" alt="{{ $product->name }} thumbnail {{ $i + 1 }}" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
+                        <img src="{{ asset('storage/' . $img) }}" alt="{{ $product->name }} thumbnail {{ $i + 1 }}" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                     </button>
                     @endforeach
                 </div>
@@ -128,7 +128,7 @@
             <div class="product-card">
                 <div class="product-image">
                     <a href="/product/{{ $rp->slug }}">
-                        <img src="{{ $rp->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $rp->name }}" loading="lazy" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
+                        <img src="{{ !empty($rp->image) ? asset('storage/' . $rp->image) : '/assets/images/category-bookshelf.png' }}" alt="{{ $rp->name }}" loading="lazy" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                     </a>
                     @if ($rp->badge)
                     <div class="product-badges">

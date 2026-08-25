@@ -143,7 +143,7 @@ $displayFormats = strtoupper(str_replace(',', ', ', $supportedImageFormats ?? 'j
                     <div class="form-group" x-data="{ preview: '{{ $product->image ?? '' }}' }">
                         @if ($product->image)
                         <div class="current-image">
-                            <img src="{{ $product->image }}" alt="Current image" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
+                            <img src="{{ !empty($product->image) ? asset('storage/' . $product->image) : '' }}" alt="Current image" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                         </div>
                         @endif
                         <div class="image-upload" @click="$refs.fileInput.click()">

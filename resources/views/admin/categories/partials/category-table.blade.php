@@ -17,7 +17,7 @@
                 <td>
                     <div class="cell-with-image">
                         @if ($cat->image)
-                        <img src="{{ $cat->image }}" alt="" class="cell-img-sm">
+                        <img src="{{ !empty($cat->image) ? asset('storage/' . $cat->image) : '' }}" alt="" class="cell-img-sm">
                         @endif
                         <span class="cell-title">{{ $cat->name }}</span>
                     </div>

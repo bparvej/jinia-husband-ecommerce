@@ -30,7 +30,7 @@
                         <td class="text-muted">{{ \Carbon\Carbon::parse($entry->created_at)->format('d M Y, h:i A') }}</td>
                         <td>
                             <div class="product-cell">
-                                <img src="{{ $entry->product ? ($entry->product->image ?? '/assets/images/category-bookshelf.png') : '/assets/images/category-bookshelf.png' }}" alt="{{ $entry->product->name ?? 'Unknown Product' }}" class="product-thumb" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
+                                <img src="{{ !empty($entry->product) && !empty($entry->product->image) ? asset('storage/' . $entry->product->image) : '/assets/images/category-bookshelf.png' }}" alt="{{ $entry->product->name ?? 'Unknown Product' }}" class="product-thumb" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                                 <div>
                                     <span class="product-cell-name">{{ $entry->product->name ?? 'Unknown Product' }}</span>
                                     <span class="text-mono" style="display:block; font-size:0.75rem;">{{ $entry->product->sku ?? '—' }}</span>

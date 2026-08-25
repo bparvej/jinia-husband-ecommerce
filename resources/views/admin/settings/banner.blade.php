@@ -62,7 +62,7 @@ $isDefault = ($bannerImage ?? '') === '/assets/images/hero-living-room.png';
                                 <img :src="preview" alt="New banner preview" class="upload-preview">
                             </template>
                             <template x-if="!preview">
-                                <img src="{{ $bannerImage }}" alt="Current banner" class="upload-preview" style="display: block; margin: 0 auto;">
+                                <img src="{{ !empty($bannerImage) ? asset('storage/' . $bannerImage) : '' }}" alt="Current banner" class="upload-preview" style="display: block; margin: 0 auto;">
                             </template>
                         </div>
 

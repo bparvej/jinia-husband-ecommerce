@@ -11,11 +11,58 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
     <script src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.body.setAttribute('hx-headers', JSON.stringify({
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             }));
+            
+            // Intelligent Image Optimization - Frontend Validation
+            document.body.addEventListener('change', function(e) {
+                if (e.target && e.target.type === 'file' && e.target.accept && e.target.accept.includes('image')) {
+                    Array.from(e.target.files).forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const img = new Image();
+                            img.onload = function() {
+                                if (img.width < 200 || img.height < 200) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Image Too Small!',
+                                        text: 'This image is under the 200px limit. You can optimize and upscale this picture to use it.',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Try now',
+                                        cancelButtonText: 'Cancel'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            Swal.fire({
+                                                icon: 'info',
+                                                title: 'Premium Service',
+                                                text: 'This is a paid service. Contact administrator.',
+                                                confirmButtonColor: '#3085d6'
+                                            });
+                                        }
+                                        e.target.value = ''; // Clear file input
+                                        
+                                        // Attempt to reset AlpineJS previews if bound
+                                        let el = e.target;
+                                        while (el && !el.hasAttribute('x-data')) {
+                                            el = el.parentElement;
+                                        }
+                                        if (el && el.__x && el.__x.$data) {
+                                            if (typeof el.__x.$data.preview !== 'undefined') el.__x.$data.preview = null;
+                                            if (typeof el.__x.$data.previews !== 'undefined') el.__x.$data.previews = [];
+                                        }
+                                    });
+                                }
+                            };
+                            img.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
         });
     </script>
 </head>
