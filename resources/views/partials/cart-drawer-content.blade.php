@@ -115,27 +115,13 @@
             </div>
 
             <div class="form-group">
-                <label>Payment Method *</label>
+                <label>Payment Method</label>
                 <div class="payment-methods-grid">
                     <label class="payment-option active">
-                        <input type="radio" name="payment_method" value="cod" checked required>
+                        <input type="radio" name="payment_method" value="cod" checked>
                         <div class="payment-option-content">
                             <span class="method-title">Cash on Delivery</span>
                             <span class="method-desc">Pay when you receive the product</span>
-                        </div>
-                    </label>
-                    <label class="payment-option">
-                        <input type="radio" name="payment_method" value="bkash">
-                        <div class="payment-option-content">
-                            <span class="method-title">bKash</span>
-                            <span class="method-desc">Pay online securely</span>
-                        </div>
-                    </label>
-                    <label class="payment-option">
-                        <input type="radio" name="payment_method" value="nagad">
-                        <div class="payment-option-content">
-                            <span class="method-title">Nagad</span>
-                            <span class="method-desc">Fast mobile wallet payment</span>
                         </div>
                     </label>
                 </div>
