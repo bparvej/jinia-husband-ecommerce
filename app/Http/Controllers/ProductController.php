@@ -11,27 +11,26 @@ use App\Models\InventoryLedger;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Exception;
+use App\Traits\ImageOptimizerTrait;
 
 class ProductController extends Controller
 {
+    use ImageOptimizerTrait;
+
     // --- ADMIN: Product Listing ---
     public function adminIndex(Request $request)
     {
         $query = Product::with('category');
-
         $search = $request->query('search');
         $categoryId = $request->query('category_id');
         $status = $request->query('status');
 
         if ($search) {
-            $query->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('sku', 'LIKE', "%{$search}%");
+            $query->where('name', 'LIKE', "%{$search}%")->orWhere('sku', 'LIKE', "%{$search}%");
         }
-
         if ($categoryId) {
             $query->where('category_id', $categoryId);
         }
-
         if ($status !== null && $status !== '') {
             $isActive = $status === 'active' || $status === '1' || $status === 'true';
             $query->where('is_active', $isActive);
@@ -43,19 +42,13 @@ class ProductController extends Controller
         $viewData = [
             'products' => $products,
             'categories' => $categories,
-            'filters' => [
-                'search' => $search,
-                'category_id' => $categoryId,
-                'status' => $status
-            ],
+            'filters' => ['search' => $search, 'category_id' => $categoryId, 'status' => $status],
             'title' => 'Products — HomeI Admin'
         ];
 
-        // HTMX request partial return
         if ($request->headers->has('hx-request')) {
             return view('admin.products.partials.product-table', $viewData);
         }
-
         return view('admin.products.index', $viewData);
     }
 
@@ -67,11 +60,8 @@ class ProductController extends Controller
         $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
 
         return view('admin.products.create', [
-            'categories' => $categories,
-            'product' => null,
-            'error' => null,
-            'maxImageSize' => $maxImageSize,
-            'supportedImageFormats' => $supportedImageFormats,
+            'categories' => $categories, 'product' => null, 'error' => null,
+            'maxImageSize' => $maxImageSize, 'supportedImageFormats' => $supportedImageFormats,
             'title' => 'Add Product — HomeI Admin'
         ]);
     }
@@ -108,65 +98,41 @@ class ProductController extends Controller
                 'warehouse_location' => ['nullable', 'string', 'max:100', 'not_regex:/^(test_|invalid_|dummy_|sample_).*$/i'],
             ], [
                 'name.required' => 'Please provide a product title.',
-                'name.max' => 'The product title is too long.',
-                'name.regex' => 'The product title contains invalid characters.',
-                'name.not_regex' => 'The product title looks like dummy text.',
-                'description.max' => 'The description is too long.',
-                'short_description.max' => 'The short description is too long.',
                 'price.required' => 'A price is required.',
-                'price.not_regex' => 'Please enter a valid real price (not 0.00 or dummy).',
                 'sku.unique' => 'This SKU is already in use.',
                 'image_file.image' => 'The main file must be an image.',
                 'image_file.max' => 'The main image must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
-                'image_file.mimes' => 'The main image must be a file of type: ' . $supportedImageFormats . '.',
-                'gallery_images.*.max' => 'Gallery images must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
-                'gallery_images.*.mimes' => 'Gallery images must be a file of type: ' . $supportedImageFormats . '.',
                 'stock_quantity.required' => 'Please specify the stock quantity.',
             ]);
 
             $slug = Str::slug($request->input('name'));
-            // Ensure slug is unique
             $originalSlug = $slug;
             $count = 1;
             while (Product::where('slug', $slug)->exists()) {
                 $slug = $originalSlug . '-' . $count++;
             }
 
-
-            // Validate product data on server-side
-            //$validationErrors = Product::validateProductData($request->all(), $operation: 'store');
-            $validationErrors = Product::validateProductData(
-                                    data: $request->all(),
-                                    operation: 'store'
-                                );
+            $validationErrors = Product::validateProductData(data: $request->all(), operation: 'store');
             if (!empty($validationErrors)) {
                 $errorMessages = [];
                 foreach ($validationErrors as $field => $errors) {
                     $errorMessages[] = implode(', ', $errors);
                 }
-                
                 $errorMessage = "Validation failed: " . implode('; ', $errorMessages);
-                
                 Log::warning("Product creation validation error: " . $errorMessage . ", User ID: " . auth()->id());
                 
                 if ($request->headers->has('hx-request')) {
                     return response()->json(['errors' => $validationErrors, 'message' => $errorMessage], 422);
                 }
-                
-                $categories = Category::all();
                 return view('admin.products.create', [
-                    'categories' => $categories,
-                    'product' => (object) $request->all(),
-                    'error' => $errorMessage,
-                    'title' => 'Add Product — HomeI Admin'
+                    'categories' => Category::all(), 'product' => (object) $request->all(),
+                    'error' => $errorMessage, 'title' => 'Add Product — HomeI Admin'
                 ]);
             }
             
             $productData = [
-                'name' => $request->input('name'),
-                'slug' => $slug,
-                'description' => $request->input('description'),
-                'short_description' => $request->input('short_description'),
+                'name' => $request->input('name'), 'slug' => $slug,
+                'description' => $request->input('description'), 'short_description' => $request->input('short_description'),
                 'price' => floatval($request->input('price')),
                 'compare_price' => $request->input('compare_price') ? floatval($request->input('compare_price')) : null,
                 'cost_price' => $request->input('cost_price') ? floatval($request->input('cost_price')) : null,
@@ -177,45 +143,31 @@ class ProductController extends Controller
                 'is_featured' => (bool) $request->input('is_featured'),
             ];
 
-            // Image file upload
+            // ✅ BEST PRACTICE: Use Storage facade
             if ($request->hasFile('image_file')) {
-                $file = $request->file('image_file');
-                $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                $this->ensureDirectory(public_path('uploads/products'));
-                $file->move(public_path('uploads/products'), $filename);
-                $productData['image'] = '/uploads/products/' . $filename;
+                $productData['image'] = $this->optimizeAndStoreImage($request->file('image_file'), 'uploads/products');
             }
 
-            // Gallery images upload
             $galleryImages = [];
             if ($request->hasFile('gallery_images')) {
-                $this->ensureDirectory(public_path('uploads/products/gallery'));
                 foreach ($request->file('gallery_images') as $file) {
-                    $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('uploads/products/gallery'), $filename);
-                    $galleryImages[] = '/uploads/products/gallery/' . $filename;
+                    $galleryImages[] = $this->optimizeAndStoreImage($file, 'uploads/products/gallery');
                 }
             }
             $productData['images'] = $galleryImages;
 
             $product = Product::create($productData);
 
-            // Create inventory entry
             $stockQuantity = intval($request->input('stock_quantity', 0));
             Inventory::create([
-                'product_id' => $product->id,
-                'quantity' => $stockQuantity,
+                'product_id' => $product->id, 'quantity' => $stockQuantity,
                 'low_stock_threshold' => intval($request->input('low_stock_threshold', 10)),
                 'warehouse_location' => $request->input('warehouse_location') ?: 'Dhaka Main'
             ]);
 
             InventoryLedger::create([
-                'product_id' => $product->id,
-                'type' => 'opening',
-                'quantity' => $stockQuantity,
-                'balance_after' => $stockQuantity,
-                'note' => 'Opening stock for new product',
-                'user_id' => auth()->id(),
+                'product_id' => $product->id, 'type' => 'opening', 'quantity' => $stockQuantity,
+                'balance_after' => $stockQuantity, 'note' => 'Opening stock for new product', 'user_id' => auth()->id(),
             ]);
 
             Log::info("Product created: " . $product->name);
@@ -223,18 +175,14 @@ class ProductController extends Controller
             if ($request->headers->has('hx-request')) {
                 return response('')->header('HX-Redirect', '/admin/products');
             }
-
             return redirect('/admin/products');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;
         } catch (Exception $e) {
-            $categories = Category::all();
             return view('admin.products.create', [
-                'categories' => $categories,
-                'product' => (object) $request->all(),
-                'error' => $e->getMessage(),
-                'title' => 'Add Product — HomeI Admin'
+                'categories' => Category::all(), 'product' => (object) $request->all(),
+                'error' => $e->getMessage(), 'title' => 'Add Product — HomeI Admin'
             ]);
         }
     }
@@ -248,11 +196,8 @@ class ProductController extends Controller
         $supportedImageFormats = \App\Models\Setting::get('supported_image_formats', 'jpeg,jpg,png,webp');
 
         return view('admin.products.edit', [
-            'product' => $product,
-            'categories' => $categories,
-            'error' => null,
-            'maxImageSize' => $maxImageSize,
-            'supportedImageFormats' => $supportedImageFormats,
+            'product' => $product, 'categories' => $categories, 'error' => null,
+            'maxImageSize' => $maxImageSize, 'supportedImageFormats' => $supportedImageFormats,
             'title' => 'Edit ' . $product->name . ' — HomeI Admin'
         ]);
     }
@@ -293,24 +238,16 @@ class ProductController extends Controller
                 'existing_images.*' => ['nullable', 'string', 'max:500'],
             ], [
                 'name.required' => 'Please provide a product title.',
-                'name.max' => 'The product title is too long.',
-                'description.max' => 'The description is too long.',
-                'short_description.max' => 'The short description is too long.',
                 'price.required' => 'A price is required.',
-                'price.not_regex' => 'Please enter a valid real price (not 0.00 or dummy).',
                 'sku.unique' => 'This SKU is already in use.',
                 'image_file.image' => 'The main file must be an image.',
                 'image_file.max' => 'The main image must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
-                'image_file.mimes' => 'The main image must be a file of type: ' . $supportedImageFormats . '.',
-                'gallery_images.*.max' => 'Gallery images must not be larger than ' . round($maxImageSize / 1024, 1) . 'MB.',
-                'gallery_images.*.mimes' => 'Gallery images must be a file of type: ' . $supportedImageFormats . '.',
                 'stock_quantity.required' => 'Please specify the stock quantity.',
             ]);
 
             $productData = [
                 'name' => $request->input('name'),
-                'description' => $request->input('description'),
-                'short_description' => $request->input('short_description'),
+                'description' => $request->input('description'), 'short_description' => $request->input('short_description'),
                 'price' => floatval($request->input('price')),
                 'compare_price' => $request->input('compare_price') ? floatval($request->input('compare_price')) : null,
                 'cost_price' => $request->input('cost_price') ? floatval($request->input('cost_price')) : null,
@@ -321,16 +258,15 @@ class ProductController extends Controller
                 'is_featured' => (bool) $request->input('is_featured'),
             ];
 
-            // Image file upload
+            // ✅ BEST PRACTICE: Use Storage facade
             if ($request->hasFile('image_file')) {
-                $file = $request->file('image_file');
-                $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                $this->ensureDirectory(public_path('uploads/products'));
-                $file->move(public_path('uploads/products'), $filename);
-                $productData['image'] = '/uploads/products/' . $filename;
+                // Optional: Delete old image to save space
+                if ($product->image) {
+                    Storage::disk('public')->delete($product->image);
+                }
+                $productData['image'] = $this->optimizeAndStoreImage($request->file('image_file'), 'uploads/products');
             }
 
-            // Gallery images handling
             $existingImages = [];
             if ($request->input('existing_images')) {
                 $existingImages = json_decode($request->input('existing_images'), true);
@@ -341,18 +277,14 @@ class ProductController extends Controller
 
             $newImages = [];
             if ($request->hasFile('gallery_images')) {
-                $this->ensureDirectory(public_path('uploads/products/gallery'));
                 foreach ($request->file('gallery_images') as $file) {
-                    $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('uploads/products/gallery'), $filename);
-                    $newImages[] = '/uploads/products/gallery/' . $filename;
+                    $newImages[] = $this->optimizeAndStoreImage($file, 'uploads/products/gallery');
                 }
             }
             $productData['images'] = array_merge($existingImages, $newImages);
 
             $product->update($productData);
 
-            // Sync inventory from the edit form (prevents mismatch with inventory list)
             $newStock = intval($request->input('stock_quantity', 0));
             $newThreshold = intval($request->input('low_stock_threshold', 10));
             $warehouseLocation = $request->input('warehouse_location');
@@ -361,7 +293,6 @@ class ProductController extends Controller
 
             if ($inventory) {
                 $delta = $newStock - $inventory->quantity;
-
                 $inventory->low_stock_threshold = $newThreshold;
                 if ($warehouseLocation) {
                     $inventory->warehouse_location = $warehouseLocation;
@@ -369,28 +300,16 @@ class ProductController extends Controller
                 $inventory->save();
 
                 if ($delta !== 0) {
-                    Inventory::adjustStock(
-                        $product->id,
-                        $delta,
-                        'adjustment',
-                        'Stock changed while editing product "' . $product->name . '"'
-                    );
+                    Inventory::adjustStock($product->id, $delta, 'adjustment', 'Stock changed while editing product "' . $product->name . '"');
                 }
             } else {
                 Inventory::create([
-                    'product_id' => $product->id,
-                    'quantity' => $newStock,
-                    'low_stock_threshold' => $newThreshold,
-                    'warehouse_location' => $warehouseLocation ?: 'Dhaka Main'
+                    'product_id' => $product->id, 'quantity' => $newStock,
+                    'low_stock_threshold' => $newThreshold, 'warehouse_location' => $warehouseLocation ?: 'Dhaka Main'
                 ]);
-
                 InventoryLedger::create([
-                    'product_id' => $product->id,
-                    'type' => 'opening',
-                    'quantity' => $newStock,
-                    'balance_after' => $newStock,
-                    'note' => 'Opening stock while editing product',
-                    'user_id' => auth()->id(),
+                    'product_id' => $product->id, 'type' => 'opening', 'quantity' => $newStock,
+                    'balance_after' => $newStock, 'note' => 'Opening stock while editing product', 'user_id' => auth()->id(),
                 ]);
             }
 
@@ -399,18 +318,14 @@ class ProductController extends Controller
             if ($request->headers->has('hx-request')) {
                 return response('')->header('HX-Redirect', '/admin/products');
             }
-
             return redirect('/admin/products');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             throw $e;
         } catch (Exception $e) {
-            $categories = Category::all();
             return view('admin.products.edit', [
-                'product' => $product,
-                'categories' => $categories,
-                'error' => $e->getMessage(),
-                'title' => 'Edit ' . $product->name . ' — HomeI Admin'
+                'product' => $product, 'categories' => Category::all(),
+                'error' => $e->getMessage(), 'title' => 'Edit ' . $product->name . ' — HomeI Admin'
             ]);
         }
     }
@@ -420,28 +335,25 @@ class ProductController extends Controller
     {
         try {
             $product = Product::findOrFail($id);
+            
+            // ✅ BEST PRACTICE: Clean up files when deleting
+            if ($product->image) Storage::disk('public')->delete($product->image);
+            if ($product->images) {
+                foreach ($product->images as $img) {
+                    Storage::disk('public')->delete($img);
+                }
+            }
+            
             $product->delete();
-
             Log::info("Product deleted: " . $product->name);
 
             if ($request->headers->has('hx-request')) {
                 return response('');
             }
-
             return redirect('/admin/products');
         } catch (\Exception $e) {
             Log::error("Failed to delete product: " . $e->getMessage());
             return redirect('/admin/products')->with('error', 'Failed to delete product: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Make sure an upload directory exists before moving a file into it.
-     */
-    private function ensureDirectory(string $directory): void
-    {
-        if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
-            throw new Exception("Failed to create upload directory: " . $directory);
         }
     }
 }

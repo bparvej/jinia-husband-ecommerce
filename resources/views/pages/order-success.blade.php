@@ -48,7 +48,7 @@
             <div class="product-card" data-category="{{ $product->category ? $product->category->slug : 'all' }}">
                 <div class="product-image">
                     <a href="/product/{{ $product->slug }}">
-                        <img src="{{ $product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" loading="lazy" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
+                        <img src="{{ !empty($product->image) ? asset('storage/' . $product->image) : '/assets/images/category-bookshelf.png' }}" alt="{{ $product->name }}" loading="lazy" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                     </a>
                     @if ($product->badge)
                     <div class="product-badges">

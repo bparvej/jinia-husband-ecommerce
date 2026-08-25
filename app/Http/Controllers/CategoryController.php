@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
+use App\Traits\ImageOptimizerTrait;
 
 class CategoryController extends Controller
 {
+    use ImageOptimizerTrait;
+
     public function adminIndex(Request $request)
     {
         $query = Category::withCount('products');
@@ -83,10 +86,7 @@ class CategoryController extends Controller
 
             if ($request->hasFile('image_file')) {
                 $file = $request->file('image_file');
-                $filename = 'cat_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
-                $this->ensureDirectory(public_path('uploads/categories'));
-                $file->move(public_path('uploads/categories'), $filename);
-                $data['image'] = '/uploads/categories/' . $filename;
+                $data['image'] = $this->optimizeAndStoreImage($file, 'uploads/categories');
             }
 
             Category::create($data);
@@ -156,10 +156,7 @@ class CategoryController extends Controller
 
             if ($request->hasFile('image_file')) {
                 $file = $request->file('image_file');
-                $filename = 'cat_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
-                $this->ensureDirectory(public_path('uploads/categories'));
-                $file->move(public_path('uploads/categories'), $filename);
-                $data['image'] = '/uploads/categories/' . $filename;
+                $data['image'] = $this->optimizeAndStoreImage($file, 'uploads/categories');
             }
 
             $category->update($data);

@@ -22,7 +22,7 @@
         @foreach ($cart->CartItems as $item)
             <div class="cart-item">
                 <div class="cart-item-image">
-                    <img src="{{ $item->Product->image ?? '/assets/images/category-bookshelf.png' }}" alt="{{ $item->Product->name }}">
+                    <img src="{{ !empty($item->Product->image) ? asset('storage/' . $item->Product->image) : '/assets/images/category-bookshelf.png' }}" alt="{{ $item->Product->name }}">
                 </div>
                 <div class="cart-item-details">
                     <h4 class="cart-item-title">{{ $item->Product->name }}</h4>
