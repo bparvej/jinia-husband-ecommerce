@@ -334,7 +334,14 @@ class StorefrontController extends Controller
                 ];
             }
 
-            $shippingCost = ($subtotal >= 5000) ? 0 : 200;
+            $shippingCity = $request->input('shipping_city', 'Dhaka');
+            if ($subtotal >= 5000) {
+                $shippingCost = 0;
+            } elseif (strtolower($shippingCity) === 'dhaka') {
+                $shippingCost = 80;
+            } else {
+                $shippingCost = 120;
+            }
             $total = $subtotal + $shippingCost;
 
             // Generate order number
@@ -351,7 +358,7 @@ class StorefrontController extends Controller
                 'shipping_name' => $request->input('shipping_name'),
                 'shipping_phone' => $request->input('shipping_phone'),
                 'shipping_address' => $request->input('shipping_address'),
-                'shipping_city' => $request->input('shipping_city'),
+                'shipping_city' => $shippingCity,
                 'notes' => $request->input('notes')
             ]);
 
@@ -496,7 +503,14 @@ class StorefrontController extends Controller
 
             $itemTotal = floatval($product->price) * $quantity;
             $subtotal = $itemTotal;
-            $shippingCost = $subtotal >= 5000 ? 0 : 200;
+            $shippingCity = $request->input('shipping_city', 'Dhaka');
+            if ($subtotal >= 5000) {
+                $shippingCost = 0;
+            } elseif (strtolower($shippingCity) === 'dhaka') {
+                $shippingCost = 80;
+            } else {
+                $shippingCost = 120;
+            }
             $total = $subtotal + $shippingCost;
 
             $orderNumber = 'HI-' . date('Ymd') . '-' . strtoupper(Str::random(6));
@@ -511,7 +525,7 @@ class StorefrontController extends Controller
                 'shipping_name' => $request->input('shipping_name'),
                 'shipping_phone' => $request->input('shipping_phone'),
                 'shipping_address' => $request->input('shipping_address'),
-                'shipping_city' => $request->input('shipping_city'),
+                'shipping_city' => $shippingCity,
                 'notes' => $request->input('notes')
             ]);
 

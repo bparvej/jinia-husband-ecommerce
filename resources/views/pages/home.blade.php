@@ -16,7 +16,7 @@
         <div class="hero-overlay"></div>
     </div>
     <div class="container hero-content">
-        <div class="hero-badge">New Collection 2026</div>
+        <a href="/#new-arrivals" class="hero-badge">New Collection {{ date('Y') }} →</a>
         <h1 class="hero-title">Crafted for <br><em>Cozy Living</em></h1>
         <p class="hero-subtitle">Handcrafted wooden lamps, shelves and home décor that brings warmth, style, and soul to every corner of your home.</p>
         <div class="hero-cta">

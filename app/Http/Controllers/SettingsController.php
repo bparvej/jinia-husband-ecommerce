@@ -215,8 +215,8 @@ class SettingsController extends Controller
         $sampleOrder = (object) [
             'order_number' => 'HI-20260817-DEMO01',
             'subtotal' => 4500.00,
-            'shipping_cost' => 200.00,
-            'total' => 4700.00,
+            'shipping_cost' => 80.00,
+            'total' => 4580.00,
             'shipping_name' => 'Jinia Akter',
             'shipping_phone' => '01712345678',
             'shipping_address' => '123 Tejgaon, Road 5',

@@ -658,6 +658,13 @@ input {
     color: var(--clr-accent-light);
     margin-bottom: var(--space-xl);
     animation: fadeInUp 0.8s var(--ease-out) 0.2s both;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.hero-badge:hover {
+    background: rgba(196,149,106,0.35);
+    transform: translateY(-2px);
 }
 
 .hero-title {
