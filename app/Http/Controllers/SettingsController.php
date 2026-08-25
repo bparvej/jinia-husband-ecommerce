@@ -152,7 +152,13 @@ class SettingsController extends Controller
 
     public function emailTemplates()
     {
-        $templates = EmailTemplate::orderBy('is_default', 'desc')->orderBy('label')->get();
+        try {
+            $templates = EmailTemplate::orderBy('is_default', 'desc')->orderBy('label')->get();
+        } catch (\Exception $e) {
+            // Table may not exist yet on this environment
+            Log::warning('Email templates table not available: ' . $e->getMessage());
+            $templates = collect();
+        }
 
         return view('admin.settings.email-templates', [
             'templates' => $templates,
