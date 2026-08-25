@@ -32,7 +32,7 @@
                 <div class="product-thumbnails" id="product-thumbnails">
                     @foreach ($images as $i => $img)
                     <button class="thumb-btn {{ $i === 0 ? 'active' : '' }}"
-                            data-img="{{ $img }}"
+                            data-img="{{ asset('storage/' . $img) }}"
                             onclick="switchImage(this)">
                         <img src="{{ asset('storage/' . $img) }}" alt="{{ $product->name }} thumbnail {{ $i + 1 }}" onerror="this.onerror=null;this.src='/assets/images/category-bookshelf.png';">
                     </button>
