@@ -37,12 +37,14 @@
                             <button class="qty-btn"
                                     hx-post="/cart/update/{{ $item->product_id }}"
                                     hx-vals='{"quantity": "{{ $item->quantity - 1 }}"}'
+                                    hx-encoding="multipart/form-data"
                                     hx-target="#cart-drawer-body"
                                     {{ $item->quantity <= 1 ? 'disabled' : '' }}>&minus;</button>
                             <span class="qty-val">{{ $item->quantity }}</span>
                             <button class="qty-btn"
                                     hx-post="/cart/update/{{ $item->product_id }}"
                                     hx-vals='{"quantity": "{{ $item->quantity + 1 }}"}'
+                                    hx-encoding="multipart/form-data"
                                     hx-target="#cart-drawer-body">+</button>
                         </div>
                         <button class="cart-item-remove"

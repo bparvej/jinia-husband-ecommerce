@@ -127,9 +127,8 @@ class StorefrontController extends Controller
         return $this->renderCartDrawer($request, 'open-cart');
     }
 
-    public function updateCartQuantity(Request $request)
+    public function updateCartQuantity(Request $request, $productId)
     {
-        $productId = $request->input('product_id');
         $quantity = intval($request->input('quantity'));
 
         if ($quantity < 1) {
@@ -161,10 +160,8 @@ class StorefrontController extends Controller
         return $this->renderCartDrawer($request);
     }
 
-    public function removeFromCart(Request $request)
+    public function removeFromCart(Request $request, $productId)
     {
-        $productId = $request->input('product_id');
-
         if (Auth::check()) {
             $user = Auth::user();
             $cart = Cart::where('user_id', $user->id)->first();
