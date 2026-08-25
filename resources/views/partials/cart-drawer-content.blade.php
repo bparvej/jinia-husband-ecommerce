@@ -15,7 +15,7 @@
         foreach ($cart->CartItems as $item) {
             $subtotal += floatval($item->Product->price) * $item->quantity;
         }
-        $shippingCost = $subtotal >= 5000 ? 0 : 200;
+        $shippingCost = $subtotal >= 5000 ? 0 : 80;
         $total = $subtotal + $shippingCost;
     @endphp
     <div class="cart-items-list">

@@ -44,7 +44,7 @@
                     </div>
                     <div class="co-summary-row">
                         <span>Shipping</span>
-                        <span class="co-shipping-value">Calculated at order</span>
+                        <span class="co-shipping-value">Inside Dhaka: ৳80 | Outside: ৳120 | Free above ৳5,000</span>
                     </div>
                     <div class="co-summary-row co-total">
                         <span>Total</span>
