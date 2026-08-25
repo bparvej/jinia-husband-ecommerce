@@ -44,7 +44,7 @@
                     </div>
                     <div class="co-summary-row">
                         <span>Shipping</span>
-                        <span class="co-shipping-value">Inside Dhaka: ৳80 | Outside: ৳120 | Free above ৳5,000</span>
+                        <span id="co-shipping-label">Select location</span>
                     </div>
                     <div class="co-summary-row co-total">
                         <span>Total</span>
@@ -105,17 +105,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="qc_city">City *</label>
-                        <select id="qc_city" name="shipping_city" class="form-control" required>
-                            <option value="" disabled selected>Select City</option>
-                            <option value="Dhaka">Dhaka</option>
-                            <option value="Chittagong">Chittagong</option>
-                            <option value="Sylhet">Sylhet</option>
-                            <option value="Rajshahi">Rajshahi</option>
-                            <option value="Khulna">Khulna</option>
-                            <option value="Barisal">Barisal</option>
-                            <option value="Rangpur">Rangpur</option>
-                            <option value="Mymensingh">Mymensingh</option>
+                        <label for="qc_city">Delivery Location *</label>
+                        <select id="qc_city" name="shipping_city" class="form-control" required onchange="updateCheckoutShipping()">
+                            <option value="" disabled selected>Select Location</option>
+                            <option value="Dhaka">Inside Dhaka — ৳80</option>
+                            <option value="Outside Dhaka">Outside Dhaka — ৳120</option>
                         </select>
                     </div>
 
@@ -153,6 +147,7 @@
 
 <script>
 let checkoutQty = 1;
+let unitPrice = {{ $product->price }};
 
 function changeCheckoutQty(delta) {
     let val = checkoutQty + delta;
@@ -161,8 +156,35 @@ function changeCheckoutQty(delta) {
     checkoutQty = val;
     document.getElementById('checkout-qty-display').textContent = val;
     document.getElementById('checkout-qty').value = val;
-    let unitPrice = {{ $product->price }};
-    document.getElementById('checkout-total').textContent = (unitPrice * val).toLocaleString('en-US');
+    updateCheckoutShipping();
+}
+
+function updateCheckoutShipping() {
+    let subtotal = unitPrice * checkoutQty;
+    let sel = document.getElementById('qc_city');
+    let shippingLabel = document.getElementById('co-shipping-label');
+    let totalLabel = document.querySelector('.co-total span:last-child');
+    let btnTotal = document.getElementById('checkout-total');
+    if (!sel || !sel.value) return;
+    let freeShipping = subtotal >= 5000;
+    let shipping = 0;
+    if (!freeShipping) {
+        shipping = sel.value === 'Dhaka' ? 80 : 120;
+    }
+    let total = subtotal + shipping;
+    shippingLabel.textContent = freeShipping ? 'Free' : (shipping === 0 ? 'Free' : '৳' + shipping.toLocaleString('en-US'));
+    if (totalLabel) totalLabel.textContent = '৳' + total.toLocaleString('en-US');
+    if (btnTotal) btnTotal.textContent = total.toLocaleString('en-US');
+
+    let optDhaka = sel.querySelector('option[value="Dhaka"]');
+    let optOutside = sel.querySelector('option[value="Outside Dhaka"]');
+    if (freeShipping) {
+        if (optDhaka) { optDhaka.disabled = false; optDhaka.text = 'Inside Dhaka — Free'; }
+        if (optOutside) { optOutside.disabled = false; optOutside.text = 'Outside Dhaka — Free'; }
+    } else {
+        if (optDhaka) optDhaka.text = 'Inside Dhaka — ৳80';
+        if (optOutside) optOutside.text = 'Outside Dhaka — ৳120';
+    }
 }
 </script>
 @endsection
