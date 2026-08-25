@@ -42,7 +42,7 @@
         <div class="content-block">
             <h2>How to Initiate a Return</h2>
             <ol class="steps-list">
-                <li>Contact our support team at <a href="mailto:hello@homei.com.bd">hello@homei.com.bd</a> or call <a href="tel:+8801XXXXXXXXX">+880 1XXX-XXXXXX</a> within 14 days of delivery.</li>
+                <li>Contact our support team at <a href="mailto:hello@homei.com.bd">hello@homei.com.bd</a> or call <a href="tel:+8801787656135">+880 1787656135</a> within 14 days of delivery.</li>
                 <li>Provide your order number and reason for the return.</li>
                 <li>Our team will review your request and provide return instructions.</li>
                 <li>Pack the item securely in its original packaging.</li>
@@ -74,7 +74,7 @@
             <h2>Need Help?</h2>
             <p>If you have any questions about returns or exchanges, our team is ready to assist:</p>
             <div class="contact-quick">
-                <p>📞 <a href="tel:+8801XXXXXXXXX">+880 1XXX-XXXXXX</a> (Sat–Thu, 10AM–8PM)</p>
+                <p>📞 <a href="tel:+8801787656135">+880 1787656135</a> (Sat–Thu, 10AM–8PM)</p>
                 <p>✉️ <a href="mailto:hello@homei.com.bd">hello@homei.com.bd</a></p>
             </div>
         </div>

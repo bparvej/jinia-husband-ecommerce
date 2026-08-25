@@ -176,7 +176,7 @@
     </div>
     <div class="guide-trouble">
         <h4>Need help?</h4>
-        <p>Contact support@homei.com.bd or call +880 1712-345678.</p>
+        <p>Contact <a href="mailto:homeibd26@gmail.com">homeibd26@gmail.com</a> or call <a href="tel:+8801787656135">+880 1787656135</a>.</p>
     </div>
 
 </div>

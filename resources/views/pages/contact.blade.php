@@ -71,7 +71,7 @@
                     <div class="contact-info-card">
                         <div class="contact-info-icon">💬</div>
                         <h3>WhatsApp</h3>
-                        <p>+880 1787656135</p>
+                        <p><a href="https://wa.me/8801787656135" target="_blank" style="color:inherit;text-decoration:none;">+880 1787656135</a></p>
                         <small>Quick responses</small>
                     </div>
                 </div>

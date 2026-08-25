@@ -61,7 +61,7 @@
                     <svg class="faq-chevron" :class="{ 'open': open === 5 }" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
                 <div class="faq-answer" x-show="open === 5" x-collapse>
-                    <p>Contact us within 14 days of delivery at <a href="mailto:hello@homei.com.bd">hello@homei.com.bd</a> or call +880 1XXX-XXXXXX. We'll guide you through the return process. Items must be unused and in original packaging. Refunds are processed within 5–7 business days.</p>
+                    <p>Contact us within 14 days of delivery at <a href="mailto:hello@homei.com.bd">hello@homei.com.bd</a> or call <a href="tel:+8801787656135">+880 1787656135</a>. We'll guide you through the return process. Items must be unused and in original packaging. Refunds are processed within 5–7 business days.</p>
                 </div>
             </div>
 
@@ -113,9 +113,9 @@
                 <div class="faq-answer" x-show="open === 10" x-collapse>
                     <p>You can reach us via:</p>
                     <ul>
-                        <li>📞 Phone: +880 1XXX-XXXXXX (Sat–Thu, 10AM–8PM)</li>
-                        <li>✉️ Email: <a href="mailto:hello@homei.com.bd">hello@homei.com.bd</a></li>
-                        <li>💬 WhatsApp: +880 1XXX-XXXXXX</li>
+                        <li>📞 Phone: <a href="tel:+8801787656135">+880 1787656135</a> (Sat–Thu, 10AM–8PM)</li>
+                        <li>✉️ Email: <a href="mailto:homeibd26@gmail.com">homeibd26@gmail.com</a></li>
+                        <li>💬 WhatsApp: <a href="https://wa.me/8801787656135" target="_blank">+880 1787656135</a></li>
                     </ul>
                 </div>
             </div>
